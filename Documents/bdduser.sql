@@ -1,0 +1,2 @@
+CREATE TABLE t_compte_cpt(cpt_pseudo VARCHAR PRIMARY KEY,cpt_mdp VARCHAR NOT NULL,cpt_role CHAR(1) NOT NULL);
+CREATE  TABLE  t_profil_pfl(pfl_nom VARCHAR, pfl_prenom VARCHAR,pfl_dateCreation DATE,pfl_mail VARCHAR,cpt_pseudo VARCHAR PRIMARY KEY REFERENCES t_compte_cpt(pseudo));
