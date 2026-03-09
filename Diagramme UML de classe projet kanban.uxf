@@ -1,30 +1,33 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <diagram program="umlet" version="15.1">
-  <zoom_level>10</zoom_level>
+  <zoom_level>7</zoom_level>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1050</x>
-      <y>200</y>
-      <w>430</w>
-      <h>290</h>
+      <x>700</x>
+      <y>210</y>
+      <w>301</w>
+      <h>203</h>
     </coordinates>
     <panel_attributes>Carte
 --
-+ id : string
+_+ idCarte : string_
 + nom : string
 + description : string
-+ etat : string
++ archiver : string
++ terminer : string
++ ordre : int
 + date_création : Date
 + date_début : Date
 + date_fin : Date
++ couverture : string
 --
 + creerCarte(nom : string) : Carte
 + modifierCarte(nom : string, description : string) : string
 + modifierDateDebut(date_debut : Date) : Date
 + modifierDateFin(date_fin : Date) : Date
 + archiver(id : string) : string
-+ desarchiver(id : string) : string
++ phaseEcheance(idCarte : string) : string
 + supprimerCarte(id : string) : void
 
 </panel_attributes>
@@ -33,12 +36,12 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>560</x>
-      <y>0</y>
-      <w>300</w>
-      <h>90</h>
+      <x>357</x>
+      <y>70</y>
+      <w>210</w>
+      <h>63</h>
     </coordinates>
-    <panel_attributes>Gateway
+    <panel_attributes>Utilisateur
 --
 + token : string
 --
@@ -49,14 +52,14 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>50</x>
-      <y>200</y>
-      <w>350</w>
-      <h>250</h>
+      <x>0</x>
+      <y>210</y>
+      <w>245</w>
+      <h>175</h>
     </coordinates>
     <panel_attributes>Tableau
 --
-+ id : string
+_+ idTableau : string_
 + nom : string
 + description : string
 + date_création : Date
@@ -76,14 +79,14 @@ description : string, image : string) : void
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>540</x>
-      <y>490</y>
-      <w>420</w>
-      <h>160</h>
+      <x>322</x>
+      <y>413</y>
+      <w>294</w>
+      <h>112</h>
     </coordinates>
     <panel_attributes>Document
 --
-+ id : string
+_+ idDocument : string_
 + nom : string
 + lien : string
 --
@@ -95,14 +98,14 @@ description : string, image : string) : void
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1120</x>
-      <y>610</y>
-      <w>430</w>
-      <h>150</h>
+      <x>826</x>
+      <y>532</y>
+      <w>301</w>
+      <h>105</h>
     </coordinates>
     <panel_attributes>Etiquette
 --
-+ id : string
++ idEtiquette : string
 + nom : string
 + couleur : string
 --
@@ -115,19 +118,20 @@ description : string, image : string) : void
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>420</x>
-      <y>680</y>
-      <w>640</w>
-      <h>160</h>
+      <x>259</x>
+      <y>546</y>
+      <w>448</w>
+      <h>112</h>
     </coordinates>
     <panel_attributes>Journal
 --
-+ id : string
-+ titre : string
+_+ idJournal : string_
++ type : string
 + description : string
 + auteur : string
 + action : string
 + date : Date
++ etat : string
 --
 + ajouterJournal(titre : string, description : string, auteur : string, action : string) : Journal
 </panel_attributes>
@@ -136,63 +140,63 @@ description : string, image : string) : void
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>520</x>
-      <y>200</y>
-      <w>400</w>
-      <h>240</h>
+      <x>329</x>
+      <y>210</y>
+      <w>280</w>
+      <h>168</h>
     </coordinates>
     <panel_attributes>Liste
 --
-+ id : string
-+ nom : string
+_+ idListe : string_
++ titre : string
 + ordre : int
 + etat : string
 
 --
-+ ajoutListe(nom : string) : Liste
-+ ajouterCarte(idListe : string, idCarte : string) : string
++ créerListe(titre : string, idTableau : string) : Liste
++ ajouterCarte(idCarte : string) : string
++ retirerCarte(idCarte : string) : string
 + modifierListe(id : string, nom : string) : string
 + deplacerListe(ordre : int) : int
-+ archiver(id : string) : string
-+ desarchiver(id : string) : string
++ archiverListe(idListe : string) : string
 + supprimeListe(id : string) : void</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>390</x>
-      <y>80</y>
-      <w>190</w>
-      <h>140</h>
+      <x>119</x>
+      <y>105</y>
+      <w>252</w>
+      <h>119</h>
     </coordinates>
     <panel_attributes>lt=-
 m1=1..n
 m2=1..n
 créer</panel_attributes>
-    <additional_attributes>170.0;10.0;10.0;120.0</additional_attributes>
+    <additional_attributes>340.0;20.0;10.0;20.0;10.0;150.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>850</x>
-      <y>60</y>
-      <w>220</w>
-      <h>160</h>
+      <x>560</x>
+      <y>112</y>
+      <w>308</w>
+      <h>112</h>
     </coordinates>
     <panel_attributes>lt=-
 m1=1..n
 m2=0..n
-associé à</panel_attributes>
-    <additional_attributes>10.0;10.0;200.0;140.0</additional_attributes>
+membre de</panel_attributes>
+    <additional_attributes>10.0;20.0;390.0;20.0;390.0;140.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>390</x>
-      <y>250</y>
-      <w>150</w>
-      <h>50</h>
+      <x>238</x>
+      <y>245</y>
+      <w>105</w>
+      <h>35</h>
     </coordinates>
     <panel_attributes>lt=-
 m1=1..1
@@ -203,10 +207,10 @@ contient</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>910</x>
-      <y>250</y>
-      <w>160</w>
-      <h>50</h>
+      <x>602</x>
+      <y>245</y>
+      <w>112</w>
+      <h>35</h>
     </coordinates>
     <panel_attributes>lt=-
 m1=1..1
@@ -217,51 +221,51 @@ contient</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>950</x>
-      <y>480</y>
-      <w>220</w>
-      <h>80</h>
+      <x>609</x>
+      <y>350</y>
+      <w>105</w>
+      <h>126</h>
     </coordinates>
     <panel_attributes>lt=-
 m1=0..n
 m2=0..n
 associé à</panel_attributes>
-    <additional_attributes>200.0;10.0;10.0;50.0</additional_attributes>
+    <additional_attributes>130.0;10.0;50.0;10.0;50.0;150.0;10.0;150.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1170</x>
-      <y>480</y>
-      <w>150</w>
-      <h>150</h>
+      <x>917</x>
+      <y>406</y>
+      <w>77</w>
+      <h>140</h>
     </coordinates>
     <panel_attributes>lt=-
 m1=0..n
 m2=0..n
 appartient à</panel_attributes>
-    <additional_attributes>10.0;10.0;90.0;130.0</additional_attributes>
+    <additional_attributes>10.0;10.0;10.0;180.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>200</x>
-      <y>440</y>
-      <w>240</w>
-      <h>320</h>
+      <x>105</x>
+      <y>378</y>
+      <w>168</w>
+      <h>245</h>
     </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
-    <additional_attributes>220.0;300.0;10.0;10.0</additional_attributes>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;330.0;220.0;330.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1050</x>
-      <y>480</y>
-      <w>140</w>
-      <h>280</h>
+      <x>700</x>
+      <y>406</y>
+      <w>98</w>
+      <h>217</h>
     </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;260.0;120.0;10.0</additional_attributes>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>120.0;10.0;120.0;290.0;10.0;290.0</additional_attributes>
   </element>
 </diagram>
