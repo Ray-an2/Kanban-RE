@@ -2,7 +2,8 @@ import { randomBytes, scrypt } from "node:crypto";
 import { jwtVerify, SignJWT } from "jose";
 import { type AuthPayload, isAuthPayload } from "../model/auth.ts";
 
-const JWT_SECRET = "R10E";
+const JWT_SECRET = Deno.env.get("JWT_SECRET") ?? "dev-insecure";
+const PASSWORD_PEPPER = Deno.env.get("PASSWORD_PEPPER") ?? "";
 const JWT_KEY = new TextEncoder().encode(JWT_SECRET);
 
 export async function createJWT(
@@ -26,7 +27,7 @@ export async function verifyJWT(token: string): Promise<AuthPayload | null> {
 export function hashPassword(password: string): Promise<string> {
     const salt = randomBytes(16).toString("hex");
     return new Promise((resolve, reject) => {
-        scrypt(password, salt, 64, (err, derivedKey) => {
+        scrypt(password + PASSWORD_PEPPER, salt, 64, (err, derivedKey) => {
             if (err) reject(err);
             else resolve(`${derivedKey.toString("hex")}.${salt}`);
         });
@@ -36,7 +37,7 @@ export function hashPassword(password: string): Promise<string> {
 export function verifyPassword(password: string, storedHash: string): Promise<boolean> {
     const [hash, salt] = storedHash.split(".");
     return new Promise((resolve, reject) => {
-        scrypt(password, salt, 64, (err, derivedKey) => {
+        scrypt(password + PASSWORD_PEPPER, salt, 64, (err, derivedKey) => {
             if (err) reject(err);
             else resolve(hash === derivedKey.toString("hex"));
         });

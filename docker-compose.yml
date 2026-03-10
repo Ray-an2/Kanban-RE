@@ -1,5 +1,91 @@
-#services:
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    env_file:
+      - ./client/.env
+    ports:
+      - "5173:80"
+    depends_on:
+      - serveur-deno
+    networks:
+      - appnet
 
-#volumes:
+  serveur-deno:
+    build:
+      context: ./serveurDeno
+      dockerfile: Dockerfile
+    env_file:
+      - ./serveurDeno/.env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mariadb
+      - mongo
+      - serveur-tomcat
+    networks:
+      - appnet
 
-#networks:
+  serveur-tomcat:
+    build:
+      context: ./serveurTomcat
+      dockerfile: Dockerfile
+    env_file:
+      - ./serveurTomcat/.env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mariadb
+      - mongo
+    networks:
+      - appnet
+
+  mariadb:
+    image: mariadb:11.4
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    networks:
+      - appnet
+
+  mongo:
+    image: mongo:7.0
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27018:27017"
+    networks:
+      - appnet
+
+  phpmyadmin:
+    image: phpmyadmin:5.2
+    environment:
+      PMA_HOST: mariadb
+      PMA_PORT: 3306
+      PMA_USER: ${MARIADB_USER}
+      PMA_PASSWORD: ${MARIADB_PASSWORD}
+    ports:
+      - "8081:80"
+    depends_on:
+      - mariadb
+    networks:
+      - appnet
+
+volumes:
+  mariadb_data:
+  mongo_data:
+
+networks:
+  appnet:
+    driver: bridge

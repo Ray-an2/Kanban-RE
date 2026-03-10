@@ -16,9 +16,9 @@ const clients = new Set<WebSocket>();
 
 // --- Application ---
 
-const PROTOCOL = "http";
-const HOST = "localhost";
-const PORT = 8000;
+const PROTOCOL = Deno.env.get("PROTOCOL") ?? "http";
+const HOST = Deno.env.get("HOST") ?? "0.0.0.0";
+const PORT = Number(Deno.env.get("PORT") ?? "8000");
 const ADDRESS = `${PROTOCOL}://${HOST}:${PORT}`;
 
 const app = new Application();
