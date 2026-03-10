@@ -4,10 +4,22 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css">
     <title>client</title>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <h1>Kanban</h1>
+    <div id="board">
+      <div class="column" id="todo">
+        <h2>To Do</h2>
+        <div class="card">Task 1</div>
+        <div class="card">Task 2</div>
+    </div>
+    <div class="column" id="in-progress">
+        <h2>In Progress</h2>
+        <div class="card">Task 3</div>
+    </div>
   </body>
 </html>
