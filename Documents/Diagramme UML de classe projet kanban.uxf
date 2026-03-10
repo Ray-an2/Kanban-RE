@@ -4,8 +4,8 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>700</x>
-      <y>210</y>
+      <x>994</x>
+      <y>287</y>
       <w>301</w>
       <h>203</h>
     </coordinates>
@@ -36,24 +36,28 @@ _+ idCarte : string_
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>357</x>
-      <y>70</y>
-      <w>210</w>
-      <h>63</h>
+      <x>651</x>
+      <y>105</y>
+      <w>336</w>
+      <h>105</h>
     </coordinates>
-    <panel_attributes>Utilisateur
+    <panel_attributes>Compte
 --
-+ token : string
+_+ pseudo : string_
++ mot de passe : string
++ role : string
 --
-+ verifierToken(token : string) : boolean
-</panel_attributes>
++ creationCompte(pseudo : string, mot de passe : string) : Compte
++ suppressionCompte(pseudo : string) : void
++ connexion(pseudo : string, mot de passe : string) : string
++ deconnexion() : string</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>0</x>
-      <y>210</y>
+      <x>294</x>
+      <y>287</y>
       <w>245</w>
       <h>175</h>
     </coordinates>
@@ -79,10 +83,10 @@ description : string, image : string) : void
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>322</x>
-      <y>413</y>
+      <x>616</x>
+      <y>490</y>
       <w>294</w>
-      <h>112</h>
+      <h>105</h>
     </coordinates>
     <panel_attributes>Document
 --
@@ -98,14 +102,14 @@ _+ idDocument : string_
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>826</x>
-      <y>532</y>
+      <x>1120</x>
+      <y>609</y>
       <w>301</w>
       <h>105</h>
     </coordinates>
     <panel_attributes>Etiquette
 --
-+ idEtiquette : string
+_+ idEtiquette : string_
 + nom : string
 + couleur : string
 --
@@ -118,10 +122,10 @@ _+ idDocument : string_
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>259</x>
-      <y>546</y>
+      <x>553</x>
+      <y>623</y>
       <w>448</w>
-      <h>112</h>
+      <h>119</h>
     </coordinates>
     <panel_attributes>Journal
 --
@@ -140,8 +144,8 @@ _+ idJournal : string_
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>329</x>
-      <y>210</y>
+      <x>623</x>
+      <y>287</y>
       <w>280</w>
       <h>168</h>
     </coordinates>
@@ -165,36 +169,36 @@ _+ idListe : string_
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>119</x>
-      <y>105</y>
-      <w>252</w>
-      <h>119</h>
+      <x>413</x>
+      <y>203</y>
+      <w>336</w>
+      <h>98</h>
     </coordinates>
     <panel_attributes>lt=-
 m1=1..n
 m2=1..n
 créer</panel_attributes>
-    <additional_attributes>340.0;20.0;10.0;20.0;10.0;150.0</additional_attributes>
+    <additional_attributes>430.0;10.0;430.0;70.0;10.0;70.0;10.0;120.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>560</x>
-      <y>112</y>
-      <w>308</w>
-      <h>112</h>
+      <x>924</x>
+      <y>203</y>
+      <w>238</w>
+      <h>98</h>
     </coordinates>
     <panel_attributes>lt=-
 m1=1..n
 m2=0..n
 membre de</panel_attributes>
-    <additional_attributes>10.0;20.0;390.0;20.0;390.0;140.0</additional_attributes>
+    <additional_attributes>10.0;10.0;10.0;70.0;290.0;70.0;290.0;120.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>238</x>
-      <y>245</y>
+      <x>532</x>
+      <y>322</y>
       <w>105</w>
       <h>35</h>
     </coordinates>
@@ -207,8 +211,8 @@ contient</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>602</x>
-      <y>245</y>
+      <x>896</x>
+      <y>322</y>
       <w>112</w>
       <h>35</h>
     </coordinates>
@@ -221,8 +225,8 @@ contient</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>609</x>
-      <y>350</y>
+      <x>903</x>
+      <y>427</y>
       <w>105</w>
       <h>126</h>
     </coordinates>
@@ -235,8 +239,8 @@ associé à</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>917</x>
-      <y>406</y>
+      <x>1211</x>
+      <y>483</y>
       <w>77</w>
       <h>140</h>
     </coordinates>
@@ -249,8 +253,8 @@ appartient à</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>105</x>
-      <y>378</y>
+      <x>399</x>
+      <y>455</y>
       <w>168</w>
       <h>245</h>
     </coordinates>
@@ -260,12 +264,83 @@ appartient à</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>700</x>
-      <y>406</y>
+      <x>994</x>
+      <y>483</y>
       <w>98</w>
       <h>217</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
     <additional_attributes>120.0;10.0;120.0;290.0;10.0;290.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>238</x>
+      <y>98</y>
+      <w>308</w>
+      <h>133</h>
+    </coordinates>
+    <panel_attributes>Profil
+--
++ nom : string
++ prenom : string
++ dateCreation : Date
++ mail : string
+--
++ creationProfil(nom : string, prenom : string, 
+mail : string) : Profil
++ modifierProfil(nom : string, prenom : string, 
+mail : string) : string
++ supprimerProfil(pseudo : string) : void
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>539</x>
+      <y>154</y>
+      <w>126</w>
+      <h>35</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1..1
+m2=1..1
+possède</panel_attributes>
+    <additional_attributes>10.0;20.0;160.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1358</x>
+      <y>413</y>
+      <w>301</w>
+      <h>112</h>
+    </coordinates>
+    <panel_attributes>Commentaire
+--
+_+ idCommentaire : string_
++ description : string
++ dateCreation : string
++ auteur : string
+--
++ ajouterCommentaire(description : string) : Commentaire
++ supprimerEtiquette(idCommentaire : string) : void
++ modifierCommentaire(description : string) : string</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1288</x>
+      <y>357</y>
+      <w>252</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1..1
+m2=0..n
+contient</panel_attributes>
+    <additional_attributes>10.0;20.0;310.0;20.0;310.0;80.0</additional_attributes>
   </element>
 </diagram>
