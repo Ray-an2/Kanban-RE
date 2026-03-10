@@ -12,44 +12,63 @@
     <script type="module" src="/src/main.tsx"></script>
     <h1>Kanban</h1>
     <div id="board">
-  <div class="column" id="todo">
-    <h2 class="column-title">To Do</h2>
-    <div class="cards">
-      <div class="card" onclick="toggleCardDetails(this)">
-        <div class="card-title">Task 1</div>
-        <div class="card-details">
-          <p>Description : Terminer la maquette du projet.</p>
-          <p>Date limite : 15/03/2026</p>
+      <div class="column" id="todo">
+        <h2 class="column-title">To Do</h2>
+        <div class="cards">
+      <div class="card" draggable="true" ondragstart="dragStart(event)">
+        <div class="card-title" onclick="openModal('Task 1', 'Terminer la maquette.', '15/03/2026')">Task 1</div>
+      </div>
+      <div class="card" draggable="true" ondragstart="dragStart(event)">
+        <div class="card-title" onclick="openModal('Task 2', 'Préparer la réunion.', '12/03/2026')">Task 2</div>
+          </div>
         </div>
       </div>
-      <div class="card" onclick="toggleCardDetails(this)">
-        <div class="card-title">Task 2</div>
-        <div class="card-details">
-          <p>Description : Préparer la réunion avec l'équipe.</p>
-          <p>Date limite : 12/03/2026</p>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="column" id="in-progress">
-    <h2 class="column-title">In Progress</h2>
-    <div class="cards">
-      <div class="card" onclick="toggleCardDetails(this)">
-        <div class="card-title">Task 3</div>
-        <div class="card-details">
-          <p>Description : Développer la fonctionnalité de login.</p>
-          <p>Date limite : 20/03/2026</p>
+      <div class="column" id="in-progress">
+        <h2 class="column-title">In Progress</h2>
+        <div class="cards">
+          <div class="card" onclick="openModal('Task 3', 'Développer la fonctionnalité de login.', '20/03/2026')">
+            <div class="card-title">Task 3</div>
+            <div class="card-details">
+              <p>Description : Développer la fonctionnalité de login.</p>
+              <p>Date limite : 20/03/2026</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
-
-  </body>
-  <script>
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2 id="modal-title">Titre de la tâche</h2>
+        <p id="modal-description">Description...</p>
+        <p id="modal-due-date">Date limite...</p>
+      </div>
+    </div>
+<script>
     function toggleCardDetails(cardElement) {
-    cardElement.classList.toggle("card-expanded");
+      cardElement.classList.toggle("card-expanded");
     }
 
+    function openModal(title, description, dueDate) {
+      document.getElementById("modal-title").textContent = title;
+      document.getElementById("modal-description").textContent = "Description : " + description;
+      document.getElementById("modal-due-date").textContent = "Date limite : " + dueDate;
+      document.getElementById("modal").style.display = "block";
+    }
+
+    function closeModal() {
+      document.getElementById("modal").style.display = "none";
+    }
+
+
+    window.onclick = function(event) {
+      const modal = document.getElementById("modal");
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    };
+
+
   </script>
+  </body>
 </html>
