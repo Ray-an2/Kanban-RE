@@ -93,6 +93,26 @@ body {
     display: block; /* Affiché quand la carte est étendue */
 }
 
+.cards.empty {
+  min-height: 50px;
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+.card.placeholder {
+  background: rgba(59, 59, 59, 0.5); 
+  border: 2px dashed #888;
+  border-radius: 4px;
+  padding: 12px;
+  min-height: 20px;
+  box-sizing: border-box;
+  box-shadow: none;
+}
+
+.cards.drag-over {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
 .card-title {
     font-size: 14px;
     color: #fdfdfd;
