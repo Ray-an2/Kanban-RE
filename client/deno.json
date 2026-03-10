@@ -1,0 +1,8 @@
+{
+  "imports": {
+    "@deno/vite-plugin": "npm:@deno/vite-plugin@^1.0.6",
+    "@types/react": "npm:@types/react@^19.2.14",
+    "@vitejs/plugin-react": "npm:@vitejs/plugin-react@^5.1.4",
+    "react-router": "npm:react-router@^7.13.1"
+  }
+}
