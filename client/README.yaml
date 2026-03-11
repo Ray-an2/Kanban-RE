@@ -12,7 +12,7 @@ paths:
       description: Route publique vers la page de connexion.
       responses:
         '200':
-          description: OK
+          description: Affiche la page de connexion.
     post:
       summary: Envoi des informations de connexion
       description: Envoie les informations de connexion.
@@ -31,16 +31,16 @@ paths:
               $ref: '#/components/schemas/LoginRequest'
       responses:
         '200':
-          description: OK
+          description: Authentification réussie et accès au tableau.
         '401':
-          description: Identifiants invalides
+          description: (UNAUTHORIZED) identifiants invalides.
   /inscription:
     get:
       summary: Page d'inscription
       description: Route publique vers la page d'inscription.
       responses:
         '200':
-          description: OK
+          description: Affiche la page d'inscription.
     post:
       summary: Envoi des informations d'inscription
       description: Envoie les informations d'inscription depuis la page d'inscription.
@@ -54,7 +54,7 @@ paths:
         '201':
           description: Compte créé
         '400':
-          description: Données invalides
+          description: (VALIDATION_ERROR) données invalides.
   /tableau:
     get:
       summary: Accueil tableau
@@ -63,9 +63,35 @@ paths:
         - bearerAuth: []
       responses:
         '200':
-          description: OK
+          description: Affiche la page d'accueil du tableau.
         '401':
-          description: Non autorisé
+          description: (UNAUTHORIZED) non autorisé.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    post:
+      summary: Création d'un tableau
+      description: Route protégée pour créer un tableau.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TableauCreateRequest'
+      responses:
+        '201':
+          description: Tableau créé.
+        '400':
+          description: (VALIDATION_ERROR) données invalides.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
   /tableau/logs:
     get:
       summary: Logs (admin uniquement)
@@ -74,11 +100,15 @@ paths:
         - bearerAuth: []
       responses:
         '200':
-          description: OK
+          description: Affiche la page des logs (admin).
         '401':
-          description: Non autorisé
+          description: (UNAUTHORIZED) non autorisé.
         '403':
-          description: Accès interdit (rôle insuffisant)
+          description: (ROLE_UNAUTHORIZED) rôle insuffisant.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
   /tableau/{id}/log:
     get:
       summary: Logs par tableau
@@ -94,11 +124,15 @@ paths:
           description: Identifiant du tableau.
       responses:
         '200':
-          description: OK
+          description: Affiche les logs du tableau demandé.
         '401':
-          description: Non autorisé
+          description: (UNAUTHORIZED) non autorisé.
         '404':
-          description: Non trouvé
+          description: (NOT_FOUND) ressource introuvable.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
   /tableau/{id}:
     get:
       summary: Tableau
@@ -114,11 +148,287 @@ paths:
           description: Identifiant du tableau.
       responses:
         '200':
-          description: OK
+          description: Affiche le tableau demandé.
         '401':
-          description: Non autorisé
+          description: (UNAUTHORIZED) non autorisé.
         '404':
-          description: Non trouvé
+          description: (NOT_FOUND) ressources introuvables.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    put:
+      summary: Mise à jour d'un tableau
+      description: Route protégée pour mettre à jour un tableau.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TableauUpdateRequest'
+      responses:
+        '200':
+          description: Tableau mis à jour.
+        '400':
+          description: (VALIDATION_ERROR) données invalides.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressources introuvables.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    delete:
+      summary: Suppression d'un tableau
+      description: Route protégée pour supprimer un tableau.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+      responses:
+        '204':
+          description: Tableau supprimé.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressources introuvables.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /tableau/{tabId}/liste:
+    get:
+      summary: Listes d'un tableau
+      description: Route protégée pour récupérer les listes d'un tableau.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tabId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+      responses:
+        '200':
+          description: Listes récupérées.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressources introuvables.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    post:
+      summary: Création d'une liste
+      description: Route protégée pour créer une liste dans un tableau.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tabId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListeCreateRequest'
+      responses:
+        '201':
+          description: Liste créée.
+        '400':
+          description: (VALIDATION_ERROR) données invalides.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressources introuvables.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /tableau/{tabId}/liste/{lisId}:
+    get:
+      summary: Détails d'une liste
+      description: Route protégée pour récupérer une liste.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tabId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+        - name: lisId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant de la liste.
+      responses:
+        '200':
+          description: Liste récupérée.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressources introuvables.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    put:
+      summary: Mise à jour d'une liste
+      description: Route protégée pour mettre à jour une liste.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tabId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+        - name: lisId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant de la liste.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListeUpdateRequest'
+      responses:
+        '200':
+          description: Liste mise à jour.
+        '400':
+          description: (VALIDATION_ERROR) données invalides.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressources introuvables.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    delete:
+      summary: Suppression d'une liste
+      description: Route protégée pour supprimer une liste.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tabId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+        - name: lisId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant de la liste.
+      responses:
+        '204':
+          description: Liste supprimée.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressources introuvables.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /tableau/{tabId}/liste/{lisId}/carte:
+    get:
+      summary: Cartes d'une liste
+      description: Route protégée pour récupérer les cartes d'une liste.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tabId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+        - name: lisId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant de la liste.
+      responses:
+        '200':
+          description: Cartes récupérées.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressources introuvables.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    post:
+      summary: Création d'une carte
+      description: Route protégée pour créer une carte dans une liste.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tabId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+        - name: lisId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant de la liste.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarteCreateRequest'
+      responses:
+        '201':
+          description: Carte créée.
+        '400':
+          description: (VALIDATION_ERROR) données invalides.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressources introuvables.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
   /tableau/{tabId}/carte/{carId}:
     get:
       summary: Carte
@@ -140,11 +450,81 @@ paths:
           description: Identifiant de la carte.
       responses:
         '200':
-          description: OK
+          description: Affiche la carte demandée.
         '401':
-          description: Non autorisé
+          description: (UNAUTHORIZED) non autorisé.
         '404':
-          description: Non trouvé
+          description: (NOT_FOUND) ressources introuvables.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    put:
+      summary: Mise à jour d'une carte
+      description: Route protégée pour mettre à jour une carte.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tabId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+        - name: carId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant de la carte.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarteUpdateRequest'
+      responses:
+        '200':
+          description: Carte mise à jour.
+        '400':
+          description: (VALIDATION_ERROR) données invalides.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressources introuvables.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    delete:
+      summary: Suppression d'une carte
+      description: Route protégée pour supprimer une carte.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tabId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+        - name: carId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant de la carte.
+      responses:
+        '204':
+          description: Carte supprimée.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressources introuvables.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
   /compte/{pseudo}:
     get:
       summary: Compte utilisateur
@@ -160,11 +540,15 @@ paths:
           description: Pseudo de l'utilisateur.
       responses:
         '200':
-          description: OK
+          description: Affiche la page compte de l'utilisateur.
         '401':
-          description: Non autorisé
+          description: (UNAUTHORIZED) non autorisé.
         '404':
-          description: Non trouvé
+          description: (NOT_FOUND) ressource introuvable.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
   /notification:
     get:
       summary: Notifications
@@ -173,9 +557,13 @@ paths:
         - bearerAuth: []
       responses:
         '200':
-          description: OK
+          description: Affiche la page des notifications.
         '401':
-          description: Non autorisé
+          description: (UNAUTHORIZED) non autorisé.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
 
 components:
   securitySchemes:
@@ -195,6 +583,7 @@ components:
           type: string
           format: password
           description: Mot de passe.
+
     RegisterRequest:
       type: object
       required: [pseudo, motDePasse, email]
@@ -210,3 +599,139 @@ components:
           type: string
           format: email
           description: Adresse e-mail.
+        Nom:
+          type: string
+          description: Nom de famille.
+        Prenom:
+          type: string
+          description: Prénom.
+
+    TableauCreateRequest:
+      type: object
+      required: [tab_nom]
+      properties:
+        tab_nom:
+          type: string
+          description: Nom du tableau.
+        tab_description:
+          type: string
+          description: Description du tableau.
+        tab_etat:
+          type: string
+          description: Etat du tableau.
+        tab_image:
+          type: string
+          description: Lien de l'image du tableau.
+
+    TableauUpdateRequest:
+      type: object
+      properties:
+        tab_nom:
+          type: string
+          description: Nom du tableau.
+        tab_description:
+          type: string
+          description: Description du tableau.
+        tab_etat:
+          type: string
+          description: Etat du tableau.
+        tab_image:
+          type: string
+          description: Lien de l'image du tableau.
+
+    ListeCreateRequest:
+      type: object
+      required: [lis_titre]
+      properties:
+        lis_titre:
+          type: string
+          description: Titre de la liste.
+        lis_ordre:
+          type: integer
+          description: Ordre d'affichage de la liste.
+        lis_etat:
+          type: string
+          description: Etat de la liste.
+
+    ListeUpdateRequest:
+      type: object
+      properties:
+        lis_titre:
+          type: string
+          description: Titre de la liste.
+        lis_ordre:
+          type: integer
+          description: Ordre d'affichage de la liste.
+        lis_etat:
+          type: string
+          description: Etat de la liste.
+
+    CarteCreateRequest:
+      type: object
+      required: [car_nom]
+      properties:
+        car_nom:
+          type: string
+          description: Nom de la carte.
+        car_description:
+          type: string
+          description: Description de la carte.
+        car_archiver:
+          type: string
+          description: Etat d'archivage (P/A).
+        car_terminer:
+          type: string
+          description: Etat de terminaison (0).
+        car_priorite:
+          type: integer
+          description: Priorite de la carte allant de 0 (forte priorité) à N-1 carte (basse priorité).
+        car_date_creation:
+          type: string
+          format: date-time
+          description: Date de creation de la carte.
+        car_date_debut:
+          type: string
+          format: date-time
+          description: Date de debut.
+        car_date_fin:
+          type: string
+          format: date-time
+          description: Date de fin.
+        car_couverture:
+          type: string
+          description: Lien de la couverture.
+
+    CarteUpdateRequest:
+      type: object
+      properties:
+        car_nom:
+          type: string
+          description: Nom de la carte.
+        car_description:
+          type: string
+          description: Description de la carte.
+        car_archiver:
+          type: string
+          description: Etat d'archivage (P/A).
+        car_terminer:
+          type: string
+          description: Etat de terminaison (0/1).
+        car_priorite:
+          type: integer
+          description: Priorite de la carte.
+        car_date_creation:
+          type: string
+          format: date-time
+          description: Date de creation de la carte.
+        car_date_debut:
+          type: string
+          format: date-time
+          description: Date de debut.
+        car_date_fin:
+          type: string
+          format: date-time
+          description: Date de fin.
+        car_couverture:
+          type: string
+          description: Lien de la couverture.
+        
