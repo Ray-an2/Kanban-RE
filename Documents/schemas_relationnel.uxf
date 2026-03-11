@@ -4,77 +4,77 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>0</x>
-      <y>208</y>
+      <x>40</x>
+      <y>216</y>
       <w>280</w>
       <h>120</h>
     </coordinates>
     <panel_attributes>t_tableau_tab
 --
-_tab_id : Text_
-tab_nom : Text
-tab_description: Text
-tab_date_création : Text
+_tab_id : VARCHAR(64)_
+tab_nom : VARCHAR(100)
+tab_description: VARCHAR(500)
+tab_date : DATETIME
 tab_etat : CHAR(1)
-tab_image : Text</panel_attributes>
+tab_image : VARCHAR(200)</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>376</x>
-      <y>208</y>
+      <x>416</x>
+      <y>216</y>
       <w>320</w>
       <h>112</h>
     </coordinates>
     <panel_attributes>t_liste_lis
 --
-_lis_id : Text_
-lis_titre : Text
-lis_ordre : Integer
+_lis_id : VARCHAR(64)_
+lis_titre : VARCHAR(100)
+lis_ordre : tinyint
 lis_etat : CHAR(1)
-#tab_id : Text</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>256</x>
-      <y>440</y>
-      <w>192</w>
-      <h>64</h>
-    </coordinates>
-    <panel_attributes>t_document_doc
---
-_doc_id : Text_
-doc_nom : Text
-doc_lien : Text</panel_attributes>
+#tab_id : VARCHAR(64)</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
       <x>296</x>
-      <y>592</y>
+      <y>448</y>
+      <w>192</w>
+      <h>64</h>
+    </coordinates>
+    <panel_attributes>t_document_doc
+--
+_doc_id : VARCHAR(64)_
+doc_nom : VARCHAR(100)
+doc_lien : VARCHAR(200)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>336</x>
+      <y>600</y>
       <w>512</w>
       <h>128</h>
     </coordinates>
     <panel_attributes>t_journal_jou
 --
-_jou_id : Text_
-jou_titre : Text
-jou_description : Text
-jou_auteur : Text
-jou_action : Text
-jou_date : Text
+_jou_id : VARCHAR(64)_
+jou_titre : VARCHAR(100)
+jou_description : VARCHAR(500)
+jou_auteur : VARCHAR(100)
+jou_action : VARCHAR(50)
+jou_date : DATETIME
 jou_etat : CHAR(1)</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>120</x>
-      <y>320</y>
+      <x>160</x>
+      <y>328</y>
       <w>192</w>
       <h>336</h>
     </coordinates>
@@ -84,72 +84,73 @@ jou_etat : CHAR(1)</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>800</x>
-      <y>360</y>
+      <x>840</x>
+      <y>376</y>
       <w>112</w>
-      <h>320</h>
+      <h>312</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;380.0;50.0;380.0;50.0;190.0;120.0;190.0;120.0;10.0</additional_attributes>
+    <additional_attributes>10.0;370.0;50.0;370.0;50.0;180.0;120.0;180.0;120.0;10.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>800</x>
-      <y>208</y>
-      <w>344</w>
-      <h>160</h>
+      <x>840</x>
+      <y>216</y>
+      <w>248</w>
+      <h>168</h>
     </coordinates>
     <panel_attributes>t_carte_car
 --
-_car_id : Text_
-car_nom : Text
-car_description : Text
-car_archiver : Text
-car_terminer : Text
-car_date_création : Text
-car_date_début : Text
-car_date_fin : Text
-car_couverture : Text
-#lis_id : Text
+_car_id : VARCHAR(64)_
+car_nom : VARCHAR(100)
+car_description : VARCHAR(500)
+car_archiver : CHAR(1)
+car_terminer : CHAR(1)
+car_priorite : tinyint
+car_date_création : DATETIME
+car_date_début : DATETIME
+car_date_fin : DATETIME
+car_couverture : VARCHAR(200)
+#lis_id : VARCHAR(64)
 </panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>864</x>
-      <y>640</y>
+      <x>904</x>
+      <y>648</y>
       <w>344</w>
       <h>72</h>
     </coordinates>
     <panel_attributes>t_etiquette_eti
 --
-eti_id : Text
-eti_nom : Text
-eti_couleur : Integer</panel_attributes>
+_eti_id : VARCHAR(64)_
+eti_nom : VARCHAR(100)
+eti_couleur : VARCHAR(20)</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>8</x>
-      <y>104</y>
+      <x>48</x>
+      <y>112</y>
       <w>240</w>
       <h>72</h>
     </coordinates>
     <panel_attributes>t_role_rol
 --
-#cpt_pseudo : Text
-#tab_id : Text
+#cpt_pseudo : VARCHAR(100)
+#tab_id : VARCHAR(64)
 rol_role : CHAR(1)</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>112</x>
-      <y>168</y>
+      <x>152</x>
+      <y>176</y>
       <w>24</w>
       <h>56</h>
     </coordinates>
@@ -159,8 +160,8 @@ rol_role : CHAR(1)</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>240</x>
-      <y>104</y>
+      <x>280</x>
+      <y>112</y>
       <w>248</w>
       <h>56</h>
     </coordinates>
@@ -170,8 +171,8 @@ rol_role : CHAR(1)</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>272</x>
-      <y>272</y>
+      <x>312</x>
+      <y>280</y>
       <w>120</w>
       <h>24</h>
     </coordinates>
@@ -181,8 +182,8 @@ rol_role : CHAR(1)</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>688</x>
-      <y>272</y>
+      <x>728</x>
+      <y>280</y>
       <w>128</w>
       <h>24</h>
     </coordinates>
@@ -192,23 +193,23 @@ rol_role : CHAR(1)</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>736</x>
-      <y>96</y>
+      <x>776</x>
+      <y>104</y>
       <w>240</w>
       <h>72</h>
     </coordinates>
     <panel_attributes>t_membre_mem
 --
-#cpt_pseudo : Text
-#car_id : Text
-mem_date : Text</panel_attributes>
+#cpt_pseudo : VARCHAR(100)
+#car_id : VARCHAR(64)
+mem_date : DATETIME</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>560</x>
-      <y>104</y>
+      <x>600</x>
+      <y>112</y>
       <w>192</w>
       <h>56</h>
     </coordinates>
@@ -218,8 +219,8 @@ mem_date : Text</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>872</x>
-      <y>160</y>
+      <x>912</x>
+      <y>168</y>
       <w>24</w>
       <h>64</h>
     </coordinates>
@@ -229,36 +230,36 @@ mem_date : Text</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>920</x>
-      <y>496</y>
+      <x>960</x>
+      <y>504</y>
       <w>240</w>
       <h>56</h>
     </coordinates>
     <panel_attributes>t_associer_as
 --
-#car_id : Text
-#eti_id : Text</panel_attributes>
+_#car_id : VARCHAR(64)_
+_#eti_id : VARCHAR(64)_</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>536</x>
-      <y>480</y>
+      <x>576</x>
+      <y>488</y>
       <w>240</w>
       <h>72</h>
     </coordinates>
     <panel_attributes>t_lier_li
 --
-#car_id : Text
-#doc_id : Text</panel_attributes>
+_#car_id : VARCHAR(64)_
+_#doc_id : VARCHAR(64)_</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1016</x>
-      <y>544</y>
+      <x>1056</x>
+      <y>552</y>
       <w>24</w>
       <h>112</h>
     </coordinates>
@@ -268,19 +269,19 @@ mem_date : Text</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1016</x>
-      <y>360</y>
+      <x>1056</x>
+      <y>376</y>
       <w>24</w>
-      <h>152</h>
+      <h>144</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;10.0;170.0</additional_attributes>
+    <additional_attributes>10.0;10.0;10.0;160.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>440</x>
-      <y>472</y>
+      <x>480</x>
+      <y>480</y>
       <w>112</w>
       <h>72</h>
     </coordinates>
@@ -290,8 +291,8 @@ mem_date : Text</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>728</x>
-      <y>336</y>
+      <x>768</x>
+      <y>344</y>
       <w>88</w>
       <h>160</h>
     </coordinates>
@@ -301,73 +302,102 @@ mem_date : Text</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>112</x>
-      <y>0</y>
-      <w>144</w>
+      <x>152</x>
+      <y>8</y>
+      <w>184</w>
       <h>88</h>
     </coordinates>
-    <panel_attributes>Profil
+    <panel_attributes>t_profil_pfl
 --
-+ nom : string
-+ prenom : string
-+ dateCreation : Date
-+ mail : string
-_# pseudo : string_
++ pfl_nom : string
++ pfl_prenom : string
++ pfl_dateCreation : DATETIME
++ pfl_mail : string
+_# cpt_pseudo : string_
 </panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>456</x>
-      <y>40</y>
-      <w>160</w>
+      <x>496</x>
+      <y>48</y>
+      <w>176</w>
       <h>72</h>
     </coordinates>
-    <panel_attributes>Compte
+    <panel_attributes>t_compte_cpt
 --
-_+ pseudo : string_
-+ mot de passe : string
-+ role : string</panel_attributes>
+_+ cpt_pseudo : VARCHAR(100)_
++ cpt_mdp : CHAR(128)
++ cpt_role : CHAR(1)</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>248</x>
-      <y>48</y>
-      <w>224</w>
+      <x>328</x>
+      <y>56</y>
+      <w>184</w>
       <h>24</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>260.0;10.0;10.0;10.0</additional_attributes>
+    <additional_attributes>210.0;10.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1304</x>
-      <y>368</y>
-      <w>320</w>
+      <x>1160</x>
+      <y>376</y>
+      <w>216</w>
       <h>112</h>
     </coordinates>
     <panel_attributes>t_commentaire_com
 --
-_com_id : Text_
-com_description : Text
-com_date : Text
-com_auteur : Text
-#car_id : Text</panel_attributes>
+_com_id : VARCHAR(64)_
+com_description : VARCHAR(500)
+com_date : DATETIME
+com_auteur : VARCHAR(100)
+#car_id : VARCHAR(64)</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1136</x>
-      <y>288</y>
-      <w>184</w>
+      <x>1080</x>
+      <y>296</y>
+      <w>96</w>
       <h>152</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;100.0;10.0;100.0;170.0;210.0;170.0</additional_attributes>
+    <additional_attributes>10.0;10.0;80.0;10.0;80.0;170.0;100.0;170.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>664</x>
+      <y>56</y>
+      <w>136</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;150.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>792</x>
+      <y>0</y>
+      <w>184</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>t_notification_not
+--
+_+ not_id : VARCHAR(64)_
++ not_titre : VARCHAR(100)
++ not_lien : VARCHAR(200)
++ not_date : DATETIME
+# cpt_pseudo : VARCHAR(100)
+</panel_attributes>
+    <additional_attributes/>
   </element>
 </diagram>
