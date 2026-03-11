@@ -13,11 +13,6 @@ let draggedCard: HTMLElement | null = null;
 let placeholder: HTMLDivElement | null = null;
 let dragSourceColumn: HTMLElement | null = null;
 
-// Fonction pour basculer l'affichage des détails d'une carte
-export function toggleCardDetails(cardElement: HTMLElement): void {
-  cardElement.classList.toggle("card-expanded");
-}
-
 // Fonction pour ouvrir une modale avec des informations
 export function openModal(title: string, description: string, dueDate: string): void {
   (document.getElementById("modal-title") as HTMLElement).textContent = title;
@@ -32,7 +27,7 @@ export function closeModal(): void {
 }
 
 // Gestion du clic en dehors de la modale pour la fermer
-window.onclick = function(event: MouseEvent): void {
+globalThis.onclick = function(event: MouseEvent): void {
   const modal = document.getElementById("modal");
   if (event.target === modal) {
     modal!.style.display = "none";

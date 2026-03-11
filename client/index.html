@@ -10,42 +10,5 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <h1>Kanban</h1>
-    <div id="board">
-      <div className="column" id="todo">
-        <h2 className="column-title">To Do</h2>
-        <div className="cards"
-            ondragover="dragOver(event)"
-            ondragleave="dragLeave(event)"
-            ondrop="drop(event)">
-          <div className="card" draggable="true" ondragstart="dragStart(event)" ondragend="dragEnd(event)">
-            <div className="card-title" onclick="openModal('Task 1', 'Terminer la maquette.', '15/03/2026')">Task 1</div>
-          </div>
-          <div className="card" draggable="true" ondragstart="dragStart(event)">
-            <div className="card-title" onclick="openModal('Task 2', 'Préparer la réunion.', '12/03/2026')">Task 2</div>
-          </div>
-        </div>
-      </div>
-      <div className="column" id="in-progress">
-        <h2 className="column-title">In Progress</h2>
-        <div className="cards"
-            ondragover="dragOver(event)"
-            ondragleave="dragLeave(event)"
-            ondrop="drop(event)">
-          <div className="card" draggable="true" ondragstart="dragStart(event)">
-            <div className="card-title" onclick="openModal('Task 3', 'Développer la fonctionnalité de login.', '20/03/2026')">Task 3</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div id="modal" className="modal">
-      <div className="modal-content">
-        <span className="close" onclick="closeModal()">&times;</span>
-        <h2 id="modal-title">Titre de la tâche</h2>
-        <p id="modal-description">Description...</p>
-        <p id="modal-due-date">Date limite...</p>
-      </div>
-    </div>
   </body>
 </html>
