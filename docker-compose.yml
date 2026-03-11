@@ -22,7 +22,6 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - mariadb
       - mongo
       - serveur-tomcat
     networks:
@@ -38,25 +37,10 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - mariadb
       - mongo
     networks:
       - appnet
     restart: always
-
-  mariadb:
-    image: mariadb:11.4
-    environment:
-      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
-      MARIADB_DATABASE: ${MARIADB_DATABASE}
-      MARIADB_USER: ${MARIADB_USER}
-      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
-    volumes:
-      - mariadb_data:/var/lib/mysql
-    ports:
-      - "3307:3306"
-    networks:
-      - appnet
 
   mongo:
     image: mongo:7.0
@@ -71,22 +55,7 @@ services:
     networks:
       - appnet
 
-  phpmyadmin:
-    image: phpmyadmin:5.2
-    environment:
-      PMA_HOST: mariadb
-      PMA_PORT: 3306
-      PMA_USER: ${MARIADB_USER}
-      PMA_PASSWORD: ${MARIADB_PASSWORD}
-    ports:
-      - "8081:80"
-    depends_on:
-      - mariadb
-    networks:
-      - appnet
-
 volumes:
-  mariadb_data:
   mongo_data:
 
 networks:

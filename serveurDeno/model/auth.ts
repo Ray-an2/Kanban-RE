@@ -2,14 +2,16 @@ import { Context, State } from "@oak/oak";
 import {User} from "./user.ts";
 
 export interface LoginRequest {
-    username: string;
-    password: string;
+    pseudo: string;
+    motDePasse: string;
 }
 
 export interface RegisterRequest {
-    username: string;
-    password: string;
-    isAdmin?: boolean;
+    pseudo: string;
+    motDePasse: string;
+    email: string;
+    nom: string;
+    prenom: string;
 }
 
 export interface AuthResponse {
@@ -18,9 +20,8 @@ export interface AuthResponse {
 }
 
 export interface AuthPayload {
-    userId: string;
-    username: string;
-    isAdmin: boolean;
+    pseudo: string;
+    role: string;
     exp: number;
 }
 
@@ -37,9 +38,8 @@ export function isAuthPayload(value: unknown): value is AuthPayload {
     return (
         typeof value === "object" &&
         value !== null &&
-        typeof (value as any).userId === "string" &&
-        typeof (value as any).username === "string" &&
-        typeof (value as any).isAdmin === "boolean" &&
+        typeof (value as any).pseudo === "string" &&
+        typeof (value as any).role === "string" &&
         typeof (value as any).exp === "number"
     );
 }

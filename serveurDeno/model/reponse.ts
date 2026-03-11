@@ -21,7 +21,8 @@ export enum APIErreurCode {
     TIMEOUT = "TIMEOUT",
     UNAUTHORIZED = "UNAUTHORIZED",
     VALIDATION_ERROR = "VALIDATION_ERROR",
-    BAD_REQUEST = "BAD_REQUEST"
+    BAD_REQUEST = "BAD_REQUEST",
+    ROLE_UNAUTHORIZED = "ROLE_UNAUTHORIZED"
 }
 
 export class APIException extends Error {

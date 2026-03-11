@@ -1,0 +1,5 @@
+export interface Compte {
+    cpt_pseudo: string;
+    cpt_mdp: string;
+    cpt_role: string;
+}

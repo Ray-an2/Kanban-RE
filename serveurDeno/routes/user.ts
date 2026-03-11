@@ -1,7 +1,7 @@
 import { Router } from "@oak/oak";
 import { db } from "../main.ts";
 
-import { isUserRow, userRowToApi } from "../model/db.ts";
+import { isCompteRow, compteRowToApi } from "../model/db.ts";
 import { APIErreurCode, APIException, APIResponse } from "../model/reponse.ts";
 import { type AuthResponse, type LoginRequest, type RegisterRequest, type AuthContext } from "../model/auth.ts";
 import { type User } from "../model/user.ts";
@@ -16,7 +16,7 @@ const router = new Router({ prefix: "/users" });
 router.post("/register", async (ctx) => {
     const body = (await ctx.request.body.json()) as RegisterRequest;
 
-    if (!body?.username || !body?.password) {
+    if (!body?.pseudo || !body?.motDePasse || !body?.email || !body?.nom || !body?.prenom) {
         throw new APIException(
             APIErreurCode.BAD_REQUEST,
             400,
@@ -25,36 +25,39 @@ router.post("/register", async (ctx) => {
     }
 
     const existing = db.prepare(`
-    SELECT id, username, password_hash, is_admin, created_at
-    FROM users WHERE username = ?;`).get(body.username);
+    SELECT cpt_pseudo, cpt_mdp, cpt_role
+    FROM t_compte_cpt WHERE cpt_pseudo = ?;`).get(body.pseudo);
 
-    if (existing && isUserRow(existing)) {
+    if (existing && isCompteRow(existing)) {
         throw new APIException(
             APIErreurCode.VALIDATION_ERROR,
             409,
-            "Nom d'utilisateur deja utilise",
+            "Pseudo deja utilise",
         );
     }
 
-    const userId = crypto.randomUUID();
     const createdAt = new Date().toISOString();
-    const passwordHash = await hashPassword(body.password);
+    const passwordHash = await hashPassword(body.motDePasse);
 
     db.prepare(`
-    INSERT INTO users (id, username, password_hash, is_admin, created_at)
+    INSERT INTO t_compte_cpt (cpt_pseudo, cpt_mdp, cpt_role)
+    VALUES (?, ?, ?);
+    `).run(body.pseudo, passwordHash, "U");
+
+    db.prepare(`
+    INSERT INTO t_profil_pfl (pfl_nom, pfl_prenom, pfl_dateCreation, pfl_mail, cpt_pseudo)
     VALUES (?, ?, ?, ?, ?);
     `).run(
-        userId,
-        body.username,
-        passwordHash,
-        body.isAdmin ? 1 : 0,
+        body.nom,
+        body.prenom,
         createdAt,
+        body.email,
+        body.pseudo,
     );
 
     const user: User = {
-        username: body.username,
-        isAdmin: body.isAdmin ?? false,
-        createdAt,
+        cpt_pseudo: body.pseudo,
+        cpt_role: "U",
     };
 
     const response: APIResponse<User> = {
@@ -72,7 +75,7 @@ router.post("/register", async (ctx) => {
 router.post("/login", async (ctx) => {
     const body = (await ctx.request.body.json()) as LoginRequest;
 
-    if (!body?.username || !body?.password) {
+    if (!body?.pseudo || !body?.motDePasse) {
         throw new APIException(
             APIErreurCode.BAD_REQUEST,
             400,
@@ -81,11 +84,11 @@ router.post("/login", async (ctx) => {
     }
 
     const row = db.prepare(`
-    SELECT id, username, password_hash, is_admin, created_at
-    FROM users WHERE username = ?;
-    `).get(body.username);
+    SELECT cpt_pseudo, cpt_mdp, cpt_role
+    FROM t_compte_cpt WHERE cpt_pseudo = ?;
+    `).get(body.pseudo);
 
-    if (!row || !isUserRow(row)) {
+    if (!row || !isCompteRow(row)) {
         throw new APIException(
             APIErreurCode.UNAUTHORIZED,
             401,
@@ -93,7 +96,7 @@ router.post("/login", async (ctx) => {
         );
     }
 
-    const ok = await verifyPassword(body.password, row.password_hash);
+    const ok = await verifyPassword(body.motDePasse, row.cpt_mdp);
     if (!ok) {
         throw new APIException(
             APIErreurCode.UNAUTHORIZED,
@@ -103,16 +106,15 @@ router.post("/login", async (ctx) => {
     }
 
     const token = await createJWT({
-        userId: row.id,
-        username: row.username,
-        isAdmin: row.is_admin === 1,
+        pseudo: row.cpt_pseudo,
+        role: row.cpt_role,
     });
 
     const response: APIResponse<AuthResponse> = {
         success: true,
         data: {
             token,
-            user: userRowToApi(row),
+            user: compteRowToApi(row),
         },
     };
 
@@ -123,12 +125,12 @@ router.post("/login", async (ctx) => {
  * GET /users/validate
  */
 router.get("/validate", authMiddleware, (ctx: AuthContext) => {
-    const userId = ctx.state.user!.userId;
+    const pseudo = ctx.state.user!.pseudo;
     const row = db.prepare(`
-    SELECT id, username, password_hash, is_admin, created_at
-    FROM users WHERE id = ?;`).get(userId);
+    SELECT cpt_pseudo, cpt_mdp, cpt_role
+    FROM t_compte_cpt WHERE cpt_pseudo = ?;`).get(pseudo);
 
-    if (!row || !isUserRow(row)) {
+    if (!row || !isCompteRow(row)) {
         throw new APIException(
             APIErreurCode.NOT_FOUND,
             404,
@@ -140,7 +142,7 @@ router.get("/validate", authMiddleware, (ctx: AuthContext) => {
         success: true,
         data: {
             valid: true,
-            user: userRowToApi(row),
+            user: compteRowToApi(row),
         },
     };
     ctx.response.body = response;
@@ -150,13 +152,13 @@ router.get("/validate", authMiddleware, (ctx: AuthContext) => {
  * GET /users/me
  */
 router.get("/me", authMiddleware, (ctx: AuthContext) => {
-    const userId = ctx.state.user!.userId;
+    const pseudo = ctx.state.user!.pseudo;
 
     const row = db.prepare(`
-    SELECT id, username, password_hash, is_admin, created_at
-    FROM users WHERE id = ?;`).get(userId);
+    SELECT cpt_pseudo, cpt_mdp, cpt_role
+    FROM t_compte_cpt WHERE cpt_pseudo = ?;`).get(pseudo);
 
-    if (!row || !isUserRow(row)) {
+    if (!row || !isCompteRow(row)) {
         throw new APIException(
             APIErreurCode.NOT_FOUND,
             404,
@@ -166,7 +168,7 @@ router.get("/me", authMiddleware, (ctx: AuthContext) => {
 
     const response: APIResponse<User> = {
         success: true,
-        data: userRowToApi(row),
+        data: compteRowToApi(row),
     };
 
     ctx.response.body = response;
@@ -179,17 +181,15 @@ router.get("/me", authMiddleware, (ctx: AuthContext) => {
 router.get("/", (ctx) => {
     const rows = db.prepare(`
     SELECT
-      id,
-      username,
-      password_hash,
-      is_admin,
-      created_at
-    FROM users;
+      cpt_pseudo,
+      cpt_mdp,
+      cpt_role
+    FROM t_compte_cpt;
   `).all();
 
     const users: User[] = rows
-        .filter(isUserRow)
-        .map(userRowToApi);
+        .filter(isCompteRow)
+        .map(compteRowToApi);
 
     const response: APIResponse<User[]> = {
         success: true,
@@ -203,20 +203,18 @@ router.get("/", (ctx) => {
  * GET /users/:id
  */
 router.get("/:id", (ctx) => {
-    const userId = ctx.params.id!;
+    const pseudo = ctx.params.id!;
 
     const row = db.prepare(`
     SELECT
-      id,
-      username,
-      password_hash,
-      is_admin,
-      created_at
-    FROM users
-    WHERE id = ?;
-  `).get(userId);
+      cpt_pseudo,
+      cpt_mdp,
+      cpt_role
+    FROM t_compte_cpt
+    WHERE cpt_pseudo = ?;
+  `).get(pseudo);
 
-    if (!row || !isUserRow(row)) {
+    if (!row || !isCompteRow(row)) {
         throw new APIException(
             APIErreurCode.NOT_FOUND,
             404,
@@ -226,7 +224,7 @@ router.get("/:id", (ctx) => {
 
     const response: APIResponse<User> = {
         success: true,
-        data: userRowToApi(row),
+        data: compteRowToApi(row),
     };
 
     ctx.response.body = response;
@@ -238,7 +236,7 @@ router.get("/:id", (ctx) => {
 router.post("/", async (ctx) => {
     const body = (await ctx.request.body.json()) as RegisterRequest;
 
-    if (!body?.username || !body?.password) {
+    if (!body?.pseudo || !body?.motDePasse || !body?.email || !body?.nom || !body?.prenom) {
         throw new APIException(
             APIErreurCode.BAD_REQUEST,
             400,
@@ -246,25 +244,30 @@ router.post("/", async (ctx) => {
         );
     }
 
-    const userId = crypto.randomUUID();
     const createdAt = new Date().toISOString();
-    const passwordHash = await hashPassword(body.password);
+    const passwordHash = await hashPassword(body.motDePasse);
 
     db.prepare(`
-  INSERT INTO users (
-    id, username, password_hash, is_admin, created_at
+  INSERT INTO t_compte_cpt (
+    cpt_pseudo, cpt_mdp, cpt_role
+  ) VALUES (?, ?, ?);
+`).run(body.pseudo, passwordHash, "U");
+
+    db.prepare(`
+  INSERT INTO t_profil_pfl (
+    pfl_nom, pfl_prenom, pfl_dateCreation, pfl_mail, cpt_pseudo
   ) VALUES (?, ?, ?, ?, ?);
 `).run(
-        userId,
-        body.username,
-        passwordHash,
-        body.isAdmin ? 1 : 0,
+        body.nom,
+        body.prenom,
         createdAt,
+        body.email,
+        body.pseudo,
     );
 
-    const response: APIResponse<{ id: string }> = {
+    const response: APIResponse<{ pseudo: string }> = {
         success: true,
-        data: { id: userId },
+        data: { pseudo: body.pseudo },
     };
 
     ctx.response.status = 201;
@@ -275,25 +278,37 @@ router.post("/", async (ctx) => {
  * PUT /users/:id
  */
 router.put("/:id", async (ctx) => {
-    const userId = ctx.params.id!;
+    const pseudo = ctx.params.id!;
 
     const body = await ctx.request.body.json();
 
-    const result = db.prepare(`
-    UPDATE users
+    const compteResult = db.prepare(`
+    UPDATE t_compte_cpt
     SET
-      username = COALESCE(?, username),
-      password_hash = COALESCE(?, password_hash),
-      is_admin = COALESCE(?, is_admin)
-    WHERE id = ?;
+      cpt_mdp = COALESCE(?, cpt_mdp),
+      cpt_role = COALESCE(?, cpt_role)
+    WHERE cpt_pseudo = ?;
   `).run(
-        body.username ?? null,
-        body.password ? await hashPassword(body.password) : null,
-        typeof body.isAdmin === "boolean" ? Number(body.isAdmin) : null,
-        userId,
+        body.motDePasse ? await hashPassword(body.motDePasse) : null,
+        body.role ?? null,
+        pseudo,
     );
 
-    if (result.changes === 0) {
+    db.prepare(`
+    UPDATE t_profil_pfl
+    SET
+      pfl_nom = COALESCE(?, pfl_nom),
+      pfl_prenom = COALESCE(?, pfl_prenom),
+      pfl_mail = COALESCE(?, pfl_mail)
+    WHERE cpt_pseudo = ?;
+  `).run(
+        body.nom ?? null,
+        body.prenom ?? null,
+        body.email ?? null,
+        pseudo,
+    );
+
+    if (compteResult.changes === 0) {
         throw new APIException(
             APIErreurCode.NOT_FOUND,
             404,
@@ -313,12 +328,17 @@ router.put("/:id", async (ctx) => {
  * DELETE /users/:id
  */
 router.delete("/:id", (ctx) => {
-    const userId = ctx.params.id!;
+    const pseudo = ctx.params.id!;
+
+    db.prepare(`
+    DELETE FROM t_profil_pfl
+    WHERE cpt_pseudo = ?;
+  `).run(pseudo);
 
     const result = db.prepare(`
-    DELETE FROM users
-    WHERE id = ?;
-  `).run(userId);
+    DELETE FROM t_compte_cpt
+    WHERE cpt_pseudo = ?;
+  `).run(pseudo);
 
     if (result.changes === 0) {
         throw new APIException(
