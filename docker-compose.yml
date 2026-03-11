@@ -11,7 +11,7 @@ services:
       - serveur-deno
     networks:
       - appnet
-    restart: on-failure
+    restart: always
 
   serveur-deno:
     build:
@@ -27,7 +27,7 @@ services:
       - serveur-tomcat
     networks:
       - appnet
-    restart: on-failure
+    restart: always
 
   serveur-tomcat:
     build:
@@ -42,7 +42,7 @@ services:
       - mongo
     networks:
       - appnet
-    restart: on-failure
+    restart: always
 
   mariadb:
     image: mariadb:11.4
