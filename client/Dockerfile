@@ -17,3 +17,4 @@ COPY --from=build /app/dist /usr/share/nginx/html
 EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]
+CMD ["sh", "-c", "trap 'echo Arrêt frontend détecté; exit' SIGINT SIGTERM; npm run dev"]
