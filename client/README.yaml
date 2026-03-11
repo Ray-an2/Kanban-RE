@@ -1,0 +1,212 @@
+openapi: 3.1.0
+info:
+  title: Routes Frontend
+  description: Documentation des routes React (React Router) du client.
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:5173'    # URL provisoire avant le déploiement.
+paths:
+  /login:
+    get:
+      summary: Page de connexion
+      description: Route publique vers la page de connexion.
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Envoi des informations de connexion
+      description: Envoie les informations de connexion.
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Identifiant passé en query string.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Identifiants invalides
+  /inscription:
+    get:
+      summary: Page d'inscription
+      description: Route publique vers la page d'inscription.
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Envoi des informations d'inscription
+      description: Envoie les informations d'inscription depuis la page d'inscription.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Compte créé
+        '400':
+          description: Données invalides
+  /tableau:
+    get:
+      summary: Accueil tableau
+      description: Route protégée vers la page Accueil.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Non autorisé
+  /tableau/logs:
+    get:
+      summary: Logs (admin uniquement)
+      description: Route protégée vers la page Log. Accessible uniquement aux administrateur.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Non autorisé
+        '403':
+          description: Accès interdit (rôle insuffisant)
+  /tableau/{id}/log:
+    get:
+      summary: Logs par tableau
+      description: Route protégée vers la page Log pour un tableau donné.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Non autorisé
+        '404':
+          description: Non trouvé
+  /tableau/{id}:
+    get:
+      summary: Tableau
+      description: Route protégée vers la page Tableau.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Non autorisé
+        '404':
+          description: Non trouvé
+  /tableau/{tabId}/carte/{carId}:
+    get:
+      summary: Carte
+      description: Route protégée vers la page Carte.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tabId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+        - name: carId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant de la carte.
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Non autorisé
+        '404':
+          description: Non trouvé
+  /compte/{pseudo}:
+    get:
+      summary: Compte utilisateur
+      description: Route protégée vers la page compte.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: pseudo
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Pseudo de l'utilisateur.
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Non autorisé
+        '404':
+          description: Non trouvé
+  /notification:
+    get:
+      summary: Notifications
+      description: Route protégée vers la page des notifications.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Non autorisé
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    LoginRequest:
+      type: object
+      required: [pseudo, motDePasse]
+      properties:
+        pseudo:
+          type: string
+          description: Pseudo utilisateur.
+        motDePasse:
+          type: string
+          format: password
+          description: Mot de passe.
+    RegisterRequest:
+      type: object
+      required: [pseudo, motDePasse, email]
+      properties:
+        pseudo:
+          type: string
+          description: Pseudo utilisateur.
+        motDePasse:
+          type: string
+          format: password
+          description: Mot de passe.
+        email:
+          type: string
+          format: email
+          description: Adresse e-mail.
