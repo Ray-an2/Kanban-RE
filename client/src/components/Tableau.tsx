@@ -157,17 +157,10 @@ const Tableau: React.FC = () => {
         </button>
         <button
           type="button"
-          className="inscription-button"
-          onClick={() => navigate('/inscription')}
-        >
-          Inscription
-        </button>
-        <button
-          type="button"
           className="login-button"
           onClick={() => navigate('/login')}
         >
-          Connexion
+          Deconnexion
         </button>
       </div>
       <div className="board">

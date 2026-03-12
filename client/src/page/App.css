@@ -182,13 +182,6 @@
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-/* ... (les autres styles restent inchangés) ... */
-
-/* Couleurs pastel zen optimisées pour la lisibilité */
-.board-card-horizontal {
-  /* ... (les autres propriétés restent inchangées) ... */
-}
-
 /* Classes de couleur pour les cases */
 .board-color-1 { background-color: #f8f9fa; } /* Blanc cassé - neutre */
 .board-color-2 { background-color: #e8f5e9; } /* Vert très clair */
