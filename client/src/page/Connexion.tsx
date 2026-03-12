@@ -1,30 +1,36 @@
 import React, { useState } from 'react';
-import type {ChangeEvent} from 'react';
+import type { ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './App.css';
+import type { APIResponse } from '../model/api.ts';
+import { isAuthResponse } from '../model/auth.ts';
+import { useAuth } from '../hooks/useAuth.ts';
+
+const API_URL = 'http://localhost:8000';
 
 interface FormData {
   pseudo: string;
-  password: string;
+  motDePasse: string;
 }
 
 interface FormErrors {
   pseudo?: string;
-  password?: string;
+  motDePasse?: string;
   api?: string;
 }
 
 const Connexion: React.FC = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState<FormData>({
     pseudo: '',
-    password: '',
+    motDePasse: '',
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
-  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -43,8 +49,8 @@ const Connexion: React.FC = () => {
       isValid = false;
     }
 
-    if (!formData.password) {
-      newErrors.password = 'Le mot de passe est requis';
+    if (!formData.motDePasse) {
+      newErrors.motDePasse = 'Le mot de passe est requis';
       isValid = false;
     }
 
@@ -52,25 +58,40 @@ const Connexion: React.FC = () => {
     return isValid;
   };
 
-  const handleSubmit = (e: React.SyntheticEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     if (validateForm()) {
+      setLoading(true);
+      setErrors({});
       try {
-        console.log('Connexion en cours avec :', formData);
+        const res = await fetch(`${API_URL}/users/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            pseudo: formData.pseudo,
+            motDePasse: formData.motDePasse,
+          }),
+        });
 
-        // Simulation d'un appel API
-        // const response = await axios.post('https://ton-api.com/login', formData);
-        // if (response.status === 200) {
-        //   setIsSubmitted(true);
-        //   // Rediriger vers une page protégée après la connexion
-        //   navigate('/tableau');
-        // }
+        const json = (await res.json()) as APIResponse<unknown>;
+        if (!res.ok || !json.success) {
+          throw new Error(json.success ? `HTTP ${res.status}` : json.error.message);
+        }
 
-        // Pour l'exemple, on simule une connexion réussie
-        setIsSubmitted(true);
+        if (!isAuthResponse(json.data)) {
+          throw new Error('Format de reponse invalide');
+        }
+
+        login(json.data);
+        navigate('/tableau');
       } catch (error) {
         console.error('Erreur lors de la connexion:', error);
-        setErrors({ ...errors, api: 'Pseudo ou mot de passe incorrect.' });
+        setErrors((prev) => ({
+          ...prev,
+          api: error instanceof Error ? error.message : 'Erreur de connexion.',
+        }));
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -81,75 +102,68 @@ const Connexion: React.FC = () => {
         <h1>Connexion</h1>
       </div>
 
-      {isSubmitted ? (
-        <div className="success-message">
-          <h2>Connexion réussie !</h2>
-          <p>Redirection en cours...</p>
-          {/* Redirection automatique après 2 secondes */}
-          {setTimeout(() => navigate('/tableau'), 2000)}
+      <form onSubmit={handleSubmit} className="connexion-form">
+        <div className="form-group">
+          <label htmlFor="pseudo">Pseudo</label>
+          <input
+            type="text"
+            id="pseudo"
+            name="pseudo"
+            value={formData.pseudo}
+            onChange={handleChange}
+            className={errors.pseudo ? 'error' : ''}
+            placeholder="Entrez votre pseudo"
+            required
+          />
+          {errors.pseudo && <span className="error-message">{errors.pseudo}</span>}
         </div>
-      ) : (
-        <form onSubmit={handleSubmit} className="connexion-form">
-          <div className="form-group">
-            <label htmlFor="pseudo">Pseudo</label>
+
+        <div className="form-group">
+          <label htmlFor="motDePasse">Mot de passe</label>
+          <input
+            type={showPassword ? 'text' : 'password'}
+            id="motDePasse"
+            name="motDePasse"
+            value={formData.motDePasse}
+            onChange={handleChange}
+            className={errors.motDePasse ? 'error' : ''}
+            placeholder="Entrez votre mot de passe"
+            required
+          />
+          {errors.motDePasse && <span className="error-message">{errors.motDePasse}</span>}
+        </div>
+
+        <div className="show-password">
+          <label>
             <input
-              type="text"
-              id="pseudo"
-              name="pseudo"
-              value={formData.pseudo}
-              onChange={handleChange}
-              className={errors.pseudo ? 'error' : ''}
-              placeholder="Entrez votre pseudo"
+              type="checkbox"
+              checked={showPassword}
+              onChange={() => setShowPassword(!showPassword)}
             />
-            {errors.pseudo && <span className="error-message">{errors.pseudo}</span>}
-          </div>
+            Afficher le mot de passe
+          </label>
+        </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Mot de passe</label>
-            <input
-              type={showPassword ? 'text' : 'password'}
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className={errors.password ? 'error' : ''}
-              placeholder="Entrez votre mot de passe"
-            />
-            {errors.password && <span className="error-message">{errors.password}</span>}
-          </div>
+        <button type="submit" className="submit-button" disabled={loading}>
+          {loading ? 'Connexion...' : 'Se connecter'}
+        </button>
 
-          <div className="show-password">
-            <label>
-              <input
-                type="checkbox"
-                checked={showPassword}
-                onChange={() => setShowPassword(!showPassword)}
-              />
-              Afficher le mot de passe
-            </label>
-          </div>
+        {errors.api && <div className="api-error-message">{errors.api}</div>}
 
-          <button type="submit" className="submit-button">
-            Se connecter
+        <div className="register-link">
+          <p>Vous n'avez pas de compte ?</p>
+          <button type="button" className="link-button" onClick={() => navigate('/inscription')}>
+            S'inscrire
           </button>
-
-          {errors.api && <div className="api-error-message">{errors.api}</div>}
-
-          <div className="register-link">
-            <p>Vous n'avez pas de compte ?</p>
-            <button type="button" className="link-button" onClick={() => navigate('/inscription')}>
-              S'inscrire
-            </button>
-            <button
+          <button
             type="button"
             className="link-button"
             onClick={() => navigate('/')}
-            >
+          >
             Retour au Kanban
-            </button>
-          </div>
-        </form>
-      )}
+          </button>
+        </div>
+      </form>
     </div>
   );
 };
