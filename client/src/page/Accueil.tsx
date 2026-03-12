@@ -7,6 +7,7 @@ interface Board {
   id: string;
   title: string;
   description?: string;
+  color?: string;
 }
 
 const TableauPage: React.FC = () => {
@@ -20,8 +21,7 @@ const TableauPage: React.FC = () => {
   ];
 
   const handleLogout = () => {
-    // Logique de déconnexion
-    navigate('/connexion');
+    navigate('/login');
   };
 
   return (
