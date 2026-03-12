@@ -5,23 +5,20 @@ import './App.css';
 interface FormData {
   pseudo: string;
   password: string;
-  confirmPassword: string;
 }
 
 interface FormErrors {
   pseudo?: string;
   password?: string;
-  confirmPassword?: string;
   api?: string;
 }
 
-const Inscription: React.FC = () => {
+const Connexion: React.FC = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState<FormData>({
     pseudo: '',
     password: '',
-    confirmPassword: '',
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -43,24 +40,10 @@ const Inscription: React.FC = () => {
     if (!formData.pseudo.trim()) {
       newErrors.pseudo = 'Le pseudo est requis';
       isValid = false;
-    } else if (formData.pseudo.length < 3) {
-      newErrors.pseudo = 'Le pseudo doit faire au moins 3 caractères';
-      isValid = false;
     }
 
     if (!formData.password) {
       newErrors.password = 'Le mot de passe est requis';
-      isValid = false;
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Le mot de passe doit faire au moins 6 caractères';
-      isValid = false;
-    }
-
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'La confirmation du mot de passe est requise';
-      isValid = false;
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Les mots de passe ne correspondent pas';
       isValid = false;
     }
 
@@ -72,40 +55,40 @@ const Inscription: React.FC = () => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        console.log('Formulaire valide, données soumises :', formData);
+        console.log('Connexion en cours avec :', formData);
+
+        // Simulation d'un appel API
+        // const response = await axios.post('https://ton-api.com/login', formData);
+        // if (response.status === 200) {
+        //   setIsSubmitted(true);
+        //   // Rediriger vers une page protégée après la connexion
+        //   navigate('/tableau');
+        // }
+
+        // Pour l'exemple, on simule une connexion réussie
         setIsSubmitted(true);
-        setFormData({
-          pseudo: '',
-          password: '',
-          confirmPassword: '',
-        });
       } catch (error) {
-        console.error('Erreur lors de l\'inscription:', error);
-        setErrors({ ...errors, api: 'Une erreur est survenue lors de l\'inscription.' });
+        console.error('Erreur lors de la connexion:', error);
+        setErrors({ ...errors, api: 'Pseudo ou mot de passe incorrect.' });
       }
     }
   };
 
-  const handleGoToLogin = () => {
-    navigate('/connexion');
-  };
-
   return (
-    <div className="inscription-container">
+    <div className="connexion-container">
       <div className="header">
-        <h1>Inscription</h1>
+        <h1>Connexion</h1>
       </div>
 
       {isSubmitted ? (
         <div className="success-message">
-          <h2>Inscription réussie !</h2>
-          <p>Bienvenue, {formData.pseudo} !</p>
-          <button type="button" className="login-button" onClick={handleGoToLogin}>
-            Se connecter
-          </button>
+          <h2>Connexion réussie !</h2>
+          <p>Redirection en cours...</p>
+          {/* Redirection automatique après 2 secondes */}
+          {setTimeout(() => navigate('/tableau'), 2000)}
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="inscription-form">
+        <form onSubmit={handleSubmit} className="connexion-form">
           <div className="form-group">
             <label htmlFor="pseudo">Pseudo</label>
             <input
@@ -134,20 +117,6 @@ const Inscription: React.FC = () => {
             {errors.password && <span className="error-message">{errors.password}</span>}
           </div>
 
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Confirmer le mot de passe</label>
-            <input
-              type={showPassword ? 'text' : 'password'}
-              id="confirmPassword"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              className={errors.confirmPassword ? 'error' : ''}
-              placeholder="Confirmez votre mot de passe"
-            />
-            {errors.confirmPassword && <span className="error-message">{errors.confirmPassword}</span>}
-          </div>
-
           <div className="show-password">
             <label>
               <input
@@ -155,26 +124,33 @@ const Inscription: React.FC = () => {
                 checked={showPassword}
                 onChange={() => setShowPassword(!showPassword)}
               />
-              Afficher les mots de passe
+              Afficher le mot de passe
             </label>
           </div>
 
           <button type="submit" className="submit-button">
-            S'inscrire
+            Se connecter
           </button>
-          <button
-          type="button"
-          className="log-button"
-          onClick={() => navigate('/')}
-        >
-          Retour au Kanban
-        </button>
 
           {errors.api && <div className="api-error-message">{errors.api}</div>}
+
+          <div className="register-link">
+            <p>Vous n'avez pas de compte ?</p>
+            <button type="button" className="link-button" onClick={() => navigate('/inscription')}>
+              S'inscrire
+            </button>
+            <button
+            type="button"
+            className="link-button"
+            onClick={() => navigate('/')}
+            >
+            Retour au Kanban
+            </button>
+          </div>
         </form>
       )}
     </div>
   );
 };
 
-export default Inscription;
+export default Connexion;

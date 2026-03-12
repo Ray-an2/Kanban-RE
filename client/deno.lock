@@ -12,6 +12,7 @@
     "npm:eslint@^9.39.1": "9.39.2",
     "npm:globals@^16.5.0": "16.5.0",
     "npm:react-dom@^19.2.0": "19.2.4_react@19.2.4",
+    "npm:react-router-dom@^7.13.1": "7.13.1_react@19.2.4_react-dom@19.2.4__react@19.2.4",
     "npm:react-router@^7.13.1": "7.13.1_react@19.2.4_react-dom@19.2.4__react@19.2.4",
     "npm:react@^19.2.0": "19.2.4",
     "npm:typescript-eslint@^8.48.0": "8.54.0_eslint@9.39.2_typescript@5.9.3_@typescript-eslint+parser@8.54.0__eslint@9.39.2__typescript@5.9.3",
@@ -1178,6 +1179,14 @@
     "react-refresh@0.18.0": {
       "integrity": "sha512-QgT5//D3jfjJb6Gsjxv0Slpj23ip+HtOpnNgnb2S5zU3CB26G/IDPGoy4RJB42wzFE46DRsstbW6tKHoKbhAxw=="
     },
+    "react-router-dom@7.13.1_react@19.2.4_react-dom@19.2.4__react@19.2.4": {
+      "integrity": "sha512-UJnV3Rxc5TgUPJt2KJpo1Jpy0OKQr0AjgbZzBFjaPJcFOb2Y8jA5H3LT8HUJAiRLlWrEXWHbF1Z4SCZaQjWDHw==",
+      "dependencies": [
+        "react",
+        "react-dom",
+        "react-router"
+      ]
+    },
     "react-router@7.13.1_react@19.2.4_react-dom@19.2.4__react@19.2.4": {
       "integrity": "sha512-td+xP4X2/6BJvZoX6xw++A2DdEi++YypA69bJUV5oVvqf6/9/9nNlD70YO1e9d3MyamJEBQFEzk6mbfDYbqrSA==",
       "dependencies": [
@@ -1377,6 +1386,7 @@
         "npm:eslint@^9.39.1",
         "npm:globals@^16.5.0",
         "npm:react-dom@^19.2.0",
+        "npm:react-router-dom@^7.13.1",
         "npm:react-router@^7.13.1",
         "npm:react@^19.2.0",
         "npm:typescript-eslint@^8.48.0",
