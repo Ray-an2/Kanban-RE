@@ -1,107 +1,104 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-interface User {
-  id: string;
-  pseudo: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  role: 'admin' | 'user';
-  registrationDate: string;
-  lastLogin: string;
-  profilePicture?: string;
-}
-
-interface Board {
-  id: string;
-  name: string;
-  description: string;
-  createdAt: string;
-  owner: string;
-  membersCount: number;
-  cardsCount: number;
-}
-
-interface Log {
-  id: string;
-  action: string;
-  user: string;
-  date: string;
-  board: string;
-}
-
-interface AdminStats {
-  totalUsers: number;
-  totalBoards: number;
-  totalCards: number;
-}
+import { UserWithProfile, Tableau, Journal } from '../model/types.ts';
 
 const AccountPage: React.FC = () => {
   const navigate = useNavigate();
 
-  // Données simulées de l'utilisateur connecté
-  const [user, setUser] = useState<User>({
-    id: '1',
-    pseudo: 'jdupont',
-    email: 'jean.dupont@example.com',
-    firstName: 'Jean',
-    lastName: 'Dupont',
-    role: 'user',
-    registrationDate: '10/01/2025',
-    lastLogin: '12/03/2026 14:30',
-    profilePicture: 'https://via.placeholder.com/150'
+  // Données simulées adaptées à la base de données
+  const [user, setUser] = useState<UserWithProfile>({
+    cpt_id: '1',
+    cpt_pseudo: 'jdupont',
+    cpt_mdp: '', // Ne jamais stocker en clair dans le state
+    cpt_role: 'admin',
+    profil: {
+      pfl_nom: 'Dupont',
+      pfl_prenom: 'Jean',
+      pfl_mail: 'jean.dupont@example.com',
+      pfl_etat: 'A',
+      pfl_date: '2025-01-10 14:30:00',
+      cpt_id: '1'
+    }
   });
 
-   const [adminStats, _setAdminStats] = useState<AdminStats>({
-    totalUsers: 42,
-    totalBoards: 17,
-    totalCards: 128
-  });
-
-  // Données simulées pour les tableaux (admin seulement)
-  const [boards, _setBoards] = useState<Board[]>([
-    { id: '1', name: 'Projet Alpha', description: 'Développement nouvelle application', createdAt: '05/02/2026', owner: 'Jean Dupont', membersCount: 4, cardsCount: 10 },
-    { id: '2', name: 'Marketing 2026', description: 'Campagnes marketing Q2', createdAt: '15/01/2026', owner: 'Marie Martin', membersCount: 3, cardsCount: 8 },
-    { id: '3', name: 'Support Client', description: 'Gestion des tickets clients', createdAt: '20/12/2025', owner: 'Pierre Durand', membersCount: 5, cardsCount: 15 },
-    { id: '4', name: 'RH - Recrutement', description: 'Processus de recrutement 2026', createdAt: '10/11/2025', owner: 'Sophie Lambert', membersCount: 2, cardsCount: 5 }
+  // Données simulées pour les tableaux
+  const [boards, _setBoards] = useState<Tableau[]>([
+    {
+      tab_id: '1',
+      tab_nom: 'Projet Alpha',
+      tab_description: 'Développement nouvelle application',
+      tab_date: '2026-02-05 09:00:00',
+      tab_etat: 'A',
+      tab_image: null
+    },
+    {
+      tab_id: '2',
+      tab_nom: 'Marketing 2026',
+      tab_description: 'Campagnes marketing Q2',
+      tab_date: '2026-01-15 10:00:00',
+      tab_etat: 'A',
+      tab_image: null
+    },
+    {
+      tab_id: '3',
+      tab_nom: 'Support Client',
+      tab_description: 'Gestion des tickets clients',
+      tab_date: '2025-12-20 14:30:00',
+      tab_etat: 'A',
+      tab_image: null
+    }
   ]);
 
-  // Données simulées pour les logs (admin seulement)
-  const [logs, _setLogs] = useState<Log[]>([
-    { id: '1', action: 'Création de tableau', user: 'Jean Dupont', date: '12/03/2026 14:30', board: 'Projet Alpha' },
-    { id: '2', action: 'Ajout de membre', user: 'Marie Martin', date: '11/03/2026 10:15', board: 'Marketing 2026' },
-    { id: '3', action: 'Modification de carte', user: 'Pierre Durand', date: '10/03/2026 16:45', board: 'Support Client' },
-    { id: '4', action: 'Suppression de tableau', user: 'Admin', date: '09/03/2026 09:30', board: 'Ancien Projet' },
-    { id: '5', action: 'Archivage de tableau', user: 'Sophie Lambert', date: '08/03/2026 14:00', board: 'Projet Bêta' }
+  // Données simulées pour les logs
+  const [logs, _setLogs] = useState<Journal[]>([
+    {
+      jou_id: '1',
+      jou_titre: 'Création de tableau',
+      jou_description: 'Tableau "Projet Alpha" créé',
+      jou_auteur: 'Jean Dupont',
+      jou_action: 'CREATE_TABLEAU',
+      jou_date: '2026-03-12 14:30:00',
+      jou_etat: 'SUCCESS'
+    },
+    {
+      jou_id: '2',
+      jou_titre: 'Ajout de membre',
+      jou_description: 'Marie Martin ajoutée au tableau Marketing 2026',
+      jou_auteur: 'Admin',
+      jou_action: 'ADD_MEMBER',
+      jou_date: '2026-03-11 10:15:00',
+      jou_etat: 'SUCCESS'
+    }
   ]);
 
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({
-    firstName: user.firstName,
-    lastName: user.lastName,
-    email: user.email,
-    pseudo: user.pseudo
+    firstName: user.profil?.pfl_prenom || '',
+    lastName: user.profil?.pfl_nom || '',
+    email: user.profil?.pfl_mail || ''
   });
 
   const handleEdit = () => {
     setEditData({
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      pseudo: user.pseudo
+      firstName: user.profil?.pfl_prenom || '',
+      lastName: user.profil?.pfl_nom || '',
+      email: user.profil?.pfl_mail || ''
     });
     setIsEditing(true);
   };
 
   const handleSave = () => {
-    setUser({
-      ...user,
-      firstName: editData.firstName,
-      lastName: editData.lastName,
-      email: editData.email,
-      pseudo: editData.pseudo
-    });
+    if (user.profil) {
+      setUser({
+        ...user,
+        profil: {
+          ...user.profil,
+          pfl_prenom: editData.firstName,
+          pfl_nom: editData.lastName,
+          pfl_mail: editData.email
+        }
+      });
+    }
     setIsEditing(false);
   };
 
@@ -137,22 +134,6 @@ const AccountPage: React.FC = () => {
       }}>
         <h1 style={{ margin: 0, color: '#2c3e50' }}>Mon Compte</h1>
         <button
-            type="button"
-            onClick={() => navigate('/tableau')}
-            style={{
-                padding: '8px 16px',
-                backgroundColor: '#3498db',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontWeight: '500',
-                transition: 'background-color 0.2s'
-            }}
-        >
-          Retour à l'accueil
-        </button>
-        <button
           type="button"
           onClick={handleLogout}
           style={{
@@ -176,13 +157,6 @@ const AccountPage: React.FC = () => {
         marginBottom: '30px'
       }}>
         <div style={{
-        backgroundColor: 'white',
-        borderRadius: '8px',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-        padding: '30px',
-        marginBottom: '30px'
-      }}>
-        <div style={{
           display: 'flex',
           alignItems: 'center',
           marginBottom: '30px',
@@ -191,7 +165,7 @@ const AccountPage: React.FC = () => {
         }}>
           <div style={{ marginRight: '30px' }}>
             <img
-              src={user.profilePicture}
+              src={user.profil?.pfl_mail ? `https://avatars.dicebear.com/api/initials/${user.profil.pfl_mail}.svg` : 'https://via.placeholder.com/150'}
               alt="Photo de profil"
               style={{
                 width: '100px',
@@ -204,13 +178,13 @@ const AccountPage: React.FC = () => {
           </div>
           <div>
             <h2 style={{ margin: '0 0 10px 0', color: '#2c3e50' }}>
-              {user.firstName} {user.lastName}
+              {user.profil?.pfl_prenom} {user.profil?.pfl_nom}
             </h2>
             <p style={{ margin: '5px 0', color: '#666' }}>
-              <strong>Pseudo:</strong> @{user.pseudo}
+              <strong>Pseudo:</strong> @{user.cpt_pseudo}
             </p>
             <p style={{ margin: '5px 0', color: '#666' }}>
-              <strong>Rôle:</strong> {user.role === 'admin' ? 'Administrateur' : 'Utilisateur'}
+              <strong>Rôle:</strong> {user.cpt_role === 'admin' ? 'Administrateur' : 'Utilisateur'}
             </p>
             <div style={{
               display: 'flex',
@@ -219,12 +193,12 @@ const AccountPage: React.FC = () => {
             }}>
               <span style={{
                 padding: '4px 8px',
-                backgroundColor: user.role === 'admin' ? '#e74c3c' : '#3498db',
+                backgroundColor: user.cpt_role === 'admin' ? '#e74c3c' : '#3498db',
                 color: 'white',
                 borderRadius: '4px',
                 fontSize: '12px'
               }}>
-                {user.role === 'admin' ? 'ADMIN' : 'UTILISATEUR'}
+                {user.cpt_role === 'admin' ? 'ADMIN' : 'UTILISATEUR'}
               </span>
             </div>
           </div>
@@ -265,27 +239,12 @@ const AccountPage: React.FC = () => {
                   }}
                 />
               </div>
-              <div>
+              <div style={{ gridColumn: '1 / -1' }}>
                 <label style={{ display: 'block', marginBottom: '5px', color: '#555' }}>Email</label>
                 <input
                   type="email"
                   name="email"
                   value={editData.email}
-                  onChange={handleChange}
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    border: '1px solid #ddd',
-                    borderRadius: '4px'
-                  }}
-                />
-              </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '5px', color: '#555' }}>Pseudo</label>
-                <input
-                  type="text"
-                  name="pseudo"
-                  value={editData.pseudo}
                   onChange={handleChange}
                   style={{
                     width: '100%',
@@ -330,20 +289,20 @@ const AccountPage: React.FC = () => {
             <>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
                 <div>
-                  <p style={{ margin: '5px 0', color: '#555' }}><strong>Prénom:</strong> {user.firstName}</p>
-                  <p style={{ margin: '5px 0', color: '#555' }}><strong>Nom:</strong> {user.lastName}</p>
+                  <p style={{ margin: '5px 0', color: '#555' }}><strong>Prénom:</strong> {user.profil?.pfl_prenom}</p>
+                  <p style={{ margin: '5px 0', color: '#555' }}><strong>Nom:</strong> {user.profil?.pfl_nom}</p>
                 </div>
                 <div>
-                  <p style={{ margin: '5px 0', color: '#555' }}><strong>Email:</strong> {user.email}</p>
-                  <p style={{ margin: '5px 0', color: '#555' }}><strong>Pseudo:</strong> @{user.pseudo}</p>
+                  <p style={{ margin: '5px 0', color: '#555' }}><strong>Email:</strong> {user.profil?.pfl_mail}</p>
+                  <p style={{ margin: '5px 0', color: '#555' }}><strong>Pseudo:</strong> @{user.cpt_pseudo}</p>
                 </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                 <div>
-                  <p style={{ margin: '5px 0', color: '#555' }}><strong>Date d'inscription:</strong> {user.registrationDate}</p>
+                  <p style={{ margin: '5px 0', color: '#555' }}><strong>Date d'inscription:</strong> {user.profil?.pfl_date?.split(' ')[0]}</p>
                 </div>
                 <div>
-                  <p style={{ margin: '5px 0', color: '#555' }}><strong>Dernière connexion:</strong> {user.lastLogin}</p>
+                  <p style={{ margin: '5px 0', color: '#555' }}><strong>Dernière connexion:</strong> 12/03/2026 14:30</p>
                 </div>
               </div>
               <button
@@ -394,31 +353,12 @@ const AccountPage: React.FC = () => {
                 Changer le mot de passe
               </button>
             </div>
-            <div>
-              <p style={{ margin: '5px 0', color: '#555' }}><strong>Authentification à 2 facteurs:</strong> Désactivée</p>
-              <button
-                type="button"
-                style={{
-                  marginTop: '10px',
-                  padding: '6px 12px',
-                  backgroundColor: '#95a5a6',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontSize: '12px'
-                }}
-              >
-                Configurer
-              </button>
-            </div>
           </div>
         </div>
       </div>
-      </div>
 
       {/* Section Administration pour les administrateurs */}
-      {user.role === 'admin' && (
+      {user.cpt_role === 'admin' && (
         <div style={{
           marginTop: '30px',
           padding: '30px',
@@ -435,27 +375,6 @@ const AccountPage: React.FC = () => {
           }}>
             <h2 style={{ margin: 0, color: '#e74c3c' }}>🛠 Administration</h2>
             <div style={{ display: 'flex', gap: '20px' }}>
-              {/* Pastille Comptes */}
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '8px 12px',
-                backgroundColor: '#e3f2fd',
-                borderRadius: '20px',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-              }}>
-                <div style={{
-                  width: '12px',
-                  height: '12px',
-                  backgroundColor: '#2196f3',
-                  borderRadius: '50%'
-                }}></div>
-                <span style={{ fontSize: '14px', color: '#2c3e50' }}>
-                  <strong>{adminStats.totalUsers}</strong> comptes
-                </span>
-              </div>
-
               {/* Pastille Tableaux */}
               <div style={{
                 display: 'flex',
@@ -473,35 +392,14 @@ const AccountPage: React.FC = () => {
                   borderRadius: '50%'
                 }}></div>
                 <span style={{ fontSize: '14px', color: '#2c3e50' }}>
-                  <strong>{adminStats.totalBoards}</strong> tableaux
-                </span>
-              </div>
-
-              {/* Pastille Cartes */}
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '8px 12px',
-                backgroundColor: '#fff3e0',
-                borderRadius: '20px',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-              }}>
-                <div style={{
-                  width: '12px',
-                  height: '12px',
-                  backgroundColor: '#ff9800',
-                  borderRadius: '50%'
-                }}></div>
-                <span style={{ fontSize: '14px', color: '#2c3e50' }}>
-                  <strong>{adminStats.totalCards}</strong> cartes
+                  <strong>{boards.length}</strong> tableaux
                 </span>
               </div>
             </div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
-            {/* Carte pour la gestion des tableaux (avec nombre de cartes) */}
+            {/* Carte pour la gestion des tableaux */}
             <div style={{
               backgroundColor: '#f8f9fa',
               borderRadius: '8px',
@@ -529,7 +427,7 @@ const AccountPage: React.FC = () => {
               <div style={{ maxHeight: '300px', overflowY: 'auto', marginBottom: '15px' }}>
                 {boards.map(board => (
                   <div
-                    key={board.id}
+                    key={board.tab_id}
                     style={{
                       padding: '10px 15px',
                       marginBottom: '10px',
@@ -541,18 +439,14 @@ const AccountPage: React.FC = () => {
                       justifyContent: 'space-between',
                       alignItems: 'center'
                     }}
-                    onClick={() => navigate(`/tableau/${board.id}`)}
+                    onClick={() => navigate(`/tableau/${board.tab_id}`)}
                   >
                     <div style={{ flex: 1 }}>
-                      <p style={{ margin: '0 0 5px 0', fontWeight: '600', color: '#2c3e50' }}>{board.name}</p>
-                      <p style={{ margin: 0, color: '#666', fontSize: '12px' }}>{board.description}</p>
+                      <p style={{ margin: '0 0 5px 0', fontWeight: '600', color: '#2c3e50' }}>{board.tab_nom}</p>
+                      <p style={{ margin: 0, color: '#666', fontSize: '12px' }}>{board.tab_description}</p>
                     </div>
                     <div style={{ textAlign: 'right' }}>
-                      <p style={{ margin: '0 0 5px 0', color: '#666', fontSize: '12px' }}>Créé le {board.createdAt}</p>
-                      <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-                        <span style={{ color: '#666', fontSize: '12px' }}>{board.membersCount} membres</span>
-                        <span style={{ color: '#666', fontSize: '12px' }}>{board.cardsCount} cartes</span>
-                      </div>
+                      <p style={{ margin: '0 0 5px 0', color: '#666', fontSize: '12px' }}>Créé le {board.tab_date.split(' ')[0]}</p>
                     </div>
                   </div>
                 ))}
@@ -576,6 +470,7 @@ const AccountPage: React.FC = () => {
               </button>
             </div>
 
+            {/* Carte pour les logs */}
             <div style={{
               backgroundColor: '#f8f9fa',
               borderRadius: '8px',
@@ -603,7 +498,7 @@ const AccountPage: React.FC = () => {
               <div style={{ maxHeight: '300px', overflowY: 'auto', marginBottom: '15px' }}>
                 {logs.slice(0, 5).map(log => (
                   <div
-                    key={log.id}
+                    key={log.jou_id}
                     style={{
                       padding: '10px 15px',
                       marginBottom: '10px',
@@ -614,10 +509,10 @@ const AccountPage: React.FC = () => {
                     }}
                   >
                     <p style={{ margin: '0 0 5px 0', fontWeight: '600', color: '#2c3e50' }}>
-                      {log.action} <span style={{ color: '#666', fontSize: '12px' }}>par {log.user}</span>
+                      {log.jou_titre} <span style={{ color: '#666', fontSize: '12px' }}>par {log.jou_auteur}</span>
                     </p>
-                    <p style={{ margin: '0 0 5px 0', color: '#666', fontSize: '12px' }}>Tableau: {log.board}</p>
-                    <p style={{ margin: 0, color: '#999', fontSize: '11px' }}>{log.date}</p>
+                    <p style={{ margin: '0 0 5px 0', color: '#666', fontSize: '12px' }}>{log.jou_description}</p>
+                    <p style={{ margin: 0, color: '#999', fontSize: '11px' }}>{log.jou_date.replace('T', ' ').split('.')[0]}</p>
                   </div>
                 ))}
               </div>
@@ -676,43 +571,7 @@ const AccountPage: React.FC = () => {
                 👥
               </div>
               <h3 style={{ margin: '0 0 10px 0', color: '#2c3e50' }}>Utilisateurs</h3>
-              <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>Gérer les {adminStats.totalUsers} comptes utilisateurs</p>
-            </div>
-
-            {/* Carte Paramètres */}
-            <div style={{
-              backgroundColor: '#f8f9fa',
-              borderRadius: '8px',
-              padding: '20px',
-              textAlign: 'center',
-              cursor: 'pointer',
-              transition: 'transform 0.2s, box-shadow 0.2s'
-            }}
-            onClick={() => navigate('/admin/settings')}
-            onMouseOver={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-            }}>
-              <div style={{
-                width: '50px',
-                height: '50px',
-                backgroundColor: '#e74c3c',
-                borderRadius: '50%',
-                margin: '0 auto 15px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'white',
-                fontSize: '20px'
-              }}>
-                ⚙️
-              </div>
-              <h3 style={{ margin: '0 0 10px 0', color: '#2c3e50' }}>Paramètres</h3>
-              <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>Configuration système</p>
+              <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>Gérer les comptes utilisateurs</p>
             </div>
           </div>
         </div>

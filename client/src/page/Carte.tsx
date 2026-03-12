@@ -1,137 +1,176 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-interface CardDetails {
-  id: string;
-  title: string;
-  description: string;
-  dueDate: string;
-  assignee: string;
-  status: string;
-  priority: 'low' | 'medium' | 'high';
-  comments: Array<{
-    id: string;
-    author: string;
-    date: string;
-    content: string;
-  }>;
-  checklist: Array<{
-    id: string;
-    text: string;
-    completed: boolean;
-  }>;
-  attachments: Array<{
-    id: string;
-    name: string;
-    url: string;
-    type: string;
-  }>;
+// Définition des interfaces directement dans le fichier
+interface Compte {
+  cpt_id: string;
+  cpt_pseudo: string;
+  cpt_mdp: string;
+  cpt_role: string;
+}
+
+interface Profil {
+  pfl_nom: string | null;
+  pfl_prenom: string | null;
+  pfl_mail: string | null;
+  pfl_etat: 'A' | 'D';
+  pfl_date: string | null;
+  cpt_id: string;
+}
+
+interface Etiquette {
+  eti_id: string;
+  eti_nom: string;
+  eti_couleur: string;
+}
+
+interface Liste {
+  lis_id: string;
+  lis_titre: string;
+  lis_ordre: number;
+  lis_etat: 'P' | 'A';
+  tab_id: string;
+}
+
+interface MemberWithProfile extends Compte {
+  profil?: Profil;
 }
 
 const CardDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  // Données simulées pour une carte
-  const [card, setCard] = useState<CardDetails>({
-    id: id || '1',
-    title: 'Implémenter l\'API de paiement',
-    description: 'Il faut implémenter l\'API de paiement Stripe pour le nouveau module de facturation. Cela inclut:\n\n1. Création des endpoints backend\n2. Intégration front-end avec React\n3. Tests unitaires et d\'intégration\n4. Documentation technique',
-    dueDate: '15/03/2026',
-    assignee: 'Jean Dupont',
-    status: 'En cours',
-    priority: 'high',
-    comments: [
+  // Type complet pour la carte
+  type CardType = {
+    car_id: string;
+    car_nom: string;
+    car_des: string | null;
+    car_archiver: 'O' | 'N';
+    car_terminer: 'O' | 'N';
+    car_priorite: number;
+    car_ordre: number;
+    car_dateCreation: string;
+    car_dateDebut: string | null;
+    car_dateFin: string | null;
+    car_couverture: string | null;
+    lis_id: string;
+    etiquettes?: Etiquette[];
+    membres?: MemberWithProfile[];
+    liste?: Liste;
+  };
+
+  // Données simulées avec typage complet
+  const [card] = useState<CardType>({
+    car_id: id || '1',
+    car_nom: 'Implémenter l\'API de paiement',
+    car_des: 'Description détaillée...',
+    car_archiver: 'N',
+    car_terminer: 'N',
+    car_priorite: 3,
+    car_ordre: 1,
+    car_dateCreation: '2026-03-01 10:00:00',
+    car_dateDebut: '2026-03-05 09:00:00',
+    car_dateFin: '2026-03-15 18:00:00',
+    car_couverture: null,
+    lis_id: '1',
+    etiquettes: [
+      { eti_id: '1', eti_nom: 'Urgent', eti_couleur: '#f44336' },
+      { eti_id: '2', eti_nom: 'Backend', eti_couleur: '#2196F3' }
+    ],
+    membres: [
       {
-        id: '1',
-        author: 'Marie Martin',
-        date: '10/03/2026 14:30',
-        content: 'Jean, as-tu besoin d\'aide pour l\'intégration front-end?'
+        cpt_id: '1',
+        cpt_pseudo: 'jdupont',
+        cpt_mdp: '',
+        cpt_role: 'admin',
+        profil: {
+          pfl_nom: 'Dupont',
+          pfl_prenom: 'Jean',
+          pfl_mail: 'jean.dupont@example.com',
+          pfl_etat: 'A',
+          pfl_date: '2025-01-10 14:30:00',
+          cpt_id: '1'
+        }
       },
       {
-        id: '2',
-        author: 'Jean Dupont',
-        date: '10/03/2026 15:45',
-        content: 'Merci Marie, je gère pour l\'instant. Je te tiens au courant si j\'ai besoin d\'aide.'
+        cpt_id: '2',
+        cpt_pseudo: 'mmartin',
+        cpt_mdp: '',
+        cpt_role: 'user',
+        profil: {
+          pfl_nom: 'Martin',
+          pfl_prenom: 'Marie',
+          pfl_mail: 'marie.martin@example.com',
+          pfl_etat: 'A',
+          pfl_date: '2024-11-15 09:20:00',
+          cpt_id: '2'
+        }
       }
     ],
-    checklist: [
-      { id: '1', text: 'Créer les endpoints backend', completed: true },
-      { id: '2', text: 'Intégrer Stripe au front-end', completed: false },
-      { id: '3', text: 'Écrire les tests unitaires', completed: false },
-      { id: '4', text: 'Rédiger la documentation', completed: false }
-    ],
-    attachments: [
-      { id: '1', name: 'api_specs.pdf', url: '#', type: 'pdf' },
-      { id: '2', name: 'mockup.png', url: '#', type: 'image' }
-    ]
+    liste: {
+      lis_id: '1',
+      lis_titre: 'En cours',
+      lis_ordre: 1,
+      lis_etat: 'P',
+      tab_id: '1'
+    }
   });
 
   const [newComment, setNewComment] = useState('');
   const [newChecklistItem, setNewChecklistItem] = useState('');
+  const [checklist, setChecklist] = useState([
+    { id: '1', text: 'Créer les endpoints backend', completed: true },
+    { id: '2', text: 'Intégrer Stripe au front-end', completed: false },
+    { id: '3', text: 'Écrire les tests unitaires', completed: false }
+  ]);
 
   const handleAddComment = () => {
     if (newComment.trim()) {
-      const updatedCard = {
-        ...card,
-        comments: [
-          ...card.comments,
-          {
-            id: Date.now().toString(),
-            author: 'Utilisateur actuel',
-            date: new Date().toLocaleString(),
-            content: newComment
-          }
-        ]
-      };
-      setCard(updatedCard);
       setNewComment('');
     }
   };
 
   const handleAddChecklistItem = () => {
     if (newChecklistItem.trim()) {
-      const updatedCard = {
-        ...card,
-        checklist: [
-          ...card.checklist,
-          {
-            id: Date.now().toString(),
-            text: newChecklistItem,
-            completed: false
-          }
-        ]
-      };
-      setCard(updatedCard);
+      setChecklist([
+        ...checklist,
+        {
+          id: Date.now().toString(),
+          text: newChecklistItem,
+          completed: false
+        }
+      ]);
       setNewChecklistItem('');
     }
   };
 
   const toggleChecklistItem = (id: string) => {
-    const updatedCard = {
-      ...card,
-      checklist: card.checklist.map(item =>
-        item.id === id ? { ...item, completed: !item.completed } : item
-      )
-    };
-    setCard(updatedCard);
+    setChecklist(checklist.map(item =>
+      item.id === id ? { ...item, completed: !item.completed } : item
+    ));
   };
 
   const getPriorityColor = () => {
-    switch (card.priority) {
-      case 'high': return '#ff6b6b';
-      case 'medium': return '#ffd166';
-      case 'low': return '#06d6a0';
+    switch (card.car_priorite) {
+      case 3: return '#f44336';
+      case 2: return '#ff9800';
+      case 1: return '#4caf50';
       default: return '#999';
     }
   };
 
   const getStatusColor = () => {
-    switch (card.status) {
-      case 'À faire': return '#999';
-      case 'En cours': return '#3498db';
-      case 'Terminé': return '#06d6a0';
-      default: return '#999';
+    if (card.car_terminer === 'O') return '#4caf50';
+    if (card.car_archiver === 'O') return '#9e9e9e';
+    return '#2196f3';
+  };
+
+  const handleBackToBoard = () => {
+    if (card.liste?.tab_id) {
+      navigate(`/tableau/${card.liste.tab_id}`);
+    } else {
+      console.error("Impossible de retourner au tableau: ID de tableau non trouvé");
+      navigate('/accueil');
     }
   };
 
@@ -152,7 +191,7 @@ const CardDetailsPage: React.FC = () => {
         <h1 style={{ margin: 0, color: '#2c3e50' }}>Détails de la carte</h1>
         <button
           type="button"
-          onClick={() => navigate('/')}
+          onClick={handleBackToBoard}
           style={{
             padding: '8px 16px',
             backgroundColor: '#3498db',
@@ -180,11 +219,8 @@ const CardDetailsPage: React.FC = () => {
             alignItems: 'flex-start',
             marginBottom: '15px'
           }}>
-            <h2 style={{ margin: 0, color: '#2c3e50' }}>{card.title}</h2>
-            <div style={{
-              display: 'flex',
-              gap: '10px'
-            }}>
+            <h2 style={{ margin: 0, color: '#2c3e50' }}>{card.car_nom}</h2>
+            <div style={{ display: 'flex', gap: '10px' }}>
               <span style={{
                 padding: '4px 8px',
                 backgroundColor: getPriorityColor(),
@@ -192,7 +228,9 @@ const CardDetailsPage: React.FC = () => {
                 borderRadius: '4px',
                 fontSize: '12px'
               }}>
-                Priorité: {card.priority}
+                Priorité: {card.car_priorite === 3 ? 'Haute' :
+                          card.car_priorite === 2 ? 'Moyenne' :
+                          card.car_priorite === 1 ? 'Faible' : 'Aucune'}
               </span>
               <span style={{
                 padding: '4px 8px',
@@ -201,18 +239,29 @@ const CardDetailsPage: React.FC = () => {
                 borderRadius: '4px',
                 fontSize: '12px'
               }}>
-                {card.status}
+                {card.car_terminer === 'O' ? 'Terminé' :
+                 card.car_archiver === 'O' ? 'Archivé' : 'En cours'}
               </span>
             </div>
           </div>
 
           <div style={{ marginBottom: '15px' }}>
             <p style={{ margin: '5px 0', color: '#555' }}>
-              <strong>Assigné à:</strong> {card.assignee}
+              <strong>Liste:</strong> {card.liste?.lis_titre || 'Non définie'}
             </p>
             <p style={{ margin: '5px 0', color: '#555' }}>
-              <strong>Date limite:</strong> {card.dueDate}
+              <strong>Créé le:</strong> {new Date(card.car_dateCreation).toLocaleString('fr-FR')}
             </p>
+            {card.car_dateDebut && (
+              <p style={{ margin: '5px 0', color: '#555' }}>
+                <strong>Début:</strong> {new Date(card.car_dateDebut).toLocaleString('fr-FR')}
+              </p>
+            )}
+            {card.car_dateFin && (
+              <p style={{ margin: '5px 0', color: '#555' }}>
+                <strong>Échéance:</strong> {new Date(card.car_dateFin).toLocaleString('fr-FR')}
+              </p>
+            )}
           </div>
 
           <div style={{
@@ -228,15 +277,67 @@ const CardDetailsPage: React.FC = () => {
               color: '#495057',
               lineHeight: '1.6'
             }}>
-              {card.description}
+              {card.car_des}
             </div>
+          </div>
+        </div>
+
+        <div style={{ marginBottom: '25px' }}>
+          <h3 style={{ margin: '0 0 15px 0', color: '#2c3e50' }}>Étiquettes</h3>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '15px' }}>
+            {card.etiquettes?.map((etiquette: Etiquette) => (
+              <span
+                key={etiquette.eti_id}
+                style={{
+                  padding: '4px 8px',
+                  backgroundColor: etiquette.eti_couleur,
+                  color: 'white',
+                  borderRadius: '4px',
+                  fontSize: '12px'
+                }}
+              >
+                {etiquette.eti_nom}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ marginBottom: '25px' }}>
+          <h3 style={{ margin: '0 0 15px 0', color: '#2c3e50' }}>Membres</h3>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+            {card.membres?.map((membre: MemberWithProfile) => (
+              <div
+                key={membre.cpt_id}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '6px 10px',
+                  backgroundColor: '#f0f8ff',
+                  borderRadius: '20px',
+                  border: '1px solid #e6f2ff'
+                }}
+                title={`${membre.profil?.pfl_prenom || ''} ${membre.profil?.pfl_nom || ''}\n${membre.profil?.pfl_mail || ''}`}
+              >
+                <img
+                  src={membre.profil?.pfl_mail ? `https://avatars.dicebear.com/api/initials/${membre.profil.pfl_mail}.svg` : 'https://via.placeholder.com/30'}
+                  alt={membre.cpt_pseudo}
+                  style={{
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '50%',
+                    marginRight: '6px'
+                  }}
+                />
+                <span style={{ fontSize: '14px' }}>{membre.cpt_pseudo}</span>
+              </div>
+            ))}
           </div>
         </div>
 
         <div style={{ marginBottom: '25px' }}>
           <h3 style={{ margin: '0 0 15px 0', color: '#2c3e50' }}>Liste de contrôle</h3>
           <div style={{ marginBottom: '15px' }}>
-            {card.checklist.map(item => (
+            {checklist.map(item => (
               <div
                 key={item.id}
                 style={{
@@ -293,31 +394,26 @@ const CardDetailsPage: React.FC = () => {
           </div>
         </div>
 
-        <div style={{ marginBottom: '25px' }}>
+        <div>
           <h3 style={{ margin: '0 0 15px 0', color: '#2c3e50' }}>Commentaires</h3>
           <div style={{ marginBottom: '20px' }}>
-            {card.comments.map(comment => (
-              <div
-                key={comment.id}
-                style={{
-                  marginBottom: '15px',
-                  padding: '15px',
-                  backgroundColor: '#f8f9fa',
-                  borderRadius: '4px',
-                  borderLeft: '3px solid #3498db'
-                }}
-              >
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  marginBottom: '5px'
-                }}>
-                  <strong style={{ color: '#2c3e50' }}>{comment.author}</strong>
-                  <span style={{ color: '#999', fontSize: '12px' }}>{comment.date}</span>
-                </div>
-                <p style={{ margin: 0, color: '#495057' }}>{comment.content}</p>
+            <div style={{
+              marginBottom: '15px',
+              padding: '15px',
+              backgroundColor: '#f8f9fa',
+              borderRadius: '4px',
+              borderLeft: '3px solid #3498db'
+            }}>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                marginBottom: '5px'
+              }}>
+                <strong style={{ color: '#2c3e50' }}>Jean Dupont</strong>
+                <span style={{ color: '#999', fontSize: '12px' }}>10/03/2026 14:30</span>
               </div>
-            ))}
+              <p style={{ margin: 0, color: '#495057' }}>J'ai commencé l'implémentation des endpoints backend pour Stripe.</p>
+            </div>
           </div>
           <div style={{ display: 'flex', gap: '10px' }}>
             <input
@@ -348,37 +444,6 @@ const CardDetailsPage: React.FC = () => {
             </button>
           </div>
         </div>
-
-        {card.attachments.length > 0 && (
-          <div>
-            <h3 style={{ margin: '0 0 15px 0', color: '#2c3e50' }}>Pièces jointes</h3>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-              {card.attachments.map(attachment => (
-                <div
-                  key={attachment.id}
-                  style={{
-                    padding: '10px',
-                    backgroundColor: '#f8f9fa',
-                    borderRadius: '4px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px'
-                  }}
-                >
-                  {attachment.type === 'pdf' ? '📄' : '🖼️'}
-                  <a
-                    href={attachment.url}
-                    style={{ color: '#3498db', textDecoration: 'none' }}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {attachment.name}
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
