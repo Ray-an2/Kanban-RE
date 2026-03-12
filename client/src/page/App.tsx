@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import KanbanBoard from '../components/Tableau.tsx';
 import Log from './Log.tsx';
 import Inscription from './Inscription.tsx';
@@ -12,7 +12,8 @@ const App: React.FC = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<KanbanBoard />} />
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/tableau/:id" element={<KanbanBoard />} />
         <Route path="/tableau/:id/log" element={<Log />} />
         <Route path="/inscription" element={<Inscription />} />
         <Route path="/login" element={<Connexion />} />
