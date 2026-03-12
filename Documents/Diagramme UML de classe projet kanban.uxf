@@ -4,8 +4,8 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>756</x>
-      <y>189</y>
+      <x>763</x>
+      <y>203</y>
       <w>301</w>
       <h>231</h>
     </coordinates>
@@ -27,9 +27,9 @@ _+ idCarte : string_
 + modifierCarte(nom : string, description : string) : string
 + modifierDateDebut(date_debut : Date) : Date
 + modifierDateFin(date_fin : Date) : Date
-+ archiver(id : string) : string
++ archiver(idCarte : string) : string
 + phaseEcheance(idCarte : string) : string
-+ supprimerCarte(id : string) : void
++ supprimerCarte(idCarte : string) : void
 
 </panel_attributes>
     <additional_attributes/>
@@ -37,8 +37,8 @@ _+ idCarte : string_
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>413</x>
-      <y>7</y>
+      <x>420</x>
+      <y>21</y>
       <w>336</w>
       <h>119</h>
     </coordinates>
@@ -58,8 +58,8 @@ _+ idCompte : string_
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>56</x>
-      <y>189</y>
+      <x>63</x>
+      <y>203</y>
       <w>245</w>
       <h>175</h>
     </coordinates>
@@ -85,8 +85,8 @@ description : string, image : string) : void
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>378</x>
-      <y>392</y>
+      <x>385</x>
+      <y>406</y>
       <w>294</w>
       <h>105</h>
     </coordinates>
@@ -104,8 +104,8 @@ _+ idDocument : string_
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>882</x>
-      <y>511</y>
+      <x>889</x>
+      <y>525</y>
       <w>301</w>
       <h>105</h>
     </coordinates>
@@ -124,8 +124,8 @@ _+ idEtiquette : string_
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>315</x>
-      <y>525</y>
+      <x>322</x>
+      <y>539</y>
       <w>448</w>
       <h>119</h>
     </coordinates>
@@ -146,8 +146,8 @@ _+ idJournal : string_
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>385</x>
-      <y>189</y>
+      <x>392</x>
+      <y>203</y>
       <w>280</w>
       <h>168</h>
     </coordinates>
@@ -162,17 +162,17 @@ _+ idListe : string_
 + créerListe(titre : string, idTableau : string) : Liste
 + ajouterCarte(idCarte : string) : string
 + retirerCarte(idCarte : string) : string
-+ modifierListe(id : string, nom : string) : string
++ modifierListe(idListe : string, nom : string) : string
 + deplacerListe(ordre : int) : int
 + archiverListe(idListe : string) : string
-+ supprimeListe(id : string) : void</panel_attributes>
++ supprimeListe(idListe : string) : void</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>175</x>
-      <y>119</y>
+      <x>182</x>
+      <y>133</y>
       <w>336</w>
       <h>84</h>
     </coordinates>
@@ -185,8 +185,8 @@ créer</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>686</x>
-      <y>119</y>
+      <x>693</x>
+      <y>133</y>
       <w>238</w>
       <h>84</h>
     </coordinates>
@@ -199,8 +199,8 @@ membre de</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>294</x>
-      <y>224</y>
+      <x>301</x>
+      <y>238</y>
       <w>105</w>
       <h>35</h>
     </coordinates>
@@ -213,8 +213,8 @@ contient</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>658</x>
-      <y>224</y>
+      <x>665</x>
+      <y>238</y>
       <w>112</w>
       <h>35</h>
     </coordinates>
@@ -227,8 +227,8 @@ contient</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>665</x>
-      <y>329</y>
+      <x>672</x>
+      <y>343</y>
       <w>105</w>
       <h>126</h>
     </coordinates>
@@ -241,8 +241,8 @@ associé à</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>973</x>
-      <y>413</y>
+      <x>980</x>
+      <y>427</y>
       <w>77</w>
       <h>112</h>
     </coordinates>
@@ -255,8 +255,8 @@ appartient à</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>161</x>
-      <y>357</y>
+      <x>168</x>
+      <y>371</y>
       <w>168</w>
       <h>245</h>
     </coordinates>
@@ -266,8 +266,8 @@ appartient à</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>756</x>
-      <y>413</y>
+      <x>763</x>
+      <y>427</y>
       <w>98</w>
       <h>189</h>
     </coordinates>
@@ -280,21 +280,22 @@ appartient à</panel_attributes>
       <x>0</x>
       <y>0</y>
       <w>308</w>
-      <h>140</h>
+      <h>154</h>
     </coordinates>
     <panel_attributes>Profil
 --
 + nom : string
 + prenom : string
-+ dateCreation : Date
 + mail : string
++ etat : string
++ dateCreation : Date
 _+ idCompte : string_
 --
 + creationProfil(nom : string, prenom : string, 
 mail : string) : Profil
 + modifierProfil(nom : string, prenom : string, 
 mail : string) : string
-+ supprimerProfil(id : string) : void
++ supprimerProfil(idCompte : string) : void
 </panel_attributes>
     <additional_attributes/>
   </element>
@@ -302,21 +303,21 @@ mail : string) : string
     <id>Relation</id>
     <coordinates>
       <x>301</x>
-      <y>56</y>
-      <w>126</w>
+      <y>70</y>
+      <w>133</w>
       <h>35</h>
     </coordinates>
     <panel_attributes>lt=-
 m1=1..1
 m2=1..1
 possède</panel_attributes>
-    <additional_attributes>10.0;20.0;160.0;20.0</additional_attributes>
+    <additional_attributes>10.0;20.0;170.0;20.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1120</x>
-      <y>315</y>
+      <x>1127</x>
+      <y>329</y>
       <w>301</w>
       <h>112</h>
     </coordinates>
@@ -335,8 +336,8 @@ _+ idCommentaire : string_
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1050</x>
-      <y>259</y>
+      <x>1057</x>
+      <y>273</y>
       <w>252</w>
       <h>70</h>
     </coordinates>
@@ -349,8 +350,8 @@ contient</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>742</x>
-      <y>35</y>
+      <x>749</x>
+      <y>49</y>
       <w>168</w>
       <h>35</h>
     </coordinates>
@@ -363,8 +364,8 @@ contient</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>896</x>
-      <y>0</y>
+      <x>903</x>
+      <y>14</y>
       <w>301</w>
       <h>112</h>
     </coordinates>

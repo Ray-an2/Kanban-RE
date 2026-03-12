@@ -922,7 +922,7 @@ components:
           description: Prénom.
     UserCreateRequest:
       type: object
-      required: [pseudo, motDePasse, email, nom, prenom]
+      required: [pseudo, motDePasse, email, nom, prenom, role]
       properties:
         pseudo:
           type: string
@@ -1048,7 +1048,7 @@ components:
           description: Description du tableau.
         tab_etat:
           type: string
-          description: Etat du tableau.
+          description: Etat du tableau (par défaut 'A' si omis).
         tab_image:
           type: string
           description: Lien de l'image du tableau.
@@ -1081,7 +1081,7 @@ components:
           description: Ordre d'affichage de la liste.
         lis_etat:
           type: string
-          description: Etat de la liste.
+          description: Etat de la liste (par défaut 'P' si omis).
 
     ListeUpdateRequest:
       type: object
@@ -1108,13 +1108,13 @@ components:
           description: Description de la carte.
         car_archiver:
           type: string
-          description: Etat d'archivage (P/A).
+          description: Etat d'archivage (par défaut 'N' si omis).
         car_terminer:
           type: string
-          description: Etat de terminaison (0).
+          description: Etat de terminaison (par défaut 'N' si omis).
         car_priorite:
           type: integer
-          description: Priorite de la carte allant de 0 (forte priorité) à N-1 carte (basse priorité).
+          description: Priorite de la carte allant de 0 (forte priorité) à N-1 carte (basse priorité), par défaut 0 si omis.
         car_ordre:
           type: integer
           description: Ordre d'affichage de la carte allant de 0 (haut de la liste) à N-1 cartes.

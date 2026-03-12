@@ -56,13 +56,14 @@ router.post("/register", async (ctx) => {
     `).run(cptId, body.pseudo, passwordHash, "U");
 
     db.prepare(`
-    INSERT INTO t_profil_pfl (pfl_nom, pfl_prenom, pfl_date, pfl_mail, cpt_id)
-    VALUES (?, ?, ?, ?, ?);
+    INSERT INTO t_profil_pfl (pfl_nom, pfl_prenom, pfl_date, pfl_mail, pfl_etat, cpt_id)
+    VALUES (?, ?, ?, ?, ?, ?);
     `).run(
         body.nom,
         body.prenom,
         createdAt,
         body.email,
+        "D",
         cptId,
     );
 
@@ -457,13 +458,14 @@ router.post("/", authMiddleware, async (ctx: AuthContext) => {
 
     db.prepare(`
   INSERT INTO t_profil_pfl (
-    pfl_nom, pfl_prenom, pfl_date, pfl_mail, cpt_id
-  ) VALUES (?, ?, ?, ?, ?);
+    pfl_nom, pfl_prenom, pfl_date, pfl_mail, pfl_etat, cpt_id
+  ) VALUES (?, ?, ?, ?, ?, ?);
 `).run(
         body.nom,
         body.prenom,
         createdAt,
         body.email,
+        "D",
         cptId,
     );
 

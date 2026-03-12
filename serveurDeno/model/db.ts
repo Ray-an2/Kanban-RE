@@ -26,6 +26,7 @@ export interface ProfilRow {
     pfl_prenom: string;
     pfl_date: string;
     pfl_mail: string;
+    pfl_etat: string;
     cpt_id: string;
     [key: string]: SQLOutputValue; // Index signature
 }
@@ -142,6 +143,7 @@ export function isProfilRow(obj: Record<string, SQLOutputValue>): obj is ProfilR
         "pfl_prenom" in obj && typeof obj.pfl_prenom === "string" &&
         "pfl_date" in obj && typeof obj.pfl_date === "string" &&
         "pfl_mail" in obj && typeof obj.pfl_mail === "string" &&
+        "pfl_etat" in obj && typeof obj.pfl_etat === "string" &&
         "cpt_id" in obj && typeof obj.cpt_id === "string";
 }
 

@@ -15,7 +15,7 @@ CREATE TABLE t_tableau_tab (
   tab_nom TEXT NOT NULL,
   tab_description TEXT,
   tab_date TEXT NOT NULL,
-  tab_etat TEXT NOT NULL,
+  tab_etat TEXT NOT NULL DEFAULT 'A',
   tab_image TEXT,
   PRIMARY KEY (tab_id)
 );
@@ -24,7 +24,7 @@ CREATE TABLE t_liste_lis (
   lis_id TEXT NOT NULL,
   lis_titre TEXT NOT NULL,
   lis_ordre INTEGER NOT NULL,
-  lis_etat TEXT NOT NULL,
+  lis_etat TEXT NOT NULL DEFAULT 'P',
   tab_id TEXT NOT NULL,
   PRIMARY KEY (lis_id),
   FOREIGN KEY (tab_id) REFERENCES t_tableau_tab(tab_id) ON DELETE CASCADE
@@ -34,10 +34,10 @@ CREATE TABLE t_carte_car (
   car_id TEXT NOT NULL,
   car_nom TEXT NOT NULL,
   car_des TEXT,
-  car_archiver TEXT NOT NULL,
-  car_terminer TEXT NOT NULL,
-  car_priorite INTEGER,
-  car_ordre INTEGER NOT NULL,
+  car_archiver TEXT NOT NULL DEFAULT 'N',
+  car_terminer TEXT NOT NULL DEFAULT 'N',
+  car_priorite INTEGER DEFAULT 0,
+  car_ordre INTEGER NOT NULL DEFAULT 0,
   car_dateCreation TEXT NOT NULL,
   car_dateDebut TEXT,
   car_dateFin TEXT,
@@ -85,6 +85,7 @@ CREATE TABLE t_profil_pfl (
   pfl_nom TEXT,
   pfl_prenom TEXT,
   pfl_mail TEXT,
+  pfl_etat TEXT NOT NULL DEFAULT 'D',
   pfl_date TEXT,
   cpt_id TEXT NOT NULL,
   PRIMARY KEY (cpt_id),
@@ -124,11 +125,11 @@ INSERT INTO t_compte_cpt (cpt_id, cpt_pseudo, cpt_mdp, cpt_role) VALUES
   ('cpt_003', 's.bernard', '1a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8', 'U'),
   ('cpt_004', 'p.legrand', '0f1e2d3c4b5a69788796a5b4c3d2e1f00112233445566778899aabbccddeeff', 'U');
 
-INSERT INTO t_profil_pfl (pfl_nom, pfl_prenom, pfl_mail, pfl_date, cpt_id) VALUES
-  ('Martin', 'Alice', 'alice.martin@acme-consulting.fr', '2026-03-01T09:10:00Z', 'cpt_001'),
-  ('Dupont', 'Lucas', 'lucas.dupont@acme-consulting.fr', '2026-03-02T10:05:00Z', 'cpt_002'),
-  ('Bernard', 'Sophie', 'sophie.bernard@acme-consulting.fr', '2026-03-03T08:45:00Z', 'cpt_003'),
-  ('Legrand', 'Paul', 'paul.legrand@acme-consulting.fr', '2026-03-04T11:20:00Z', 'cpt_004');
+INSERT INTO t_profil_pfl (pfl_nom, pfl_prenom, pfl_mail, pfl_etat, pfl_date, cpt_id) VALUES
+  ('Martin', 'Alice', 'alice.martin@acme-consulting.fr', 'D', '2026-03-01T09:10:00Z', 'cpt_001'),
+  ('Dupont', 'Lucas', 'lucas.dupont@acme-consulting.fr', 'D', '2026-03-02T10:05:00Z', 'cpt_002'),
+  ('Bernard', 'Sophie', 'sophie.bernard@acme-consulting.fr', 'D', '2026-03-03T08:45:00Z', 'cpt_003'),
+  ('Legrand', 'Paul', 'paul.legrand@acme-consulting.fr', 'D', '2026-03-04T11:20:00Z', 'cpt_004');
 
 INSERT INTO t_tableau_tab (tab_id, tab_nom, tab_description, tab_date, tab_etat, tab_image) VALUES
   ('tab_roadmap_2026', 'Roadmap Produit 2026', 'Planification des livrables produit pour 2026.', '2026-03-10T09:00:00Z', 'A', 'https://cdn.acme-consulting.fr/boards/roadmap.jpg'),
