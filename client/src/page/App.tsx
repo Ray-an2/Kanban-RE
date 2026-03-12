@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import KanbanBoard from './Tableau.tsx';
 import Log from './Log.tsx';
+import Inscription from './Inscription.tsx';
 import './App.css';
 
 const App: React.FC = () => {
