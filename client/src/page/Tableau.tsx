@@ -2,6 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './App.css';
 
+interface LogEntry {
+  action: string;
+  utilisateur: string;
+  date: string;
+  description: string;
+}
+
 interface Card {
   id: string;
   title: string;
@@ -34,6 +41,17 @@ const Tableau: React.FC = () => {
     },
   ]);
 
+   const [logs, setLogs] = useState<LogEntry[]>([]);
+
+   const addLog = (action: string, description: string) => {
+    const newLog: LogEntry = {
+      action,
+      utilisateur: 'Utilisateur actuel',
+      date: new Date().toLocaleString(),
+      description,
+    };
+    setLogs([...logs, newLog]);
+  };
   const [modal, setModal] = useState<{
     isOpen: boolean;
     title: string;
@@ -111,6 +129,10 @@ const Tableau: React.FC = () => {
     }
 
     setColumns(newColumns);
+     addLog(
+      'Déplacement de carte',
+      `Carte "${draggedCard.title}" déplacée de "${dragSourceColumn}" vers "${columnId}"`
+    );
     setDraggedCard(null);
     setDragSourceColumn(null);
     setDragOverCardId(null);
@@ -127,6 +149,7 @@ const Tableau: React.FC = () => {
       <div className="header">
         <h1>Kanban</h1>
         <button
+          type="button"
           className="log-button"
           onClick={() => navigate('/tableau/log')}
         >
@@ -154,6 +177,7 @@ const Tableau: React.FC = () => {
                   onDragEnd={handleDragEnd}
                 >
                   <button
+                    type="button"
                     className="card-title-button"
                     onClick={(e) => openModal(e, card)}
                   >
@@ -196,6 +220,7 @@ const Tableau: React.FC = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <button
+              type="button"
               style={{
                 position: 'absolute',
                 top: '10px',

@@ -10,6 +10,7 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<KanbanBoard />} />
         <Route path="/tableau/log" element={<Log />} />
+        <Route path="/inscription" element={<Inscription />} />
       </Routes>
     </Router>
   );
