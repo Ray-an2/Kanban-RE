@@ -52,7 +52,7 @@ const TableauPage: React.FC = () => {
   const handleBoardClick = (boardId: string) => {
     navigate(`/tableau/${boardId}`);
   };
-  
+  const pseudo = 'Utilisateur'; 
   return (
     <div className="accueil-container">
       <div className="page-header">
@@ -60,6 +60,9 @@ const TableauPage: React.FC = () => {
         <div className="header-buttons">
           <button type="button" className="add-board-button" onClick={handleAddBoard}>
             + Nouveau Tableau
+          </button>
+          <button type="button" onClick={() => navigate(`/compte/${pseudo}`)} className="account-button">
+            Mon Compte
           </button>
           <button type="button" className="logout-button" onClick={handleLogout}>
             Se déconnecter

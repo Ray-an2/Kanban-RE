@@ -7,6 +7,8 @@ import Connexion from "./Connexion.tsx";
 import TableauPage from "./Accueil.tsx";
 import './App.css';
 import CardDetailsPage from "./Carte.tsx";
+import AccountPage from "./Compte.tsx";
+import Notification from "./Notification.tsx";
 
 const App: React.FC = () => {
   return (
@@ -19,6 +21,8 @@ const App: React.FC = () => {
         <Route path="/login" element={<Connexion />} />
         <Route path="/tableau" element={<TableauPage />} />
         <Route path="/tableau/:id/carte/:id" element={<CardDetailsPage />} />
+        <Route path="/compte/:pseudo" element={<AccountPage />} />
+        <Route path="/notification" element={<Notification />} />
         <Route path="*" element={<h1>Page non trouvée</h1>} />
       </Routes>
     </Router>
