@@ -162,6 +162,13 @@ const Tableau: React.FC = () => {
         >
           Inscription
         </button>
+        <button
+          type="button"
+          className="login-button"
+          onClick={() => navigate('/login')}
+        >
+          Connexion
+        </button>
       </div>
       <div className="board">
         {columns.map((column) => (
