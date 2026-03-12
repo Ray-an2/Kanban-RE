@@ -6,7 +6,7 @@ import type { APIResponse } from '../model/api.ts';
 import { isAuthResponse } from '../model/auth.ts';
 import { useAuth } from '../hooks/useAuth.ts';
 
-const API_URL = 'http://localhost:8000';
+const API_URL = import.meta.env.VITE_API_URL;
 
 interface FormData {
   pseudo: string;
