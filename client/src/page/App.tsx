@@ -1,10 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import KanbanBoard from './Tableau.tsx';
+import KanbanBoard from '../components/Tableau.tsx';
 import Log from './Log.tsx';
 import Inscription from './Inscription.tsx';
 import Connexion from "./Connexion.tsx";
-import Accueil from "./Accueil.tsx";
+import Accueil from "../components/TableauListe.tsx";
 import './App.css';
 
 const App: React.FC = () => {
