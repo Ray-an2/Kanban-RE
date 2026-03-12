@@ -3,5 +3,5 @@ export interface Notification {
     not_titre: string;
     not_lien: string;
     not_date: string;
-    cpt_pseudo: string;
+    cpt_id: string | null;
 }

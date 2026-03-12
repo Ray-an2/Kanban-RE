@@ -20,7 +20,8 @@ export interface AuthResponse {
 }
 
 export interface AuthPayload {
-    pseudo: string;
+    cpt_id: string;
+    cpt_pseudo: string;
     role: string;
     exp: number;
 }
@@ -38,7 +39,8 @@ export function isAuthPayload(value: unknown): value is AuthPayload {
     return (
         typeof value === "object" &&
         value !== null &&
-        typeof (value as any).pseudo === "string" &&
+        typeof (value as any).cpt_id === "string" &&
+        typeof (value as any).cpt_pseudo === "string" &&
         typeof (value as any).role === "string" &&
         typeof (value as any).exp === "number"
     );

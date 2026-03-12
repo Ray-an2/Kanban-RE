@@ -13,6 +13,7 @@ import { Notification } from "./notification.ts";
  */
 // Compte
 export interface CompteRow {
+    cpt_id: string;
     cpt_pseudo: string;
     cpt_mdp: string;
     cpt_role: string;
@@ -23,15 +24,15 @@ export interface CompteRow {
 export interface ProfilRow {
     pfl_nom: string;
     pfl_prenom: string;
-    pfl_dateCreation: string;
+    pfl_date: string;
     pfl_mail: string;
-    cpt_pseudo: string;
+    cpt_id: string;
     [key: string]: SQLOutputValue; // Index signature
 }
 
 // Role (compte <-> tableau)
 export interface RoleRow {
-    cpt_pseudo: string;
+    cpt_id: string;
     tab_id: string;
     rol_role: string;
     [key: string]: SQLOutputValue; // Index signature
@@ -39,7 +40,7 @@ export interface RoleRow {
 
 // Membre (compte <-> carte)
 export interface MembreRow {
-    cpt_pseudo: string;
+    cpt_id: string;
     car_id: string;
     mem_date: string;
     [key: string]: SQLOutputValue; // Index signature
@@ -81,6 +82,7 @@ export interface CarteRow {
     car_archiver: string;
     car_terminer: string;
     car_priorite: number | null;
+    car_ordre: number;
     car_dateCreation: string;
     car_dateDebut: string | null;
     car_dateFin: string | null;
@@ -115,7 +117,7 @@ export interface NotificationRow {
     not_titre: string;
     not_date: string;
     not_lien: string;
-    cpt_pseudo: string;
+    cpt_id: string | null;
     [key: string]: SQLOutputValue; // Index signature
 }
 
@@ -126,6 +128,7 @@ export interface NotificationRow {
 export function isCompteRow(obj: Record<string, SQLOutputValue>): obj is CompteRow {
     return !!obj &&
         typeof obj === "object" &&
+        "cpt_id" in obj && typeof obj.cpt_id === "string" &&
         "cpt_pseudo" in obj && typeof obj.cpt_pseudo === "string" &&
         "cpt_mdp" in obj && typeof obj.cpt_mdp === "string" &&
         "cpt_role" in obj && typeof obj.cpt_role === "string";
@@ -137,16 +140,16 @@ export function isProfilRow(obj: Record<string, SQLOutputValue>): obj is ProfilR
         typeof obj === "object" &&
         "pfl_nom" in obj && typeof obj.pfl_nom === "string" &&
         "pfl_prenom" in obj && typeof obj.pfl_prenom === "string" &&
-        "pfl_dateCreation" in obj && typeof obj.pfl_dateCreation === "string" &&
+        "pfl_date" in obj && typeof obj.pfl_date === "string" &&
         "pfl_mail" in obj && typeof obj.pfl_mail === "string" &&
-        "cpt_pseudo" in obj && typeof obj.cpt_pseudo === "string";
+        "cpt_id" in obj && typeof obj.cpt_id === "string";
 }
 
 // Role
 export function isRoleRow(obj: Record<string, SQLOutputValue>): obj is RoleRow {
     return !!obj &&
         typeof obj === "object" &&
-        "cpt_pseudo" in obj && typeof obj.cpt_pseudo === "string" &&
+        "cpt_id" in obj && typeof obj.cpt_id === "string" &&
         "tab_id" in obj && typeof obj.tab_id === "string" &&
         "rol_role" in obj && typeof obj.rol_role === "string";
 }
@@ -155,7 +158,7 @@ export function isRoleRow(obj: Record<string, SQLOutputValue>): obj is RoleRow {
 export function isMembreRow(obj: Record<string, SQLOutputValue>): obj is MembreRow {
     return !!obj &&
         typeof obj === "object" &&
-        "cpt_pseudo" in obj && typeof obj.cpt_pseudo === "string" &&
+        "cpt_id" in obj && typeof obj.cpt_id === "string" &&
         "car_id" in obj && typeof obj.car_id === "string" &&
         "mem_date" in obj && typeof obj.mem_date === "string";
 }
@@ -201,6 +204,7 @@ export function isCarteRow(obj: Record<string, SQLOutputValue>): obj is CarteRow
         "car_archiver" in obj && typeof obj.car_archiver === "string" &&
         "car_terminer" in obj && typeof obj.car_terminer === "string" &&
         "car_priorite" in obj && (typeof obj.car_priorite === "number" || obj.car_priorite === null) &&
+        "car_ordre" in obj && typeof obj.car_ordre === "number" &&
         "car_dateCreation" in obj && typeof obj.car_dateCreation === "string" &&
         "car_dateDebut" in obj && (typeof obj.car_dateDebut === "string" || obj.car_dateDebut === null) &&
         "car_dateFin" in obj && (typeof obj.car_dateFin === "string" || obj.car_dateFin === null) &&
@@ -238,7 +242,7 @@ export function isNotificationRow(obj: Record<string, SQLOutputValue>): obj is N
         "not_titre" in obj && (typeof obj.not_titre === "string" || obj.not_titre === null) &&
         "not_date" in obj && typeof obj.not_date === "string" &&
         "not_lien" in obj && (typeof obj.not_lien === "string" || obj.not_lien === null) &&
-        "cpt_pseudo" in obj && (typeof obj.cpt_pseudo === "string" || obj.cpt_pseudo === null);
+        "cpt_id" in obj && (typeof obj.cpt_id === "string" || obj.cpt_id === null);
 }
 
 // Message ...
@@ -250,6 +254,7 @@ export function isNotificationRow(obj: Record<string, SQLOutputValue>): obj is N
 // Compte vers API
 export function compteRowToApi(row: CompteRow): User {
     return {
+        cpt_id: row.cpt_id,
         cpt_pseudo: row.cpt_pseudo,
         cpt_role: row.cpt_role,
     };
@@ -287,6 +292,7 @@ export function carteRowToApi(row: CarteRow): Carte {
         car_archiver: row.car_archiver,
         car_terminer: row.car_terminer,
         car_priorite: row.car_priorite ?? 0,
+        car_ordre: row.car_ordre,
         car_date_creation: row.car_dateCreation,
         car_date_debut: row.car_dateDebut ?? "",
         car_date_fin: row.car_dateFin ?? "",
@@ -323,6 +329,6 @@ export function notificationRowToApi(row: NotificationRow): Notification {
         not_titre: row.not_titre,
         not_lien: row.not_lien,
         not_date: row.not_date,
-        cpt_pseudo: row.cpt_pseudo,
+        cpt_id: row.cpt_id,
     };
 }

@@ -5,6 +5,7 @@ export interface Carte {
     car_archiver: string;
     car_terminer: string;
     car_priorite: number;
+    car_ordre: number;
     car_date_creation: string;
     car_date_debut: string;
     car_date_fin: string;
