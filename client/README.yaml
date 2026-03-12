@@ -6,7 +6,8 @@ info:
 servers:
   - url: 'http://localhost:5173'    # URL provisoire avant le déploiement.
 paths:
-  /login:
+
+  auth/login:
     get:
       summary: Page de connexion
       description: Route publique vers la page de connexion.
@@ -34,7 +35,7 @@ paths:
           description: Authentification réussie et accès au tableau.
         '401':
           description: (UNAUTHORIZED) identifiants invalides.
-  /inscription:
+  auth/inscription:
     get:
       summary: Page d'inscription
       description: Route publique vers la page d'inscription.
@@ -109,7 +110,7 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  /tableau/{id}/log:
+  /tableau/{tabId}/log:
     get:
       summary: Logs par tableau
       description: Route protégée vers la page Log pour un tableau donné.
@@ -133,7 +134,7 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  /tableau/{id}:
+  /tableau/{tabId}:
     get:
       summary: Tableau
       description: Route protégée vers la page Tableau.
@@ -525,19 +526,19 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  /compte/{pseudo}:
+  /compte/{id}:
     get:
       summary: Compte utilisateur
       description: Route protégée vers la page compte.
       security:
         - bearerAuth: []
       parameters:
-        - name: pseudo
+        - name: id
           in: path
           required: true
           schema:
             type: string
-          description: Pseudo de l'utilisateur.
+          description: Identifiant du compte (cpt_id).
       responses:
         '200':
           description: Affiche la page compte de l'utilisateur.
@@ -547,6 +548,207 @@ paths:
           description: (NOT_FOUND) ressource introuvable.
         '408':
           description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /admin/comptes:
+    get:
+      summary: Gestion des comptes (admin)
+      description: Route protégée vers la page de gestion des comptes (admin uniquement).
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Affiche la page de gestion des comptes.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '403':
+          description: (ROLE_UNAUTHORIZED) rôle insuffisant.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /users:
+    get:
+      summary: Liste des comptes (admin)
+      description: Récupère la liste des comptes (admin uniquement).
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Liste des comptes récupérée.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '403':
+          description: (ROLE_UNAUTHORIZED) rôle insuffisant.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    post:
+      summary: Création de compte (admin)
+      description: Crée un compte utilisateur (admin uniquement).
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateRequest'
+      responses:
+        '201':
+          description: Compte créé.
+        '400':
+          description: (BAD_REQUEST) données invalides.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '403':
+          description: (ROLE_UNAUTHORIZED) rôle insuffisant.
+        '409':
+          description: (VALIDATION_ERROR) pseudo déjà utilisé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /user/{id}:
+    get:
+      summary: Détails d'un compte (admin)
+      description: Récupère un compte (admin uniquement).
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du compte (cpt_id).
+      responses:
+        '200':
+          description: Compte récupéré.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '403':
+          description: (ROLE_UNAUTHORIZED) rôle insuffisant.
+        '404':
+          description: (NOT_FOUND) ressource introuvable.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    put:
+      summary: Mise à jour d'un compte (admin)
+      description: Met à jour un compte (admin uniquement).
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du compte (cpt_id).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequest'
+      responses:
+        '200':
+          description: Compte mis à jour.
+        '400':
+          description: (BAD_REQUEST) données invalides.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '403':
+          description: (ROLE_UNAUTHORIZED) rôle insuffisant.
+        '404':
+          description: (NOT_FOUND) ressource introuvable.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    delete:
+      summary: Suppression d'un compte (admin)
+      description: Supprime un compte (admin uniquement).
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du compte (cpt_id).
+      responses:
+        '204':
+          description: Compte supprimé.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '403':
+          description: (ROLE_UNAUTHORIZED) rôle insuffisant.
+        '404':
+          description: (NOT_FOUND) ressource introuvable.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /user/{id}/profile:
+    put:
+      summary: Modification du profil
+      description: Met à jour le profil de l'utilisateur connecté.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileUpdateRequest'
+      responses:
+        '200':
+          description: Profil mis à jour.
+        '400':
+          description: (BAD_REQUEST) données invalides.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressource introuvable.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /user/{id}/password:
+    put:
+      summary: Modification du mot de passe
+      description: Met à jour le mot de passe de l'utilisateur connecté.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordUpdateRequest'
+      responses:
+        '200':
+          description: Mot de passe mis à jour.
+        '400':
+          description: (BAD_REQUEST) données invalides.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /user/{id}/pseudo:
+    put:
+      summary: Modification du pseudo
+      description: Met à jour le pseudo de l'utilisateur connecté.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PseudoUpdateRequest'
+      responses:
+        '200':
+          description: Pseudo mis à jour.
+        '400':
+          description: (BAD_REQUEST) données invalides.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '409':
+          description: (VALIDATION_ERROR) pseudo déjà utilisé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
   /notification:
@@ -562,6 +764,119 @@ paths:
           description: (UNAUTHORIZED) non autorisé.
         '408':
           description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /notifications:
+    get:
+      summary: Liste des notifications
+      description: Récupère les notifications de l'utilisateur (ou toutes si admin).
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Notifications récupérées.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    post:
+      summary: Création d'une notification
+      description: Crée une notification (admin ou utilisateur pour lui-même).
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationCreateRequest'
+      responses:
+        '201':
+          description: Notification créée.
+        '400':
+          description: (BAD_REQUEST) données invalides.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '403':
+          description: (ROLE_UNAUTHORIZED) rôle insuffisant.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /notification/{id}:
+    get:
+      summary: Détails d'une notification
+      description: Récupère une notification.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant de la notification.
+      responses:
+        '200':
+          description: Notification récupérée.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '403':
+          description: (ROLE_UNAUTHORIZED) rôle insuffisant.
+        '404':
+          description: (NOT_FOUND) ressource introuvable.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    put:
+      summary: Mise à jour d'une notification
+      description: Met à jour une notification.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant de la notification.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationUpdateRequest'
+      responses:
+        '200':
+          description: Notification mise à jour.
+        '400':
+          description: (BAD_REQUEST) données invalides.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '403':
+          description: (ROLE_UNAUTHORIZED) rôle insuffisant.
+        '404':
+          description: (NOT_FOUND) ressource introuvable.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    delete:
+      summary: Suppression d'une notification
+      description: Supprime une notification.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant de la notification.
+      responses:
+        '204':
+          description: Notification supprimée.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '403':
+          description: (ROLE_UNAUTHORIZED) rôle insuffisant.
+        '404':
+          description: (NOT_FOUND) ressource introuvable.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
 
@@ -586,7 +901,7 @@ components:
 
     RegisterRequest:
       type: object
-      required: [pseudo, motDePasse, email]
+      required: [pseudo, motDePasse, email, nom, prenom]
       properties:
         pseudo:
           type: string
@@ -599,12 +914,127 @@ components:
           type: string
           format: email
           description: Adresse e-mail.
-        Nom:
+        nom:
           type: string
           description: Nom de famille.
-        Prenom:
+        prenom:
           type: string
           description: Prénom.
+    UserCreateRequest:
+      type: object
+      required: [pseudo, motDePasse, email, nom, prenom]
+      properties:
+        pseudo:
+          type: string
+          description: Pseudo utilisateur.
+        motDePasse:
+          type: string
+          format: password
+          description: Mot de passe.
+        email:
+          type: string
+          format: email
+          description: Adresse e-mail.
+        nom:
+          type: string
+          description: Nom de famille.
+        prenom:
+          type: string
+          description: Prénom.
+        role:
+          type: string
+          description: Rôle (A ou U).
+    UserUpdateRequest:
+      type: object
+      properties:
+        pseudo:
+          type: string
+          description: Nouveau pseudo.
+        motDePasse:
+          type: string
+          format: password
+          description: Nouveau mot de passe.
+        role:
+          type: string
+          description: Nouveau rôle (A ou U).
+        nom:
+          type: string
+          description: Nom de famille.
+        prenom:
+          type: string
+          description: Prénom.
+        email:
+          type: string
+          format: email
+          description: Adresse e-mail.
+    ProfileUpdateRequest:
+      type: object
+      properties:
+        nom:
+          type: string
+          description: Nom de famille.
+        prenom:
+          type: string
+          description: Prénom.
+        email:
+          type: string
+          format: email
+          description: Adresse e-mail.
+    PasswordUpdateRequest:
+      type: object
+      required: [ancienMotDePasse, nouveauMotDePasse]
+      properties:
+        ancienMotDePasse:
+          type: string
+          format: password
+          description: Mot de passe actuel.
+        nouveauMotDePasse:
+          type: string
+          format: password
+          description: Nouveau mot de passe.
+    PseudoUpdateRequest:
+      type: object
+      required: [nouveauPseudo, motDePasse]
+      properties:
+        nouveauPseudo:
+          type: string
+          description: Nouveau pseudo.
+        motDePasse:
+          type: string
+          format: password
+          description: Mot de passe pour validation.
+    NotificationCreateRequest:
+      type: object
+      properties:
+        titre:
+          type: string
+          description: Titre de la notification.
+        lien:
+          type: string
+          description: Lien associé.
+        date:
+          type: string
+          format: date-time
+          description: Date de la notification.
+        cpt_id:
+          type: string
+          description: Identifiant du compte cible (admin uniquement).
+    NotificationUpdateRequest:
+      type: object
+      properties:
+        titre:
+          type: string
+          description: Titre de la notification.
+        lien:
+          type: string
+          description: Lien associé.
+        date:
+          type: string
+          format: date-time
+          description: Date de la notification.
+        cpt_id:
+          type: string
+          description: Identifiant du compte cible (admin uniquement).
 
     TableauCreateRequest:
       type: object
@@ -685,6 +1115,9 @@ components:
         car_priorite:
           type: integer
           description: Priorite de la carte allant de 0 (forte priorité) à N-1 carte (basse priorité).
+        car_ordre:
+          type: integer
+          description: Ordre d'affichage de la carte allant de 0 (haut de la liste) à N-1 cartes.
         car_date_creation:
           type: string
           format: date-time
@@ -719,6 +1152,9 @@ components:
         car_priorite:
           type: integer
           description: Priorite de la carte.
+        car_ordre:
+          type: integer
+          description: Ordre d'affichage de la carte dans la liste.
         car_date_creation:
           type: string
           format: date-time

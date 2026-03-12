@@ -108,6 +108,7 @@ car_description : VARCHAR(500)
 car_archiver : CHAR(1)
 car_terminer : CHAR(1)
 car_priorite : tinyint
+car_ordre : tinyint
 car_date_création : DATETIME
 car_date_début : DATETIME
 car_date_fin : DATETIME
