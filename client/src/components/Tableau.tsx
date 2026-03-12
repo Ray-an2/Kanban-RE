@@ -143,7 +143,7 @@ const Tableau: React.FC = () => {
     setDragSourceColumn(null);
     setDragOverCardId(null);
   };
-
+  const id='1';
   return (
     <div className="app">
       <div className="header">
@@ -151,7 +151,7 @@ const Tableau: React.FC = () => {
         <button
           type="button"
           className="log-button"
-          onClick={() => navigate('/tableau/log')}
+          onClick={() => navigate(`/tableau/${id}/log`)}
         >
           Voir les logs
         </button>
