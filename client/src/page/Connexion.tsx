@@ -152,7 +152,7 @@ const Connexion: React.FC = () => {
 
         <div className="register-link">
           <p>Vous n'avez pas de compte ?</p>
-          <button type="button" className="link-button" onClick={() => navigate('/inscription')}>
+          <button type="button" className="link-button" onClick={() => navigate('/auth/inscription')}>
             S'inscrire
           </button>
           <button
