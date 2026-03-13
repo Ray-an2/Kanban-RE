@@ -211,9 +211,9 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  api/liste:
+  api/tableau/{tabId}/liste:
     get:
-      summary: Affiches tous les Listes d'un tableau
+      summary: Affiches tous les listes d'un tableau
       description: Route protégée pour récupérer les listes d'un tableau.
       security:
         - bearerAuth: []
@@ -266,7 +266,7 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  api/liste/{lisId}:
+  api/tableau/{tabId}/liste/{lisId}:
     get:
       summary: Détails d'une liste
       description: Route protégée pour récupérer une liste.
@@ -362,7 +362,7 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  api/liste/{lisId}/carte:
+  api/tableau/{tabId}/liste/{lisId}/carte:
     get:
       summary: Cartes d'une liste
       description: Route protégée pour récupérer les cartes d'une liste.
@@ -429,7 +429,7 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  api/carte/{carId}:
+  api/tableau/{tabId}/carte/{carId}:
     get:
       summary: Carte
       description: Route protégée vers la page Carte.

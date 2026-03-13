@@ -33,14 +33,14 @@ CREATE TABLE t_liste_lis (
 CREATE TABLE t_carte_car (
   car_id TEXT NOT NULL,
   car_nom TEXT NOT NULL,
-  car_des TEXT,
+  car_description TEXT,
   car_archiver TEXT NOT NULL DEFAULT 'N',
   car_terminer TEXT NOT NULL DEFAULT 'N',
+  car_ordre TEXT NOT NULL DEFAULT '0',
   car_priorite INTEGER DEFAULT 0,
-  car_ordre INTEGER NOT NULL DEFAULT 0,
-  car_dateCreation TEXT NOT NULL,
-  car_dateDebut TEXT,
-  car_dateFin TEXT,
+  car_date_creation TEXT NOT NULL,
+  car_date_debut TEXT,
+  car_date_fin TEXT,
   car_couverture TEXT,
   lis_id TEXT NOT NULL,
   PRIMARY KEY (car_id),
@@ -55,9 +55,9 @@ CREATE TABLE t_etiquette_eti (
 );
 
 CREATE TABLE t_associer_as (
-  eti_id TEXT NOT NULL,
   car_id TEXT NOT NULL,
-  PRIMARY KEY (eti_id, car_id),
+  eti_id TEXT NOT NULL,
+  PRIMARY KEY (car_id, eti_id),
   FOREIGN KEY (car_id) REFERENCES t_carte_car(car_id) ON DELETE CASCADE,
   FOREIGN KEY (eti_id) REFERENCES t_etiquette_eti(eti_id) ON DELETE CASCADE
 );
@@ -86,7 +86,7 @@ CREATE TABLE t_profil_pfl (
   pfl_prenom TEXT,
   pfl_mail TEXT,
   pfl_etat TEXT NOT NULL DEFAULT 'D',
-  pfl_date TEXT,
+  pfl_dateCreation TEXT,
   cpt_id TEXT NOT NULL,
   PRIMARY KEY (cpt_id),
   FOREIGN KEY (cpt_id) REFERENCES t_compte_cpt(cpt_id) ON DELETE CASCADE
@@ -109,6 +109,8 @@ CREATE TABLE t_journal_jou (
   jou_action TEXT NOT NULL,
   jou_date TEXT NOT NULL,
   jou_etat TEXT NOT NULL,
+  tab_id TEXT,
+  car_id TEXT,
   PRIMARY KEY (jou_id)
 );
 
@@ -125,7 +127,7 @@ INSERT INTO t_compte_cpt (cpt_id, cpt_pseudo, cpt_mdp, cpt_role) VALUES
   ('cpt_003', 's.bernard', '1a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8', 'U'),
   ('cpt_004', 'p.legrand', '0f1e2d3c4b5a69788796a5b4c3d2e1f00112233445566778899aabbccddeeff', 'U');
 
-INSERT INTO t_profil_pfl (pfl_nom, pfl_prenom, pfl_mail, pfl_etat, pfl_date, cpt_id) VALUES
+INSERT INTO t_profil_pfl (pfl_nom, pfl_prenom, pfl_mail, pfl_etat, pfl_dateCreation, cpt_id) VALUES
   ('Martin', 'Alice', 'alice.martin@acme-consulting.fr', 'D', '2026-03-01T09:10:00Z', 'cpt_001'),
   ('Dupont', 'Lucas', 'lucas.dupont@acme-consulting.fr', 'D', '2026-03-02T10:05:00Z', 'cpt_002'),
   ('Bernard', 'Sophie', 'sophie.bernard@acme-consulting.fr', 'D', '2026-03-03T08:45:00Z', 'cpt_003'),
@@ -152,20 +154,20 @@ INSERT INTO t_liste_lis (lis_id, lis_titre, lis_ordre, lis_etat, tab_id) VALUES
   ('lis_onb_fait', 'Fait', 3, 'A', 'tab_client_onboarding');
 
 INSERT INTO t_carte_car (
-  car_id, car_nom, car_des, car_archiver, car_terminer, car_priorite,
-  car_ordre, car_dateCreation, car_dateDebut, car_dateFin, car_couverture, lis_id
+  car_id, car_nom, car_description, car_archiver, car_terminer, car_ordre,
+  car_priorite, car_date_creation, car_date_debut, car_date_fin, car_couverture, lis_id
 ) VALUES
-  ('car_spec_api', 'Spécification API v2', 'Rédiger les spécifications fonctionnelles et techniques.', '0', '0', 2, 0,
+  ('car_spec_api', 'Spécification API v2', 'Rédiger les spécifications fonctionnelles et techniques.', '0', '0', '0', 2,
    '2026-03-10T10:00:00Z', '2026-03-10T11:00:00Z', NULL, NULL, 'lis_rm_backlog'),
-  ('car_design_system', 'Design system', 'Définir les composants UI réutilisables.', '0', '0', 3, 0,
+  ('car_design_system', 'Design system', 'Définir les composants UI réutilisables.', '0', '0', '0', 3,
    '2026-03-10T10:30:00Z', '2026-03-11T09:00:00Z', NULL, NULL, 'lis_rm_en_cours'),
-  ('car_release_notes', 'Release notes Q1', 'Préparer les notes de version pour le Q1.', '0', '1', 1, 0,
+  ('car_release_notes', 'Release notes Q1', 'Préparer les notes de version pour le Q1.', '0', '1', '0', 1,
    '2026-03-05T08:20:00Z', '2026-03-06T09:00:00Z', '2026-03-07T16:00:00Z', NULL, 'lis_rm_termine'),
-  ('car_kickoff', 'Réunion de lancement', 'Organiser la réunion de lancement du client.', '0', '0', 2, 0,
+  ('car_kickoff', 'Réunion de lancement', 'Organiser la réunion de lancement du client.', '0', '0', '0', 2,
    '2026-03-09T15:00:00Z', '2026-03-10T09:30:00Z', NULL, NULL, 'lis_onb_a_faire'),
-  ('car_access_setup', 'Création des accès', 'Créer les comptes et accès aux outils.', '0', '0', 3, 0,
+  ('car_access_setup', 'Création des accès', 'Créer les comptes et accès aux outils.', '0', '0', '0', 3,
    '2026-03-09T16:10:00Z', '2026-03-11T09:30:00Z', NULL, NULL, 'lis_onb_en_cours'),
-  ('car_training', 'Session de formation', 'Préparer le support et planifier la formation.', '0', '1', 1, 0,
+  ('car_training', 'Session de formation', 'Préparer le support et planifier la formation.', '0', '1', '0', 1,
    '2026-03-02T09:00:00Z', '2026-03-03T10:00:00Z', '2026-03-04T12:00:00Z', NULL, 'lis_onb_fait');
 
 INSERT INTO t_etiquette_eti (eti_id, eti_nom, eti_couleur) VALUES
@@ -174,12 +176,12 @@ INSERT INTO t_etiquette_eti (eti_id, eti_nom, eti_couleur) VALUES
   ('eti_urgent', 'Urgent', '#F0AD4E'),
   ('eti_doc', 'Documentation', '#5BC0DE');
 
-INSERT INTO t_associer_as (eti_id, car_id) VALUES
-  ('eti_feature', 'car_spec_api'),
-  ('eti_doc', 'car_spec_api'),
-  ('eti_feature', 'car_design_system'),
-  ('eti_urgent', 'car_access_setup'),
-  ('eti_doc', 'car_release_notes');
+INSERT INTO t_associer_as (car_id, eti_id) VALUES
+  ('car_spec_api', 'eti_feature'),
+  ('car_spec_api', 'eti_doc'),
+  ('car_design_system', 'eti_feature'),
+  ('car_access_setup', 'eti_urgent'),
+  ('car_release_notes', 'eti_doc');
 
 INSERT INTO t_membre_mem (cpt_id, car_id, mem_date) VALUES
   ('cpt_001', 'car_spec_api', '2026-03-10T10:05:00Z'),
@@ -191,9 +193,11 @@ INSERT INTO t_notification_not (not_id, not_titre, not_date, not_lien, cpt_id) V
   ('not_001', 'Nouvelle carte assignée', '2026-03-11T10:01:00Z', '/tableau/tab_client_onboarding', 'cpt_003'),
   ('not_002', 'Carte terminée', '2026-03-07T16:05:00Z', '/tableau/tab_roadmap_2026', 'cpt_001');
 
-INSERT INTO t_journal_jou (jou_id, jou_titre, jou_description, jou_auteur, jou_action, jou_date, jou_etat) VALUES
-  ('jou_001', 'Création tableau', 'Création du tableau Roadmap Produit 2026.', 'a.martin', 'CREATE_BOARD', '2026-03-10T09:00:00Z', 'A'),
-  ('jou_002', 'Carte déplacée', 'La carte Design system est passée en En cours.', 'l.dupont', 'MOVE_CARD', '2026-03-11T09:15:00Z', 'A'),
-  ('jou_003', 'Carte terminée', 'La carte Release notes Q1 est terminée.', 'a.martin', 'COMPLETE_CARD', '2026-03-07T16:00:00Z', 'A');
+INSERT INTO t_journal_jou (
+  jou_id, jou_titre, jou_description, jou_auteur, jou_action, jou_date, jou_etat, tab_id, car_id
+) VALUES
+  ('jou_001', 'Création tableau', 'Création du tableau Roadmap Produit 2026.', 'a.martin', 'CREATE_BOARD', '2026-03-10T09:00:00Z', 'A', 'tab_roadmap_2026', NULL),
+  ('jou_002', 'Carte déplacée', 'La carte Design system est passée en En cours.', 'l.dupont', 'MOVE_CARD', '2026-03-11T09:15:00Z', 'A', 'tab_roadmap_2026', 'car_design_system'),
+  ('jou_003', 'Carte terminée', 'La carte Release notes Q1 est terminée.', 'a.martin', 'COMPLETE_CARD', '2026-03-07T16:00:00Z', 'A', 'tab_roadmap_2026', 'car_release_notes');
 
 COMMIT;

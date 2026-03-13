@@ -5,7 +5,7 @@
     <id>UMLClass</id>
     <coordinates>
       <x>763</x>
-      <y>203</y>
+      <y>259</y>
       <w>301</w>
       <h>231</h>
     </coordinates>
@@ -38,7 +38,7 @@ _+ idCarte : string_
     <id>UMLClass</id>
     <coordinates>
       <x>420</x>
-      <y>21</y>
+      <y>77</y>
       <w>336</w>
       <h>119</h>
     </coordinates>
@@ -59,7 +59,7 @@ _+ idCompte : string_
     <id>UMLClass</id>
     <coordinates>
       <x>63</x>
-      <y>203</y>
+      <y>259</y>
       <w>245</w>
       <h>175</h>
     </coordinates>
@@ -86,7 +86,7 @@ description : string, image : string) : void
     <id>UMLClass</id>
     <coordinates>
       <x>385</x>
-      <y>406</y>
+      <y>462</y>
       <w>294</w>
       <h>105</h>
     </coordinates>
@@ -105,7 +105,7 @@ _+ idDocument : string_
     <id>UMLClass</id>
     <coordinates>
       <x>889</x>
-      <y>525</y>
+      <y>581</y>
       <w>301</w>
       <h>105</h>
     </coordinates>
@@ -125,9 +125,9 @@ _+ idEtiquette : string_
     <id>UMLClass</id>
     <coordinates>
       <x>322</x>
-      <y>539</y>
+      <y>595</y>
       <w>448</w>
-      <h>119</h>
+      <h>140</h>
     </coordinates>
     <panel_attributes>Journal
 --
@@ -138,6 +138,8 @@ _+ idJournal : string_
 + action : string
 + date : Date
 + etat : string
++ tab_id : string
++ car_id : string
 --
 + ajouterJournal(titre : string, description : string, auteur : string, action : string) : Journal
 </panel_attributes>
@@ -147,7 +149,7 @@ _+ idJournal : string_
     <id>UMLClass</id>
     <coordinates>
       <x>392</x>
-      <y>203</y>
+      <y>259</y>
       <w>280</w>
       <h>168</h>
     </coordinates>
@@ -172,7 +174,7 @@ _+ idListe : string_
     <id>Relation</id>
     <coordinates>
       <x>182</x>
-      <y>133</y>
+      <y>189</y>
       <w>336</w>
       <h>84</h>
     </coordinates>
@@ -186,7 +188,7 @@ créer</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>693</x>
-      <y>133</y>
+      <y>189</y>
       <w>238</w>
       <h>84</h>
     </coordinates>
@@ -200,7 +202,7 @@ membre de</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>301</x>
-      <y>238</y>
+      <y>294</y>
       <w>105</w>
       <h>35</h>
     </coordinates>
@@ -214,7 +216,7 @@ contient</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>665</x>
-      <y>238</y>
+      <y>294</y>
       <w>112</w>
       <h>35</h>
     </coordinates>
@@ -228,7 +230,7 @@ contient</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>672</x>
-      <y>343</y>
+      <y>399</y>
       <w>105</w>
       <h>126</h>
     </coordinates>
@@ -242,7 +244,7 @@ associé à</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>980</x>
-      <y>427</y>
+      <y>483</y>
       <w>77</w>
       <h>112</h>
     </coordinates>
@@ -256,7 +258,7 @@ appartient à</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>168</x>
-      <y>371</y>
+      <y>427</y>
       <w>168</w>
       <h>245</h>
     </coordinates>
@@ -267,7 +269,7 @@ appartient à</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>763</x>
-      <y>427</y>
+      <y>483</y>
       <w>98</w>
       <h>189</h>
     </coordinates>
@@ -278,7 +280,7 @@ appartient à</panel_attributes>
     <id>UMLClass</id>
     <coordinates>
       <x>0</x>
-      <y>0</y>
+      <y>56</y>
       <w>308</w>
       <h>154</h>
     </coordinates>
@@ -303,7 +305,7 @@ mail : string) : string
     <id>Relation</id>
     <coordinates>
       <x>301</x>
-      <y>70</y>
+      <y>126</y>
       <w>133</w>
       <h>35</h>
     </coordinates>
@@ -317,7 +319,7 @@ possède</panel_attributes>
     <id>UMLClass</id>
     <coordinates>
       <x>1127</x>
-      <y>329</y>
+      <y>385</y>
       <w>301</w>
       <h>112</h>
     </coordinates>
@@ -337,7 +339,7 @@ _+ idCommentaire : string_
     <id>Relation</id>
     <coordinates>
       <x>1057</x>
-      <y>273</y>
+      <y>329</y>
       <w>252</w>
       <h>70</h>
     </coordinates>
@@ -351,7 +353,7 @@ contient</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>749</x>
-      <y>49</y>
+      <y>105</y>
       <w>168</w>
       <h>35</h>
     </coordinates>
@@ -365,14 +367,15 @@ contient</panel_attributes>
     <id>UMLClass</id>
     <coordinates>
       <x>903</x>
-      <y>14</y>
+      <y>70</y>
       <w>301</w>
-      <h>112</h>
+      <h>119</h>
     </coordinates>
-    <panel_attributes>Notisfication
+    <panel_attributes>Notification
 --
 _+ idNotification : string_
 + titre : string
++ etat : string
 + lien : string
 + dateCreation : Date
 --
