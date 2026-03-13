@@ -179,7 +179,7 @@ const UserManagementPage: React.FC = () => {
       user: { bg: '#42A5F5', color: '#FFFFFF' }
     };
 
-    const color = colors[role] || { bg: '#CCCCCC', color: '#000000' };
+    const color = colors[role] || { bg: '#2e2727', color: '#000000' };
 
     return {
       padding: '4px 8px',
@@ -198,7 +198,7 @@ const UserManagementPage: React.FC = () => {
         <h1 style={{ margin: 0, color: '#2c3e50' }}>Gestion des utilisateurs</h1>
         <button
           type = "button"
-          onClick={() => navigate('/accueil')}
+          onClick={() => navigate('/api/tableau')}
           style={{
             padding: '8px 16px',
             backgroundColor: '#3498db',
@@ -256,7 +256,7 @@ const UserManagementPage: React.FC = () => {
         }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ backgroundColor: '#f8f9fa' }}>
+              <tr style={{ backgroundColor: '#1c1c1d' }}>
                 <th style={{ padding: '12px 15px', textAlign: 'left', fontWeight: '600' }}>ID</th>
                 <th style={{ padding: '12px 15px', textAlign: 'left', fontWeight: '600' }}>Pseudo</th>
                 <th style={{ padding: '12px 15px', textAlign: 'left', fontWeight: '600' }}>Nom</th>
@@ -272,6 +272,7 @@ const UserManagementPage: React.FC = () => {
                 <tr
                   key={user.cpt_id}
                   style={{
+                    color:'black',
                     borderBottom: '1px solid #eee',
                     transition: 'background-color 0.2s',
                   }}

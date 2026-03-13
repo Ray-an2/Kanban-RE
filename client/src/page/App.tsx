@@ -9,6 +9,7 @@ import CardDetailsPage from "./CarteDetails.tsx";
 import AccountPage from "./Compte.tsx";
 import Notification from "./Notification.tsx";
 import AdminLogsPage from "./LogListe.tsx";
+import UserManagementPage from "./UserList.tsx"
 /*import { RestrictedGuest } from "./components/RestrictedGuest"; //les routes faites par prof sont commentées
 import { RestrictedLoggedIn } from "./components/RestrictedLoggedIn";*/
 
@@ -90,6 +91,8 @@ function App() {
               //</RestrictedLoggedIn>
             }
           />
+
+          <Route path="/api/admin/comptes" element={<UserManagementPage />} />
 
           <Route path="*" element={<h1>Page non trouvée</h1>} />
         </Routes>
