@@ -97,7 +97,7 @@ const Inscription: React.FC = () => {
     setErrors({});
 
     try {
-      const res = await fetch(`${API_URL}/users/register`, {
+      const res = await fetch(`${API_URL}/auth/inscription`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

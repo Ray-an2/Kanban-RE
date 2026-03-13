@@ -1,9 +1,1191 @@
 openapi: 3.1.0
 info:
-  title: Title
-  description: Title
+  title: Backend Deno
+  description: Documentation des routes Deno côté serveur.
   version: 1.0.0
 servers:
-  - url: 'https'
+  - url: 'http://localhost:8000'    # URL provisoire avant le déploiement.
 paths:
-  
+
+  auth/login:
+    get:
+      summary: Page de connexion
+      description: Route publique vers la page de connexion.
+      responses:
+        '200':
+          description: Affiche la page de connexion.
+    post:
+      summary: Envoi des informations de connexion
+      description: Envoie les informations de connexion.
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Identifiant passé en query string.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Authentification réussie et accès au tableau.
+        '401':
+          description: (UNAUTHORIZED) identifiants invalides.
+  auth/inscription:
+    description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat ().
+    get:
+      summary: Page d'inscription
+      description: Route protégée vers la page d'inscription.
+      responses:
+        '200':
+          description: Affiche la page d'inscription.
+    post:
+      summary: Envoi des informations d'inscription
+      description: Envoie les informations d'inscription depuis la page d'inscription (route protégée).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Compte créé
+        '400':
+          description: (VALIDATION_ERROR) données invalides.
+  /tableau:
+    description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
+    get:
+      summary: Accueil tableau
+      description: Route protégée vers la page Accueil.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Affiche la page d'accueil du tableau.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    post:
+      summary: Création d'un tableau
+      description: Route protégée pour créer un tableau.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TableauCreateRequest'
+      responses:
+        '201':
+          description: Tableau créé.
+        '400':
+          description: (VALIDATION_ERROR) données invalides.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /tableau/logs:
+    description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
+    get:
+      summary: Logs (admin uniquement)
+      description: Route protégée vers la page Log. Accessible uniquement aux administrateur.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Affiche la page des logs (admin).
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '403':
+          description: (ROLE_UNAUTHORIZED) rôle insuffisant.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /tableau/{tabId}/log:
+    description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
+    get:
+      summary: Logs par tableau
+      description: Route protégée vers la page Log pour un tableau donné.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+      responses:
+        '200':
+          description: Affiche les logs du tableau demandé.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressource introuvable.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /tableau/{tabId}:
+    description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
+    get:
+      summary: Tableau
+      description: Route protégée vers la page Tableau.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+      responses:
+        '200':
+          description: Affiche le tableau demandé.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressources introuvables.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    put:
+      summary: Mise à jour d'un tableau
+      description: Route protégée pour mettre à jour un tableau.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TableauUpdateRequest'
+      responses:
+        '200':
+          description: Tableau mis à jour.
+        '400':
+          description: (VALIDATION_ERROR) données invalides.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressources introuvables.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    delete:
+      summary: Suppression d'un tableau
+      description: Route protégée pour supprimer un tableau.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+      responses:
+        '204':
+          description: Tableau supprimé.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressources introuvables.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /tableau/{tabId}/liste:
+    description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
+    get:
+      summary: Listes d'un tableau
+      description: Route protégée pour récupérer les listes d'un tableau.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tabId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+      responses:
+        '200':
+          description: Listes récupérées.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressources introuvables.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    post:
+      summary: Création d'une liste
+      description: Route protégée pour créer une liste dans un tableau.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tabId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListeCreateRequest'
+      responses:
+        '201':
+          description: Liste créée.
+        '400':
+          description: (VALIDATION_ERROR) données invalides.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressources introuvables.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /tableau/{tabId}/liste/{lisId}:
+    description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
+    get:
+      summary: Détails d'une liste
+      description: Route protégée pour récupérer une liste.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tabId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+        - name: lisId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant de la liste.
+      responses:
+        '200':
+          description: Liste récupérée.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressources introuvables.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    put:
+      summary: Mise à jour d'une liste
+      description: Route protégée pour mettre à jour une liste.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tabId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+        - name: lisId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant de la liste.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListeUpdateRequest'
+      responses:
+        '200':
+          description: Liste mise à jour.
+        '400':
+          description: (VALIDATION_ERROR) données invalides.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressources introuvables.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    delete:
+      summary: Suppression d'une liste
+      description: Route protégée pour supprimer une liste.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tabId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+        - name: lisId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant de la liste.
+      responses:
+        '204':
+          description: Liste supprimée.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressources introuvables.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /tableau/{tabId}/liste/{lisId}/carte:
+    description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
+    get:
+      summary: Cartes d'une liste
+      description: Route protégée pour récupérer les cartes d'une liste.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tabId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+        - name: lisId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant de la liste.
+      responses:
+        '200':
+          description: Cartes récupérées.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressources introuvables.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    post:
+      summary: Création d'une carte
+      description: Route protégée pour créer une carte dans une liste.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tabId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+        - name: lisId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant de la liste.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarteCreateRequest'
+      responses:
+        '201':
+          description: Carte créée.
+        '400':
+          description: (VALIDATION_ERROR) données invalides.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressources introuvables.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /tableau/{tabId}/carte/{carId}:
+    description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
+    get:
+      summary: Carte
+      description: Route protégée vers la page Carte.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tabId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+        - name: carId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant de la carte.
+      responses:
+        '200':
+          description: Affiche la carte demandée.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressources introuvables.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    put:
+      summary: Mise à jour d'une carte
+      description: Route protégée pour mettre à jour une carte.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tabId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+        - name: carId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant de la carte.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarteUpdateRequest'
+      responses:
+        '200':
+          description: Carte mise à jour.
+        '400':
+          description: (VALIDATION_ERROR) données invalides.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressources introuvables.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    delete:
+      summary: Suppression d'une carte
+      description: Route protégée pour supprimer une carte.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tabId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du tableau.
+        - name: carId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant de la carte.
+      responses:
+        '204':
+          description: Carte supprimée.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressources introuvables.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /compte/{id}:
+    description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
+    get:
+      summary: Compte utilisateur
+      description: Route protégée vers la page compte.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du compte (cpt_id).
+      responses:
+        '200':
+          description: Affiche la page compte de l'utilisateur.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressource introuvable.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /admin/comptes:
+    description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
+    get:
+      summary: Gestion des comptes (admin)
+      description: Route protégée vers la page de gestion des comptes (admin uniquement).
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Affiche la page de gestion des comptes.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '403':
+          description: (ROLE_UNAUTHORIZED) rôle insuffisant.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /users:
+    description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
+    get:
+      summary: Liste des comptes (admin)
+      description: Récupère la liste des comptes (admin uniquement).
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Liste des comptes récupérée.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '403':
+          description: (ROLE_UNAUTHORIZED) rôle insuffisant.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    post:
+      summary: Création de compte (admin)
+      description: Crée un compte utilisateur (admin uniquement).
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateRequest'
+      responses:
+        '201':
+          description: Compte créé.
+        '400':
+          description: (BAD_REQUEST) données invalides.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '403':
+          description: (ROLE_UNAUTHORIZED) rôle insuffisant.
+        '409':
+          description: (VALIDATION_ERROR) pseudo déjà utilisé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /users/{id}:
+    description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
+    get:
+      summary: Détails d'un compte (admin)
+      description: Récupère un compte (admin uniquement).
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du compte (cpt_id).
+      responses:
+        '200':
+          description: Compte récupéré.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '403':
+          description: (ROLE_UNAUTHORIZED) rôle insuffisant.
+        '404':
+          description: (NOT_FOUND) ressource introuvable.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    put:
+      summary: Mise à jour d'un compte (admin)
+      description: Met à jour un compte (admin uniquement).
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du compte (cpt_id).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequest'
+      responses:
+        '200':
+          description: Compte mis à jour.
+        '400':
+          description: (BAD_REQUEST) données invalides.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '403':
+          description: (ROLE_UNAUTHORIZED) rôle insuffisant.
+        '404':
+          description: (NOT_FOUND) ressource introuvable.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    delete:
+      summary: Suppression d'un compte (admin)
+      description: Supprime un compte (admin uniquement).
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant du compte (cpt_id).
+      responses:
+        '204':
+          description: Compte supprimé.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '403':
+          description: (ROLE_UNAUTHORIZED) rôle insuffisant.
+        '404':
+          description: (NOT_FOUND) ressource introuvable.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /users/{id}/profile:
+    description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
+    put:
+      summary: Modification du profil
+      description: Met à jour le profil de l'utilisateur connecté.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileUpdateRequest'
+      responses:
+        '200':
+          description: Profil mis à jour.
+        '400':
+          description: (BAD_REQUEST) données invalides.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '404':
+          description: (NOT_FOUND) ressource introuvable.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /users/{id}/password:
+    description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
+    put:
+      summary: Modification du mot de passe
+      description: Met à jour le mot de passe de l'utilisateur connecté.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordUpdateRequest'
+      responses:
+        '200':
+          description: Mot de passe mis à jour.
+        '400':
+          description: (BAD_REQUEST) données invalides.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /users/{id}/pseudo:
+    description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
+    put:
+      summary: Modification du pseudo
+      description: Met à jour le pseudo de l'utilisateur connecté.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PseudoUpdateRequest'
+      responses:
+        '200':
+          description: Pseudo mis à jour.
+        '400':
+          description: (BAD_REQUEST) données invalides.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '409':
+          description: (VALIDATION_ERROR) pseudo déjà utilisé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /notification:
+    description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
+    get:
+      summary: Notifications
+      description: Route protégée vers la page des notifications.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Affiche la page des notifications.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '408':
+          description: (TIMEOUT) délai d'attente dépassé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /notifications:
+    description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
+    get:
+      summary: Liste des notifications
+      description: Récupère les notifications de l'utilisateur (ou toutes si admin).
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Notifications récupérées.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    post:
+      summary: Création d'une notification
+      description: Crée une notification (admin ou utilisateur pour lui-même).
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationCreateRequest'
+      responses:
+        '201':
+          description: Notification créée.
+        '400':
+          description: (BAD_REQUEST) données invalides.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '403':
+          description: (ROLE_UNAUTHORIZED) rôle insuffisant.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+  /notifications/{id}:
+    description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
+    get:
+      summary: Détails d'une notification
+      description: Récupère une notification.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant de la notification.
+      responses:
+        '200':
+          description: Notification récupérée.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '403':
+          description: (ROLE_UNAUTHORIZED) rôle insuffisant.
+        '404':
+          description: (NOT_FOUND) ressource introuvable.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    put:
+      summary: Mise à jour d'une notification
+      description: Met à jour une notification.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant de la notification.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationUpdateRequest'
+      responses:
+        '200':
+          description: Notification mise à jour.
+        '400':
+          description: (BAD_REQUEST) données invalides.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '403':
+          description: (ROLE_UNAUTHORIZED) rôle insuffisant.
+        '404':
+          description: (NOT_FOUND) ressource introuvable.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+    delete:
+      summary: Suppression d'une notification
+      description: Supprime une notification.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifiant de la notification.
+      responses:
+        '204':
+          description: Notification supprimée.
+        '401':
+          description: (UNAUTHORIZED) non autorisé.
+        '403':
+          description: (ROLE_UNAUTHORIZED) rôle insuffisant.
+        '404':
+          description: (NOT_FOUND) ressource introuvable.
+        '500':
+          description: (SERVER_ERROR) erreur interne du serveur.
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    LoginRequest:
+      type: object
+      required: [pseudo, motDePasse]
+      properties:
+        pseudo:
+          type: string
+          description: Pseudo utilisateur.
+        motDePasse:
+          type: string
+          format: password
+          description: Mot de passe.
+
+    RegisterRequest:
+      type: object
+      required: [pseudo, motDePasse, email, nom, prenom]
+      properties:
+        pseudo:
+          type: string
+          description: Pseudo utilisateur.
+        motDePasse:
+          type: string
+          format: password
+          description: Mot de passe.
+        email:
+          type: string
+          format: email
+          description: Adresse e-mail.
+        nom:
+          type: string
+          description: Nom de famille.
+        prenom:
+          type: string
+          description: Prénom.
+    UserCreateRequest:
+      type: object
+      required: [pseudo, motDePasse, email, nom, prenom, role]
+      properties:
+        pseudo:
+          type: string
+          description: Pseudo utilisateur.
+        motDePasse:
+          type: string
+          format: password
+          description: Mot de passe.
+        email:
+          type: string
+          format: email
+          description: Adresse e-mail.
+        nom:
+          type: string
+          description: Nom de famille.
+        prenom:
+          type: string
+          description: Prénom.
+        role:
+          type: string
+          description: Rôle (A ou U).
+    UserUpdateRequest:
+      type: object
+      properties:
+        pseudo:
+          type: string
+          description: Nouveau pseudo.
+        motDePasse:
+          type: string
+          format: password
+          description: Nouveau mot de passe.
+        role:
+          type: string
+          description: Nouveau rôle (A ou U).
+        nom:
+          type: string
+          description: Nom de famille.
+        prenom:
+          type: string
+          description: Prénom.
+        email:
+          type: string
+          format: email
+          description: Adresse e-mail.
+    ProfileUpdateRequest:
+      type: object
+      properties:
+        nom:
+          type: string
+          description: Nom de famille.
+        prenom:
+          type: string
+          description: Prénom.
+        email:
+          type: string
+          format: email
+          description: Adresse e-mail.
+    PasswordUpdateRequest:
+      type: object
+      required: [ancienMotDePasse, nouveauMotDePasse]
+      properties:
+        ancienMotDePasse:
+          type: string
+          format: password
+          description: Mot de passe actuel.
+        nouveauMotDePasse:
+          type: string
+          format: password
+          description: Nouveau mot de passe.
+    PseudoUpdateRequest:
+      type: object
+      required: [nouveauPseudo, motDePasse]
+      properties:
+        nouveauPseudo:
+          type: string
+          description: Nouveau pseudo.
+        motDePasse:
+          type: string
+          format: password
+          description: Mot de passe pour validation.
+    NotificationCreateRequest:
+      type: object
+      properties:
+        titre:
+          type: string
+          description: Titre de la notification.
+        lien:
+          type: string
+          description: Lien associé.
+        date:
+          type: string
+          format: date-time
+          description: Date de la notification.
+        cpt_id:
+          type: string
+          description: Identifiant du compte cible (admin uniquement).
+    NotificationUpdateRequest:
+      type: object
+      properties:
+        titre:
+          type: string
+          description: Titre de la notification.
+        lien:
+          type: string
+          description: Lien associé.
+        date:
+          type: string
+          format: date-time
+          description: Date de la notification.
+        cpt_id:
+          type: string
+          description: Identifiant du compte cible (admin uniquement).
+
+    TableauCreateRequest:
+      type: object
+      required: [tab_nom]
+      properties:
+        tab_nom:
+          type: string
+          description: Nom du tableau.
+        tab_description:
+          type: string
+          description: Description du tableau.
+        tab_etat:
+          type: string
+          description: Etat du tableau (par défaut 'A' si omis).
+        tab_image:
+          type: string
+          description: Lien de l'image du tableau.
+
+    TableauUpdateRequest:
+      type: object
+      properties:
+        tab_nom:
+          type: string
+          description: Nom du tableau.
+        tab_description:
+          type: string
+          description: Description du tableau.
+        tab_etat:
+          type: string
+          description: Etat du tableau.
+        tab_image:
+          type: string
+          description: Lien de l'image du tableau.
+
+    ListeCreateRequest:
+      type: object
+      required: [lis_titre]
+      properties:
+        lis_titre:
+          type: string
+          description: Titre de la liste.
+        lis_ordre:
+          type: integer
+          description: Ordre d'affichage de la liste.
+        lis_etat:
+          type: string
+          description: Etat de la liste (par défaut 'P' si omis).
+
+    ListeUpdateRequest:
+      type: object
+      properties:
+        lis_titre:
+          type: string
+          description: Titre de la liste.
+        lis_ordre:
+          type: integer
+          description: Ordre d'affichage de la liste.
+        lis_etat:
+          type: string
+          description: Etat de la liste.
+
+    CarteCreateRequest:
+      type: object
+      required: [car_nom]
+      properties:
+        car_nom:
+          type: string
+          description: Nom de la carte.
+        car_description:
+          type: string
+          description: Description de la carte.
+        car_archiver:
+          type: string
+          description: Etat d'archivage (par défaut 'N' si omis).
+        car_terminer:
+          type: string
+          description: Etat de terminaison (par défaut 'N' si omis).
+        car_priorite:
+          type: integer
+          description: Priorite de la carte allant de 0 (forte priorité) à N-1 carte (basse priorité), par défaut 0 si omis.
+        car_ordre:
+          type: integer
+          description: Ordre d'affichage de la carte allant de 0 (haut de la liste) à N-1 cartes.
+        car_date_creation:
+          type: string
+          format: date-time
+          description: Date de creation de la carte.
+        car_date_debut:
+          type: string
+          format: date-time
+          description: Date de debut.
+        car_date_fin:
+          type: string
+          format: date-time
+          description: Date de fin.
+        car_couverture:
+          type: string
+          description: Lien de la couverture.
+
+    CarteUpdateRequest:
+      type: object
+      properties:
+        car_nom:
+          type: string
+          description: Nom de la carte.
+        car_description:
+          type: string
+          description: Description de la carte.
+        car_archiver:
+          type: string
+          description: Etat d'archivage (P/A).
+        car_terminer:
+          type: string
+          description: Etat de terminaison (0/1).
+        car_priorite:
+          type: integer
+          description: Priorite de la carte.
+        car_ordre:
+          type: integer
+          description: Ordre d'affichage de la carte dans la liste.
+        car_date_creation:
+          type: string
+          format: date-time
+          description: Date de creation de la carte.
+        car_date_debut:
+          type: string
+          format: date-time
+          description: Date de debut.
+        car_date_fin:
+          type: string
+          format: date-time
+          description: Date de fin.
+        car_couverture:
+          type: string
+          description: Lien de la couverture.

@@ -64,7 +64,7 @@ const Connexion: React.FC = () => {
       setLoading(true);
       setErrors({});
       try {
-        const res = await fetch(`${API_URL}/users/login`, {
+        const res = await fetch(`${API_URL}/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -83,7 +83,7 @@ const Connexion: React.FC = () => {
         }
 
         login(json.data);
-        navigate('/tableau');
+        navigate('api/tableau');
       } catch (error) {
         console.error('Erreur lors de la connexion:', error);
         setErrors((prev) => ({
