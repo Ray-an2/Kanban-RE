@@ -37,7 +37,7 @@ function App() {
           />
 
           <Route
-            path="/tableau"
+            path="/api/tableau"
             element={
               //<RestrictedLoggedIn>
                 <TableauPage />

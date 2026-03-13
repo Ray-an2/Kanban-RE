@@ -83,7 +83,7 @@ const Connexion: React.FC = () => {
         }
 
         login(json.data);
-        navigate('api/tableau');
+        navigate('/api/tableau');
       } catch (error) {
         console.error('Erreur lors de la connexion:', error);
         setErrors((prev) => ({
