@@ -19,6 +19,8 @@ services:
       dockerfile: Dockerfile
     env_file:
       - ./serveurDeno/.env
+    volumes:
+      - ./serveurDeno/kanban.db:/app/kanban.db
     ports:
       - "8000:8000"
     depends_on:

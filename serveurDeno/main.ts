@@ -5,11 +5,15 @@ import { DatabaseSync } from "node:sqlite";
 import routeUser from "./routes/user.ts";
 import routeNotif from "./routes/notif.ts";
 import routeAuth from "./routes/auth.ts";
+
+/*
 import routeTab from "./routes/tableau.ts";
 import routeCarte from "./routes/carte.ts";
 import routeListe from "./routes/liste.ts";
 import routeAdmin from "./routes/admin.ts";
-import routeMem from "./routes/membre.ts"; // voir plus tard
+*/
+// voir plus tard
+// import routeMem from "./routes/membre.ts";
 // import routeEti from "./routes/etiquette.ts";
 // import routeCom from "./routes/commentaire.ts";
 // import routeDoc from "./routes/document.ts";
@@ -38,11 +42,13 @@ app.use(errorMiddleware);
 app.use(routeUser.routes(), routeUser.allowedMethods());
 app.use(routeAuth.routes(), routeAuth.allowedMethods());
 app.use(routeNotif.routes(), routeNotif.allowedMethods());
+/*
 app.use(routeTab.routes(), routeTab.allowedMethods());
 app.use(routeListe.routes(), routeListe.allowedMethods());
 app.use(routeCarte.routes(), routeCarte.allowedMethods());
 app.use(routeAdmin.routes(), routeAdmin.allowedMethods());
 app.use(routeMem.routes(), routeMem.allowedMethods());
+ */
 // app.use(routeEti.routes(), routeEti.allowedMethods());
 // app.use(routeCom.routes(), routeCom.allowedMethods());
 // app.use(routeDoc.routes(), routeDoc.allowedMethods());
