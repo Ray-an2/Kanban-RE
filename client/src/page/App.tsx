@@ -5,7 +5,7 @@ import Log from "./Log.tsx";
 import Inscription from "./Inscription.tsx";
 import Connexion from "./Connexion.tsx";
 import TableauPage from "./Accueil.tsx";
-import CardDetailsPage from "./Carte.tsx";
+import CardDetailsPage from "./CarteDetails.tsx";
 import AccountPage from "./Compte.tsx";
 import Notification from "./Notification.tsx";
 import AdminLogsPage from "./LogListe.tsx";
