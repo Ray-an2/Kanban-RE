@@ -18,7 +18,7 @@ const Tableau: React.FC = () => {
       try {
         setLoading(true);
 
-        // Simulation d'appel API - à remplacer par un vrai appel
+        //à remplacer par un vrai appel
         await new Promise(resolve => setTimeout(resolve, 800));
 
         const mockTableau: TableauType = {
@@ -115,7 +115,6 @@ const Tableau: React.FC = () => {
     setLists(prevLists => {
       const newLists = [...prevLists];
 
-      // Retirer de la liste source
       const sourceListIndex = newLists.findIndex(l => l.cartes.some(c => c.car_id === draggedCard.car_id));
       if (sourceListIndex !== -1) {
         newLists[sourceListIndex] = {
@@ -124,7 +123,6 @@ const Tableau: React.FC = () => {
         };
       }
 
-      // Ajouter à la liste cible
       const targetListIndex = newLists.findIndex(l => l.lis_id === targetListId);
       if (targetListIndex !== -1) {
         const updatedCard = { ...draggedCard, lis_id: targetListId };

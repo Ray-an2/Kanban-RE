@@ -1,4 +1,3 @@
-// Compte.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type{ Profil } from '../model/types.ts';
@@ -15,24 +14,21 @@ const Compte: React.FC = () => {
     pfl_etat: 'A' as 'A' | 'D'
   });
 
-  // Chargement du profil - à remplacer par un appel API réel
+  //à remplacer par un appel API réel
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         setLoading(true);
 
-        // Simulation d'appel API
         await new Promise(resolve => setTimeout(resolve, 800));
 
-        // Données simulées - en réalité, ces données viendront du backend
-        // avec l'ID de l'utilisateur connecté (géré par le token JWT ou session)
         const mockProfile: Profil = {
           pfl_nom: 'Dupont',
           pfl_prenom: 'Jean',
           pfl_mail: 'jean.dupont@example.com',
           pfl_etat: 'A',
           pfl_date: new Date().toISOString(),
-          cpt_id: '1' // ID de l'utilisateur connecté (récupéré côté backend)
+          cpt_id: '1'
         };
 
         setProfile(mockProfile);
@@ -56,7 +52,7 @@ const Compte: React.FC = () => {
     e.preventDefault();
 
     try {
-      // Simulation de la mise à jour du profil - à remplacer par un appel API réel
+      //à remplacer par un appel API réel
       await new Promise(resolve => setTimeout(resolve, 500));
 
       if (profile) {
@@ -66,13 +62,12 @@ const Compte: React.FC = () => {
           pfl_prenom: formData.pfl_prenom,
           pfl_mail: formData.pfl_mail,
           pfl_etat: formData.pfl_etat,
-          pfl_date: new Date().toISOString() // Mise à jour de la date
+          pfl_date: new Date().toISOString()
         };
 
         setProfile(updatedProfile);
         setEditMode(false);
 
-        // Message de succès (en réalité, ce serait une notification ou un toast)
         alert('Profil mis à jour avec succès!');
       }
     } catch (error) {

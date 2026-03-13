@@ -15,14 +15,9 @@ const Accueil: React.FC<UserBoardsProps> = ({ tableaux, isAdmin = false }) => {
     navigate(`/tableau/${tabId}`);
   };
 
-  // Filtrer les tableaux selon le rôle de l'utilisateur
   const userTableaux = isAdmin
     ? tableaux
     : tableaux.filter(_tableau => {
-        // Ici vous devriez avoir une logique pour vérifier si l'utilisateur est propriétaire
-        // ou membre du tableau. Pour l'exemple, on suppose que tab_id contient l'ID du propriétaire
-        // ou qu'il y a une relation dans la base de données.
-        // Cette partie devra être adaptée selon votre logique métier réelle.
         return true; // À remplacer par votre logique réelle
       });
 
@@ -149,8 +144,7 @@ const Accueil: React.FC<UserBoardsProps> = ({ tableaux, isAdmin = false }) => {
                   {tableau.tab_etat === 'A' ? 'Actif' : 'Inactif'}
                 </span>
               </div>
-
-              {/* Indication du propriétaire si différent de l'utilisateur courant */}
+              
               {isAdmin && (
                 <div style={{
                   marginTop: '8px',

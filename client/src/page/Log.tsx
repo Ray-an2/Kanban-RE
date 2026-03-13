@@ -18,7 +18,7 @@ const TableauLogsPage: React.FC = () => {
     direction: 'ascending' | 'descending';
   } | null>({ key: 'jou_date', direction: 'descending' });
 
-  // Données simulées - à remplacer par un appel API réel
+  //à remplacer par un appel API réel
   useEffect(() => {
     const fetchLogs = async () => {
       try {

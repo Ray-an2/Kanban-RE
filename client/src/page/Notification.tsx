@@ -1,4 +1,3 @@
-// Notifications.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type{ Notification as NotificationType } from '../model/types.ts';
@@ -13,10 +12,9 @@ const Notifications: React.FC = () => {
       try {
         setLoading(true);
 
-        // Simulation d'appel API - à remplacer par un vrai appel
+        //à remplacer par un vrai appel
         await new Promise(resolve => setTimeout(resolve, 800));
 
-        // Données simulées
         const mockNotifications: NotificationType[] = [
           {
             not_id: '1',

@@ -1,4 +1,3 @@
-// CarteDetail.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import type{ Carte as CarteType, Etiquette } from '../model/types.ts';
@@ -16,7 +15,6 @@ const CarteDetail: React.FC = () => {
       try {
         setLoading(true);
 
-        // Simulation d'appel API
         await new Promise(resolve => setTimeout(resolve, 800));
 
         const mockCarte: CarteType = {

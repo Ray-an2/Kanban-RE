@@ -71,7 +71,7 @@ export interface Journal {
 export interface Role {
   cpt_id: string;
   tab_id: string;
-  rol_role: 'admin' | 'user' | 'lecteur';
+  rol_role: 'A' | 'U';
 }
 
 export interface Notification {

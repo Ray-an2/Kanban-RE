@@ -98,21 +98,18 @@ const AdminLogsPage: React.FC = () => {
     const sortableBoards = [...boards];
     if (sortConfig !== null) {
       sortableBoards.sort((a, b) => {
-        // Gestion spéciale pour les dates
         if (sortConfig.key === 'tab_date' || sortConfig.key === 'lastLogDate') {
           const dateA = a[sortConfig.key] ? new Date(a[sortConfig.key] as string).getTime() : 0;
           const dateB = b[sortConfig.key] ? new Date(b[sortConfig.key] as string).getTime() : 0;
           return sortConfig.direction === 'ascending' ? dateA - dateB : dateB - dateA;
         }
 
-        // Pour les nombres
         if (sortConfig.key === 'logsCount') {
           return sortConfig.direction === 'ascending'
             ? (a[sortConfig.key] as number) - (b[sortConfig.key] as number)
             : (b[sortConfig.key] as number) - (a[sortConfig.key] as number);
         }
 
-        // Pour les strings
         if (typeof a[sortConfig.key] === 'string' && typeof b[sortConfig.key] === 'string') {
           return sortConfig.direction === 'ascending'
             ? (a[sortConfig.key] as string).localeCompare(b[sortConfig.key] as string)

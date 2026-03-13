@@ -1,4 +1,3 @@
-// Accueil.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { UserWithProfile, Tableau, Role } from '../model/types.ts';
@@ -41,7 +40,7 @@ const Accueil: React.FC = () => {
             tab_etat: 'A',
             tab_image: null,
             owner: user,
-            userRole: { cpt_id: user.cpt_id, tab_id: '1', rol_role: 'admin' }
+            userRole: { cpt_id: user.cpt_id, tab_id: '1', rol_role: 'U' }
           },
           {
             tab_id: '2',
@@ -63,7 +62,7 @@ const Accueil: React.FC = () => {
                 cpt_id: '2'
               }
             },
-            userRole: { cpt_id: user.cpt_id, tab_id: '2', rol_role: 'user' }
+            userRole: { cpt_id: user.cpt_id, tab_id: '2', rol_role: 'U' }
           }
         ];
 
@@ -92,13 +91,12 @@ const Accueil: React.FC = () => {
     display: 'inline-block'
   });
 
-  const getRoleStyle = (role?: 'admin' | 'user' | 'lecteur') => {
+  const getRoleStyle = (role?: 'A' | 'U') => {
     if (!role) return { display: 'none' };
 
     const colors = {
-      admin: { bg: '#E53935', color: '#FFFFFF' },
-      user: { bg: '#42A5F5', color: '#FFFFFF' },
-      lecteur: { bg: '#FFB74D', color: '#000000' }
+      A: { bg: '#E53935', color: '#FFFFFF' },
+      U: { bg: '#42A5F5', color: '#FFFFFF' }
     };
 
     const color = colors[role] || { bg: '#CCCCCC', color: '#000000' };

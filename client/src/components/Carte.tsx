@@ -1,4 +1,3 @@
-// Carte.tsx
 import React, { useState } from 'react';
 import type{ Carte as CarteType } from '../model/types.ts';
 

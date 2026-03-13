@@ -3,17 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import type { UserWithProfile } from '../model/types.ts';
 
 interface UserWithRole extends UserWithProfile {
-  role?: string; // Le rôle est maintenant optionnel et géré séparément
+  role?: string; 
 }
 
 const UserManagementPage: React.FC = () => {
   const navigate = useNavigate();
 
-  // État pour la liste des utilisateurs
   const [users, setUsers] = useState<UserWithRole[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // État pour le formulaire
   const [formData, setFormData] = useState({
     cpt_pseudo: '',
     role: 'user' as 'user' | 'admin',
@@ -23,11 +21,9 @@ const UserManagementPage: React.FC = () => {
     pfl_etat: 'A' as 'A' | 'D'
   });
 
-  // État pour le modal
   const [modalMode, setModalMode] = useState<'create' | 'edit' | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
-  // Données simulées - à remplacer par un appel API réel
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -46,7 +42,7 @@ const UserManagementPage: React.FC = () => {
               pfl_date: new Date().toISOString(),
               cpt_id: '1'
             },
-            role: 'admin' // Rôle géré séparément
+            role: 'admin' 
           },
           {
             cpt_id: '2',
@@ -60,7 +56,7 @@ const UserManagementPage: React.FC = () => {
               pfl_date: new Date().toISOString(),
               cpt_id: '2'
             },
-            role: 'user' // Rôle géré séparément
+            role: 'user'
           }
         ];
 
@@ -91,7 +87,7 @@ const UserManagementPage: React.FC = () => {
   const openEditModal = (user: UserWithRole) => {
     setFormData({
       cpt_pseudo: user.cpt_pseudo,
-      role: (user.role as 'user' | 'admin') || 'user', // Valeur par défaut si undefined
+      role: (user.role as 'user' | 'admin') || 'user', 
       pfl_nom: user.profil?.pfl_nom || '',
       pfl_prenom: user.profil?.pfl_prenom || '',
       pfl_mail: user.profil?.pfl_mail || '',
@@ -198,7 +194,6 @@ const UserManagementPage: React.FC = () => {
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '30px', fontFamily: 'Arial, sans-serif' }}>
-      {/* En-tête */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
         <h1 style={{ margin: 0, color: '#2c3e50' }}>Gestion des utilisateurs</h1>
         <button
@@ -217,7 +212,6 @@ const UserManagementPage: React.FC = () => {
         </button>
       </div>
 
-      {/* Bouton d'ajout */}
       <div style={{ marginBottom: '20px' }}>
         <button
           type = "button"
@@ -236,7 +230,6 @@ const UserManagementPage: React.FC = () => {
         </button>
       </div>
 
-      {/* Tableau des utilisateurs */}
       {loading ? (
         <div style={{ textAlign: 'center', padding: '50px' }}>
           <div style={{
@@ -341,7 +334,6 @@ const UserManagementPage: React.FC = () => {
         </div>
       )}
 
-      {/* Modal pour ajouter/modifier un utilisateur */}
       <div id="user-modal" className="modal" style={{
         position: 'fixed',
         top: 0,
