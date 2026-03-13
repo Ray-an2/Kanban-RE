@@ -46,7 +46,7 @@ router.post("/inscription", async (ctx) => {
     `).run(cptId, body.pseudo, passwordHash, "U");
 
     db.prepare(`
-    INSERT INTO t_profil_pfl (pfl_nom, pfl_prenom, pfl_date, pfl_mail, pfl_etat, cpt_id)
+    INSERT INTO t_profil_pfl (pfl_nom, pfl_prenom, pfl_dateCreation, pfl_mail, pfl_etat, cpt_id)
     VALUES (?, ?, ?, ?, ?, ?);
     `).run(
         body.nom,
