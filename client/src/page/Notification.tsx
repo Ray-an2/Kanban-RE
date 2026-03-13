@@ -22,7 +22,7 @@ const Notifications: React.FC = () => {
             not_date: new Date().toISOString(),
             not_lien: '/tableau/1/carte/3',
             not_lue: 'N',
-            cpt_id: '1' // ID de l'utilisateur connecté (géré côté backend)
+            cpt_id: '1' 
           },
           {
             not_id: '2',
@@ -100,7 +100,7 @@ const Notifications: React.FC = () => {
         <h1 style={{ margin: 0, color: '#2c3e50' }}>Mes Notifications</h1>
         <button
           type="button"
-          onClick={() => navigate('/accueil')}
+          onClick={() => navigate('/api/tableau')}
           style={{
             padding: '8px 16px',
             backgroundColor: '#3498db',

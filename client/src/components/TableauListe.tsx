@@ -12,7 +12,7 @@ const Accueil: React.FC<UserBoardsProps> = ({ tableaux, isAdmin = false }) => {
   const navigate = useNavigate();
 
   const handleBoardClick = (tabId: string) => {
-    navigate(`/tableau/${tabId}`);
+    navigate(`/api/tableau/${tabId}`);
   };
 
   const userTableaux = isAdmin
@@ -144,7 +144,7 @@ const Accueil: React.FC<UserBoardsProps> = ({ tableaux, isAdmin = false }) => {
                   {tableau.tab_etat === 'A' ? 'Actif' : 'Inactif'}
                 </span>
               </div>
-              
+
               {isAdmin && (
                 <div style={{
                   marginTop: '8px',

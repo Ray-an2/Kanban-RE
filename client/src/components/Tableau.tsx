@@ -200,7 +200,7 @@ const Tableau: React.FC = () => {
           </button>
           <button
             type="button"
-            onClick={() => navigate('/accueil')}
+            onClick={() => navigate('/api/tableau')}
             style={{
               padding: '8px 16px',
               backgroundColor: '#95a5a6',
