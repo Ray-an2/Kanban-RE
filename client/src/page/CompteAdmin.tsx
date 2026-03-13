@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type{ Profil } from '../model/types.ts';
 
-const Compte: React.FC = () => {
+const CompteAdmin: React.FC = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<Profil | null>(null);
   const [loading, setLoading] = useState(true);
@@ -142,7 +142,7 @@ const Compte: React.FC = () => {
         <h1 style={{ margin: 0, color: '#2c3e50' }}>Mon Compte</h1>
         <button
           type="button"
-          onClick={() => navigate('/accueil')}
+          onClick={() => navigate('/api/admin/tableaux')}
           style={{
             padding: '8px 16px',
             backgroundColor: '#3498db',
@@ -319,4 +319,4 @@ const Compte: React.FC = () => {
   );
 };
 
-export default Compte;
+export default CompteAdmin;

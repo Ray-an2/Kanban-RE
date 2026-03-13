@@ -1,5 +1,5 @@
 // AdminTableaux.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type{ Tableau } from '../model/types.ts';
 
@@ -8,7 +8,10 @@ const AdminTableaux: React.FC = () => {
   const [tableaux, setTableaux] = useState<Tableau[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortConfig, setSortConfig] = useState<{ key: keyof Tableau; direction: 'asc' | 'desc' }>({
+  const [sortConfig, setSortConfig] = useState<{
+    key: keyof Tableau;
+    direction: 'asc' | 'desc'
+  } | null>({
     key: 'tab_date',
     direction: 'desc'
   });
@@ -23,7 +26,7 @@ const AdminTableaux: React.FC = () => {
     tab_etat: 'A' as 'A' | 'I'
   });
 
-  //à remplacer par un appel API réel
+  // Chargement des tableaux
   useEffect(() => {
     const fetchTableaux = async () => {
       try {
@@ -58,13 +61,6 @@ const AdminTableaux: React.FC = () => {
             tab_description: 'Projet archivé en 2025',
             tab_date: new Date('2025-05-10').toISOString(),
             tab_etat: 'I'
-          },
-          {
-            tab_id: '5',
-            tab_nom: 'RH - Recrutement',
-            tab_description: 'Processus de recrutement 2026',
-            tab_date: new Date(Date.now() - 345600000).toISOString(),
-            tab_etat: 'A'
           }
         ];
 
@@ -79,31 +75,39 @@ const AdminTableaux: React.FC = () => {
     fetchTableaux();
   }, []);
 
+  // Fonction de tri sécurisée
   const requestSort = (key: keyof Tableau) => {
     let direction: 'asc' | 'desc' = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+
+    if (sortConfig &&
+        sortConfig.key === key &&
+        sortConfig.direction === 'asc') {
       direction = 'desc';
     }
+
     setSortConfig({ key, direction });
   };
 
-  const sortedTableaux = React.useMemo(() => {
+  // Tri des tableaux avec vérification de nullité
+  const sortedTableaux = useMemo(() => {
     const sortableTableaux = [...tableaux];
-    if (sortConfig.key) {
+
+    if (sortConfig) {
       sortableTableaux.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === 'asc' ? -1 : 1;
-        }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === 'asc' ? 1 : -1;
+        // Gestion spéciale pour les dates
+        if (sortConfig.key === 'tab_date') {
+          const dateA = new Date(a.tab_date).getTime();
+          const dateB = new Date(b.tab_date).getTime();
+          return sortConfig.direction === 'asc' ? dateA - dateB : dateB - dateA;
         }
         return 0;
       });
     }
+
     return sortableTableaux;
   }, [tableaux, sortConfig]);
 
-  // Filtre les tableaux selon le terme de recherche
+  // Filtre des tableaux
   const filteredTableaux = sortedTableaux.filter(tableau =>
     tableau.tab_nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (tableau.tab_description && tableau.tab_description.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -141,7 +145,6 @@ const AdminTableaux: React.FC = () => {
     e.preventDefault();
 
     if (modalMode === 'create') {
-      // Création d'un nouveau tableau
       const newTableau: Tableau = {
         tab_id: Date.now().toString(),
         tab_nom: formData.tab_nom,
@@ -151,7 +154,6 @@ const AdminTableaux: React.FC = () => {
       };
       setTableaux([...tableaux, newTableau]);
     } else if (modalMode === 'edit' && currentTableau) {
-      // Mise à jour d'un tableau existant
       setTableaux(tableaux.map(t =>
         t.tab_id === currentTableau.tab_id
           ? {
@@ -174,7 +176,7 @@ const AdminTableaux: React.FC = () => {
     }
   };
 
-  // Changement de statut (archivage/désarchivage)
+  // Changement de statut
   const toggleStatus = (tableauId: string) => {
     setTableaux(tableaux.map(t =>
       t.tab_id === tableauId
@@ -193,6 +195,14 @@ const AdminTableaux: React.FC = () => {
     fontWeight: 'bold' as const,
     display: 'inline-block'
   });
+
+  // Icône de tri
+  const getSortIcon = (key: keyof Tableau) => {
+    if (!sortConfig || sortConfig.key !== key) {
+      return '↕';
+    }
+    return sortConfig.direction === 'asc' ? '↑' : '↓';
+  };
 
   return (
     <div style={{
@@ -240,6 +250,7 @@ const AdminTableaux: React.FC = () => {
         </div>
       </div>
 
+      {/* Barre de recherche */}
       <div style={{ marginBottom: '20px' }}>
         <input
           type="text"
@@ -301,25 +312,54 @@ const AdminTableaux: React.FC = () => {
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ backgroundColor: '#f8f9fa' }}>
-                    <th style={{ padding: '12px 15px', textAlign: 'left', fontWeight: '600', cursor: 'pointer' }}
-                        onClick={() => requestSort('tab_id')}>
-                      ID
+                    <th style={{
+                      padding: '12px 15px',
+                      textAlign: 'left',
+                      fontWeight: '600',
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => requestSort('tab_id')}>
+                      ID {getSortIcon('tab_id')}
                     </th>
-                    <th style={{ padding: '12px 15px', textAlign: 'left', fontWeight: '600', cursor: 'pointer' }}
-                        onClick={() => requestSort('tab_nom')}>
-                      Nom
+                    <th style={{
+                      padding: '12px 15px',
+                      textAlign: 'left',
+                      fontWeight: '600',
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => requestSort('tab_nom')}>
+                      Nom {getSortIcon('tab_nom')}
                     </th>
-                    <th style={{ padding: '12px 15px', textAlign: 'left', fontWeight: '600' }}>
+                    <th style={{
+                      padding: '12px 15px',
+                      textAlign: 'left',
+                      fontWeight: '600'
+                    }}>
                       Description
                     </th>
-                    <th style={{ padding: '12px 15px', textAlign: 'left', fontWeight: '600', cursor: 'pointer' }}
-                        onClick={() => requestSort('tab_date')}>
-                      Date de création
+                    <th style={{
+                      padding: '12px 15px',
+                      textAlign: 'left',
+                      fontWeight: '600',
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => requestSort('tab_date')}>
+                      Date de création {getSortIcon('tab_date')}
                     </th>
-                    <th style={{ padding: '12px 15px', textAlign: 'left', fontWeight: '600' }}>
-                      Statut
+                    <th style={{
+                      padding: '12px 15px',
+                      textAlign: 'left',
+                      fontWeight: '600',
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => requestSort('tab_etat')}>
+                      Statut {getSortIcon('tab_etat')}
                     </th>
-                    <th style={{ padding: '12px 15px', textAlign: 'center', fontWeight: '600' }}>
+                    <th style={{
+                      padding: '12px 15px',
+                      textAlign: 'center',
+                      fontWeight: '600'
+                    }}>
                       Actions
                     </th>
                   </tr>

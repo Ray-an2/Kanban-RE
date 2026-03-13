@@ -109,7 +109,7 @@ const Compte: React.FC = () => {
         <p>Profil non trouvé.</p>
         <button
           type = "button"
-          onClick={() => navigate('/accueil')}
+          onClick={() => navigate('/api/tableau')}
           style={{
             padding: '8px 16px',
             backgroundColor: '#3498db',
@@ -142,7 +142,7 @@ const Compte: React.FC = () => {
         <h1 style={{ margin: 0, color: '#2c3e50' }}>Mon Compte</h1>
         <button
           type="button"
-          onClick={() => navigate('/accueil')}
+          onClick={() => navigate('/api/tableau')}
           style={{
             padding: '8px 16px',
             backgroundColor: '#3498db',

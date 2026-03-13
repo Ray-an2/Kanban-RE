@@ -175,7 +175,7 @@ const Accueil: React.FC = () => {
                   cursor: 'pointer',
                   border: board.tab_etat === 'I' ? '1px solid #eee' : '1px solid #e3f2fd',
                 }}
-                onClick={() => navigate(`/tableau/${board.tab_id}`)}
+                onClick={() => navigate(`/api/tableau/${board.tab_id}`)}
               >
                 <div style={{ marginBottom: '10px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

@@ -10,6 +10,8 @@ import AccountPage from "./Compte.tsx";
 import Notification from "./Notification.tsx";
 import AdminLogsPage from "./LogListe.tsx";
 import UserManagementPage from "./UserList.tsx"
+import AdminTableaux from "./TableauAdmin.tsx";
+import CompteAdmin from "./CompteAdmin.tsx";
 /*import { RestrictedGuest } from "./components/RestrictedGuest"; //les routes faites par prof sont commentées
 import { RestrictedLoggedIn } from "./components/RestrictedLoggedIn";*/
 
@@ -92,6 +94,12 @@ function App() {
             }
           />
 
+          <Route 
+          path="/api/admin/tableaux" element={
+            <AdminTableaux />
+          } 
+          />
+          <Route path="/api/admin/compte" element={<CompteAdmin />} />
           <Route path="/api/admin/comptes" element={<UserManagementPage />} />
 
           <Route path="*" element={<h1>Page non trouvée</h1>} />

@@ -167,14 +167,12 @@ const TableauLogsPage: React.FC = () => {
     const sortableLogs = [...logs];
     if (sortConfig !== null) {
       sortableLogs.sort((a, b) => {
-        // Gestion spéciale pour les dates
         if (sortConfig.key === 'jou_date') {
           const dateA = new Date(a.jou_date).getTime();
           const dateB = new Date(b.jou_date).getTime();
           return sortConfig.direction === 'ascending' ? dateA - dateB : dateB - dateA;
         }
 
-        // Pour les strings
         if (typeof a[sortConfig.key] === 'string' && typeof b[sortConfig.key] === 'string') {
           return sortConfig.direction === 'ascending'
             ? (a[sortConfig.key] as string).localeCompare(b[sortConfig.key] as string)
@@ -218,7 +216,7 @@ const TableauLogsPage: React.FC = () => {
         <div style={{ display: 'flex', gap: '10px' }}>
           <button
             type = "button"
-            onClick={() => navigate(`/tableau/${id}`)}
+            onClick={() => navigate(`/api/tableau/${id}`)}
             style={{
               padding: '8px 16px',
               backgroundColor: '#3498db',
@@ -232,7 +230,7 @@ const TableauLogsPage: React.FC = () => {
           </button>
           <button
             type = "button"
-            onClick={() => navigate('/compte')}
+            onClick={() => navigate('/api/compte')}
             style={{
               padding: '8px 16px',
               backgroundColor: '#95a5a6',
