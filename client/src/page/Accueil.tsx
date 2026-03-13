@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Tableau } from '../model/types.ts';
+import type { Tableau } from '../model/types.ts';
 
 interface User {
   cpt_id: string;

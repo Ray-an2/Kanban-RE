@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { NotificationWithDetails } from '../model/types.ts';
+import type { NotificationWithDetails } from '../model/types.ts';
 
 const NotificationsPage: React.FC = () => {
   const navigate = useNavigate();

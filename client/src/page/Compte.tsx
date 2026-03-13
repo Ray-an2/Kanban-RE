@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserWithProfile, Tableau, Journal } from '../model/types.ts';
+import type { UserWithProfile, Tableau, Journal } from '../model/types.ts';
 
 const AccountPage: React.FC = () => {
   const navigate = useNavigate();
