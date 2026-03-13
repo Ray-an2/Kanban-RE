@@ -79,7 +79,7 @@ const Accueil: React.FC = () => {
   }, []);
 
   const handleLogout = () => {
-    navigate('/login');
+    navigate('/auth/login');
   };
 
   const getStatusStyle = (etat: 'A' | 'I') => ({
