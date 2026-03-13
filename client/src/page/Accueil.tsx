@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Tableau, MemberWithProfile } from '../model/types.ts';
+import type { Tableau, MemberWithProfile } from '../model/types.ts';
 
 interface BoardWithOwner extends Tableau {
   owner: MemberWithProfile;
