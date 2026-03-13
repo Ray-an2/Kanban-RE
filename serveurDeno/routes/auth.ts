@@ -11,9 +11,9 @@ import { createJWT, hashPassword, verifyPassword } from "../middleware/jwt.ts";
 const router = new Router({ prefix: "/auth" });
 
 /**
- * POST /users/register
+ * POST /auth/inscription
  */
-router.post("/register", async (ctx) => {
+router.post("/inscription", async (ctx) => {
     const body = (await ctx.request.body.json()) as RegisterRequest;
 
     if (!body?.pseudo || !body?.motDePasse || !body?.email || !body?.nom || !body?.prenom) {
@@ -73,7 +73,7 @@ router.post("/register", async (ctx) => {
 });
 
 /**
- * POST /users/login
+ * POST /auth/login
  */
 router.post("/login", async (ctx) => {
     const body = (await ctx.request.body.json()) as LoginRequest;
@@ -126,7 +126,7 @@ router.post("/login", async (ctx) => {
 });
 
 /**
- * GET /users/validate
+ * GET /auth/validate
  */
 router.get("/validate", authMiddleware, (ctx: AuthContext) => {
     const cptId = ctx.state.user!.cpt_id;
