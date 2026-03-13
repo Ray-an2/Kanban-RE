@@ -24,9 +24,7 @@ function App() {
           <Route
             path="/auth/login"
             element={
-              //<RestrictedGuest>
                 <Connexion />
-              //</RestrictedGuest>
             }
           />
           <Route
@@ -45,7 +43,7 @@ function App() {
             }
           />
           <Route
-            path="/tableau/:id"
+            path="/api/tableau/:id"
             element={
               //<RestrictedLoggedIn>
                 <KanbanBoard />
@@ -53,7 +51,7 @@ function App() {
             }
           />
           <Route
-            path="/tableau/:id/log"
+            path="/api/tableau/:id/log"
             element={
               //<RestrictedLoggedIn>
                 <Log />
@@ -61,7 +59,7 @@ function App() {
             }
           />
           <Route
-            path="/tableau/:boardId/carte/:cardId"
+            path="/api/tableau/:boardId/carte/:cardId"
             element={
               //<RestrictedLoggedIn>
                 <CardDetailsPage />
@@ -69,7 +67,7 @@ function App() {
             }
           />
           <Route
-            path="/compte"
+            path="/api/compte"
             element={
               //<RestrictedLoggedIn>
                 <AccountPage />
@@ -77,7 +75,7 @@ function App() {
             }
           />
           <Route
-            path="/notification"
+            path="/api/notifications"
             element={
               //<RestrictedLoggedIn>
                 <Notification />
@@ -85,7 +83,7 @@ function App() {
             }
           />
           <Route
-            path="/tableau/logs"
+            path="/api/tableau/logs"
             element={
               //<RestrictedLoggedIn>
                 <AdminLogsPage />
