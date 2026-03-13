@@ -6,7 +6,6 @@ info:
 servers:
   - url: 'http://localhost:5173'    # URL provisoire avant le déploiement.
 paths:
-
   auth/login:
     get:
       summary: Page de connexion
@@ -56,7 +55,7 @@ paths:
           description: Compte créé
         '400':
           description: (VALIDATION_ERROR) données invalides.
-  /tableau:
+  api/tableau:
     get:
       summary: Accueil tableau
       description: Route protégée vers la page Accueil.
@@ -93,7 +92,7 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  /tableau/logs:
+  api/tableau/logs:
     get:
       summary: Logs (admin uniquement)
       description: Route protégée vers la page Log. Accessible uniquement aux administrateur.
@@ -110,7 +109,7 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  /tableau/{tabId}/log:
+  api/tableau/{tabId}/log:
     get:
       summary: Logs par tableau
       description: Route protégée vers la page Log pour un tableau donné.
@@ -134,7 +133,7 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  /tableau/{tabId}:
+  api/tableau/{tabId}:
     get:
       summary: Tableau
       description: Route protégée vers la page Tableau.
@@ -212,9 +211,9 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  /tableau/{tabId}/liste:
+  api/liste:
     get:
-      summary: Listes d'un tableau
+      summary: Affiches tous les Listes d'un tableau
       description: Route protégée pour récupérer les listes d'un tableau.
       security:
         - bearerAuth: []
@@ -267,7 +266,7 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  /tableau/{tabId}/liste/{lisId}:
+  api/liste/{lisId}:
     get:
       summary: Détails d'une liste
       description: Route protégée pour récupérer une liste.
@@ -363,7 +362,7 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  /tableau/{tabId}/liste/{lisId}/carte:
+  api/liste/{lisId}/carte:
     get:
       summary: Cartes d'une liste
       description: Route protégée pour récupérer les cartes d'une liste.
@@ -430,7 +429,7 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  /tableau/{tabId}/carte/{carId}:
+  api/carte/{carId}:
     get:
       summary: Carte
       description: Route protégée vers la page Carte.
@@ -526,7 +525,7 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  /compte/{id}:
+  api/compte/{id}:
     get:
       summary: Compte utilisateur
       description: Route protégée vers la page compte.
@@ -550,7 +549,7 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  /admin/comptes:
+  api/admin/comptes:
     get:
       summary: Gestion des comptes (admin)
       description: Route protégée vers la page de gestion des comptes (admin uniquement).
@@ -567,7 +566,7 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  /users:
+  api/users:
     get:
       summary: Liste des comptes (admin)
       description: Récupère la liste des comptes (admin uniquement).
@@ -606,7 +605,7 @@ paths:
           description: (VALIDATION_ERROR) pseudo déjà utilisé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  /user/{id}:
+  api/user/{id}:
     get:
       summary: Détails d'un compte (admin)
       description: Récupère un compte (admin uniquement).
@@ -684,7 +683,7 @@ paths:
           description: (NOT_FOUND) ressource introuvable.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  /user/{id}/profile:
+  api/user/{id}/profile:
     put:
       summary: Modification du profil
       description: Met à jour le profil de l'utilisateur connecté.
@@ -707,7 +706,7 @@ paths:
           description: (NOT_FOUND) ressource introuvable.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  /user/{id}/password:
+  api/user/{id}/password:
     put:
       summary: Modification du mot de passe
       description: Met à jour le mot de passe de l'utilisateur connecté.
@@ -728,7 +727,7 @@ paths:
           description: (UNAUTHORIZED) non autorisé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  /user/{id}/pseudo:
+  api/user/{id}/pseudo:
     put:
       summary: Modification du pseudo
       description: Met à jour le pseudo de l'utilisateur connecté.
@@ -751,7 +750,7 @@ paths:
           description: (VALIDATION_ERROR) pseudo déjà utilisé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  /notification:
+  api/notification:
     get:
       summary: Notifications
       description: Route protégée vers la page des notifications.
@@ -766,7 +765,7 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  /notifications:
+  api/notifications:
     get:
       summary: Liste des notifications
       description: Récupère les notifications de l'utilisateur (ou toutes si admin).
@@ -801,7 +800,7 @@ paths:
           description: (ROLE_UNAUTHORIZED) rôle insuffisant.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  /notification/{id}:
+  api/notification/{id}:
     get:
       summary: Détails d'une notification
       description: Récupère une notification.
