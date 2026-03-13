@@ -115,7 +115,6 @@ const Accueil: React.FC = () => {
   };
 
   const userBoards = boards.filter(board => board.owner.cpt_id === user.cpt_id);
-  const _allBoards = boards; // Tous les tableaux visibles pour l'admin
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '30px', fontFamily: 'Arial, sans-serif' }}>

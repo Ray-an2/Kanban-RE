@@ -1,7 +1,7 @@
 // Tableau.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Tableau as TableauType, Liste, Carte } from '../model/types.ts';
+import type { Tableau as TableauType, Liste, Carte } from '../model/types.ts';
 import CarteComponent from '../components/Carte.tsx';
 
 const Tableau: React.FC = () => {
