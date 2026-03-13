@@ -6,10 +6,9 @@ import '../page/App.css';
 interface UserBoardsProps {
   tableaux: Tableau[];
   isAdmin?: boolean;
-  currentUserId: string;
 }
 
-const Accueil: React.FC<UserBoardsProps> = ({ tableaux, isAdmin = false, currentUserId }) => {
+const Accueil: React.FC<UserBoardsProps> = ({ tableaux, isAdmin = false }) => {
   const navigate = useNavigate();
 
   const handleBoardClick = (tabId: string) => {
