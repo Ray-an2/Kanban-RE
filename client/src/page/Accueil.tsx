@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type{ Tableau, MemberWithProfile } from '../model/types.ts';
+import { Tableau, MemberWithProfile } from '../model/types.ts';
 
 interface BoardWithOwner extends Tableau {
   owner: MemberWithProfile;
@@ -167,31 +167,6 @@ const Accueil: React.FC = () => {
     fetchData();
   }, []);
 
-  const _handleCreateBoard = () => {
-    if (!newBoardName.trim()) return;
-
-    const newBoard: BoardWithOwner = {
-      tab_id: Date.now().toString(),
-      tab_nom: newBoardName,
-      tab_description: newBoardDescription || '',
-      tab_date: new Date().toISOString(),
-      tab_etat: 'A',
-      tab_image: null,
-      owner: {
-        cpt_id: user.cpt_id,
-        cpt_pseudo: user.cpt_pseudo,
-        cpt_mdp: '',
-        cpt_role: user.cpt_role,
-        profil: user.profil
-      },
-      memberRole: 'admin'
-    };
-
-    setBoards([...boards, newBoard]);
-    setNewBoardName('');
-    setNewBoardDescription('');
-  };
-
   const handleLogout = () => {
     navigate('/login');
   };
@@ -265,7 +240,7 @@ const Accueil: React.FC = () => {
             + Nouveau Tableau
           </button>
           <button
-            type = "button"
+            type="button"
             onClick={handleLogout}
             style={{
               padding: '8px 16px',
@@ -396,7 +371,6 @@ const Accueil: React.FC = () => {
                         marginBottom: '8px'
                       }}>
                         👤 {board.owner.profil?.pfl_prenom} {board.owner.profil?.pfl_nom}
-                        {/* PASTILLE DE RÔLE RETIRÉE ICI */}
                       </div>
                     )}
                   </div>
@@ -631,6 +605,126 @@ const Accueil: React.FC = () => {
         alignItems: 'center',
         zIndex: 1000
       }}>
+        <div style={{
+          backgroundColor: 'white',
+          padding: '30px',
+          borderRadius: '8px',
+          width: '500px',
+          maxWidth: '90%',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.2)'
+        }}>
+          <h2 style={{ marginTop: 0, color: '#2c3e50' }}>Créer un nouveau tableau</h2>
+
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{
+              display: 'block',
+              marginBottom: '5px',
+              color: '#555',
+              fontWeight: '500'
+            }}>
+              Nom du tableau *
+            </label>
+            <input
+              type="text"
+              value={newBoardName}
+              onChange={(e) => setNewBoardName(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '10px 15px',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '14px'
+              }}
+              placeholder="Ex: Projet Alpha, Marketing 2026..."
+              required
+            />
+          </div>
+
+          <div style={{ marginBottom: '25px' }}>
+            <label style={{
+              display: 'block',
+              marginBottom: '5px',
+              color: '#555',
+              fontWeight: '500'
+            }}>
+              Description (optionnelle)
+            </label>
+            <textarea
+              value={newBoardDescription}
+              onChange={(e) => setNewBoardDescription(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '10px 15px',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '14px',
+                minHeight: '100px',
+                resize: 'vertical'
+              }}
+              placeholder="Décrivez le but de ce tableau..."
+            />
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+            <button
+              type="button"
+              onClick={() => {
+                document.getElementById('create-board-modal')?.classList.remove('open');
+                setNewBoardName('');
+                setNewBoardDescription('');
+              }}
+              style={{
+                padding: '8px 16px',
+                backgroundColor: '#95a5a6',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              Annuler
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (!newBoardName.trim()) return;
+
+                const newBoard: BoardWithOwner = {
+                  tab_id: Date.now().toString(),
+                  tab_nom: newBoardName,
+                  tab_description: newBoardDescription || '',
+                  tab_date: new Date().toISOString(),
+                  tab_etat: 'A',
+                  tab_image: null,
+                  owner: {
+                    cpt_id: user.cpt_id,
+                    cpt_pseudo: user.cpt_pseudo,
+                    cpt_mdp: '',
+                    cpt_role: user.cpt_role,
+                    profil: user.profil
+                  },
+                  memberRole: 'admin'
+                };
+
+                setBoards([...boards, newBoard]);
+                document.getElementById('create-board-modal')?.classList.remove('open');
+                setNewBoardName('');
+                setNewBoardDescription('');
+              }}
+              disabled={!newBoardName.trim()}
+              style={{
+                padding: '8px 16px',
+                backgroundColor: newBoardName.trim() ? '#4CAF50' : '#cccccc',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: newBoardName.trim() ? 'pointer' : 'not-allowed'
+              }}
+            >
+              Créer le tableau
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* CSS pour le modal */}

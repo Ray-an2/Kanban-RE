@@ -115,7 +115,7 @@ const AccountPage: React.FC = () => {
   };
 
   const handleLogout = () => {
-    navigate('/login');
+    navigate('/auth/login');
   };
 
   return (

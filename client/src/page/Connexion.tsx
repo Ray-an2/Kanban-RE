@@ -155,13 +155,6 @@ const Connexion: React.FC = () => {
           <button type="button" className="link-button" onClick={() => navigate('/auth/inscription')}>
             S'inscrire
           </button>
-          <button
-            type="button"
-            className="link-button"
-            onClick={() => navigate('/')}
-          >
-            Retour au Kanban
-          </button>
         </div>
       </form>
     </div>
