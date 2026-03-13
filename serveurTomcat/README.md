@@ -1,3 +1,27 @@
+# Serveur Tomcat Spring
+Ce module expose des API REST pour les entités de l'application (tableau, liste, carte, étiquette, journal, notification, user) via une application Spring Boot packagée en WAR et déployée dans Tomcat.
+Les commentaires et les pièces jointes sont stockés dans MongoDB. Le reste des données est stocké dans une base SQL (MariaDB par défaut).
+
+## Routes principales
+- `/tableau`
+- `/liste`
+- `/carte`
+- `/etiquette`
+- `/journal`
+- `/notification`
+- `/user`
+- `/commentaire`
+- `/document`
+
+Chaque route expose des endpoints CRUD classiques : `GET`, `POST`, `PUT`, `DELETE`.
+
+## Configuration
+Les variables attendues (via `.env` ou variables d'environnement) :
+- `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`
+- `MONGO_URI`
+
+L'application est configurée dans `src/main/resources/application.yml`.
+
 # READEME sur le serveur Tomcat
 Ce projet a pour but de mettre en place un serveur Tomcat pour héberger une application web. Tomcat est un conteneur de servlets open source développé par la fondation Apache.
 ## Installation de Tomcat
