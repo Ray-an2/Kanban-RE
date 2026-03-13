@@ -454,7 +454,7 @@ const AccountPage: React.FC = () => {
 
               <button
                 type="button"
-                onClick={() => navigate('/admin/boards')}
+                onClick={() => navigate('/tableau')}
                 style={{
                   width: '100%',
                   padding: '8px',
@@ -519,7 +519,7 @@ const AccountPage: React.FC = () => {
 
               <button
                 type="button"
-                onClick={() => navigate('/admin/logs')}
+                onClick={() => navigate('/tableau/logs')}
                 style={{
                   width: '100%',
                   padding: '8px',
