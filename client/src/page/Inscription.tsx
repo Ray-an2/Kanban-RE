@@ -118,7 +118,7 @@ const Inscription: React.FC = () => {
         throw new Error('Format de reponse invalide');
       }
 
-      navigate('/login');
+      navigate('/auth/login');
     } catch (error) {
       console.error("Erreur lors de l'inscription:", error);
       setErrors((prev) => ({
@@ -240,7 +240,7 @@ const Inscription: React.FC = () => {
 
         <div className="login-link">
           <p>Vous avez déjà un compte ?</p>
-          <button type="button" className="link-button" onClick={() => navigate('/login')}>
+          <button type="button" className="link-button" onClick={() => navigate('/auth/login')}>
             Se connecter
           </button>
         </div>
