@@ -8,7 +8,8 @@ import TableauPage from "./Accueil.tsx";
 import CardDetailsPage from "./Carte.tsx";
 import AccountPage from "./Compte.tsx";
 import Notification from "./Notification.tsx";
-/*import { RestrictedGuest } from "./components/RestrictedGuest";
+import AdminLogsPage from "./LogListe.tsx";
+/*import { RestrictedGuest } from "./components/RestrictedGuest"; //les routes faites par prof sont commentées
 import { RestrictedLoggedIn } from "./components/RestrictedLoggedIn";*/
 
 import "./App.css";
@@ -18,10 +19,10 @@ function App() {
     //<AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/" element={<Navigate to="/auth/login" replace />} />
 
           <Route
-            path="/login"
+            path="/auth/login"
             element={
               //<RestrictedGuest>
                 <Connexion />
@@ -29,11 +30,9 @@ function App() {
             }
           />
           <Route
-            path="/inscription"
+            path="/auth/inscription"
             element={
-              //<RestrictedGuest>
                 <Inscription />
-              //</RestrictedGuest>
             }
           />
 
@@ -82,6 +81,14 @@ function App() {
             element={
               //<RestrictedLoggedIn>
                 <Notification />
+              //</RestrictedLoggedIn>
+            }
+          />
+          <Route
+            path="/tableau/logs"
+            element={
+              //<RestrictedLoggedIn>
+                <AdminLogsPage />
               //</RestrictedLoggedIn>
             }
           />
