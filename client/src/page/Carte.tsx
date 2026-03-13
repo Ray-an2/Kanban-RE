@@ -1,46 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import type { Etiquette, Liste, MemberWithProfile } from '../model/types.ts';
 
-// Définition des interfaces directement dans le fichier
-interface Compte {
-  cpt_id: string;
-  cpt_pseudo: string;
-  cpt_mdp: string;
-  cpt_role: string;
-}
 
-interface Profil {
-  pfl_nom: string | null;
-  pfl_prenom: string | null;
-  pfl_mail: string | null;
-  pfl_etat: 'A' | 'D';
-  pfl_date: string | null;
-  cpt_id: string;
-}
-
-interface Etiquette {
-  eti_id: string;
-  eti_nom: string;
-  eti_couleur: string;
-}
-
-interface Liste {
-  lis_id: string;
-  lis_titre: string;
-  lis_ordre: number;
-  lis_etat: 'P' | 'A';
-  tab_id: string;
-}
-
-interface MemberWithProfile extends Compte {
-  profil?: Profil;
-}
 
 const CardDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  // Type complet pour la carte
   type CardType = {
     car_id: string;
     car_nom: string;

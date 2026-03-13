@@ -1,31 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { Tableau } from '../model/types.ts';
-
-interface User {
-  cpt_id: string;
-  cpt_pseudo: string;
-  cpt_role: string;
-  profil?: {
-    pfl_prenom: string;
-    pfl_nom: string;
-  };
-}
+import type{ Tableau, MemberWithProfile } from '../model/types.ts';
 
 interface BoardWithOwner extends Tableau {
-  owner: User;
-  isAdmin: boolean;
+  owner: MemberWithProfile;
+  memberRole?: 'admin' | 'membre' | 'lecteur';
 }
 
 const Accueil: React.FC = () => {
   const navigate = useNavigate();
-  const [user, _setUser] = useState<User>({
+  const [user] = useState<MemberWithProfile>({
     cpt_id: '1',
     cpt_pseudo: 'jdupont',
+    cpt_mdp: '', // Champ requis
     cpt_role: 'admin',
     profil: {
+      pfl_nom: 'Dupont',
       pfl_prenom: 'Jean',
-      pfl_nom: 'Dupont'
+      pfl_mail: 'jean.dupont@example.com',
+      pfl_etat: 'A',
+      pfl_date: new Date().toISOString(),
+      cpt_id: '1'
     }
   });
 
@@ -38,7 +33,6 @@ const Accueil: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Simulation de chargement
         await new Promise(resolve => setTimeout(resolve, 800));
 
         const mockBoards: BoardWithOwner[] = [
@@ -47,21 +41,47 @@ const Accueil: React.FC = () => {
             tab_id: '1',
             tab_nom: 'Projet Alpha',
             tab_description: 'Développement de la nouvelle application mobile',
-            tab_date: '2026-02-15T09:00:00',
+            tab_date: new Date().toISOString(),
             tab_etat: 'A',
             tab_image: null,
-            owner: user,
-            isAdmin: true
+            owner: {
+              cpt_id: '1',
+              cpt_pseudo: 'jdupont',
+              cpt_mdp: '',
+              cpt_role: 'admin',
+              profil: {
+                pfl_nom: 'Dupont',
+                pfl_prenom: 'Jean',
+                pfl_mail: 'jean.dupont@example.com',
+                pfl_etat: 'A',
+                pfl_date: new Date().toISOString(),
+                cpt_id: '1'
+              }
+            },
+            memberRole: 'admin'
           },
           {
             tab_id: '3',
             tab_nom: 'Support Client',
             tab_description: 'Gestion des tickets clients',
-            tab_date: '2025-12-20T14:30:00',
+            tab_date: new Date(Date.now() - 86400000).toISOString(),
             tab_etat: 'A',
             tab_image: null,
-            owner: user,
-            isAdmin: true
+            owner: {
+              cpt_id: '1',
+              cpt_pseudo: 'jdupont',
+              cpt_mdp: '',
+              cpt_role: 'admin',
+              profil: {
+                pfl_nom: 'Dupont',
+                pfl_prenom: 'Jean',
+                pfl_mail: 'jean.dupont@example.com',
+                pfl_etat: 'A',
+                pfl_date: new Date().toISOString(),
+                cpt_id: '1'
+              }
+            },
+            memberRole: 'admin'
           },
 
           // Tableaux créés par d'autres utilisateurs
@@ -69,55 +89,70 @@ const Accueil: React.FC = () => {
             tab_id: '2',
             tab_nom: 'Marketing 2026',
             tab_description: 'Campagnes marketing pour le Q2 2026',
-            tab_date: '2026-01-10T10:00:00',
+            tab_date: new Date(Date.now() - 172800000).toISOString(),
             tab_etat: 'A',
             tab_image: null,
             owner: {
               cpt_id: '2',
               cpt_pseudo: 'mmartin',
+              cpt_mdp: '',
               cpt_role: 'user',
               profil: {
+                pfl_nom: 'Martin',
                 pfl_prenom: 'Marie',
-                pfl_nom: 'Martin'
+                pfl_mail: 'marie.martin@example.com',
+                pfl_etat: 'A',
+                pfl_date: new Date().toISOString(),
+                cpt_id: '2'
               }
             },
-            isAdmin: false
+            memberRole: 'membre'
           },
           {
             tab_id: '4',
             tab_nom: 'RH - Recrutement',
             tab_description: 'Processus de recrutement 2026',
-            tab_date: '2025-11-15T11:20:00',
+            tab_date: new Date(Date.now() - 259200000).toISOString(),
             tab_etat: 'A',
             tab_image: null,
             owner: {
               cpt_id: '3',
               cpt_pseudo: 'plambert',
+              cpt_mdp: '',
               cpt_role: 'user',
               profil: {
+                pfl_nom: 'Lambert',
                 pfl_prenom: 'Pierre',
-                pfl_nom: 'Lambert'
+                pfl_mail: 'pierre.lambert@example.com',
+                pfl_etat: 'A',
+                pfl_date: new Date().toISOString(),
+                cpt_id: '3'
               }
             },
-            isAdmin: false
+            memberRole: 'lecteur'
           },
           {
             tab_id: '5',
             tab_nom: 'Ancien Projet',
             tab_description: 'Projet archivé en 2025',
-            tab_date: '2025-05-10T08:00:00',
+            tab_date: new Date('2025-05-10').toISOString(),
             tab_etat: 'I',
             tab_image: null,
             owner: {
               cpt_id: '4',
               cpt_pseudo: 'sdurand',
+              cpt_mdp: '',
               cpt_role: 'user',
               profil: {
+                pfl_nom: 'Durand',
                 pfl_prenom: 'Sophie',
-                pfl_nom: 'Durand'
+                pfl_mail: 'sophie.durand@example.com',
+                pfl_etat: 'A',
+                pfl_date: new Date().toISOString(),
+                cpt_id: '4'
               }
             },
-            isAdmin: false
+            memberRole: 'lecteur'
           }
         ];
 
@@ -132,7 +167,7 @@ const Accueil: React.FC = () => {
     fetchData();
   }, []);
 
-  const handleCreateBoard = () => {
+  const _handleCreateBoard = () => {
     if (!newBoardName.trim()) return;
 
     const newBoard: BoardWithOwner = {
@@ -142,8 +177,14 @@ const Accueil: React.FC = () => {
       tab_date: new Date().toISOString(),
       tab_etat: 'A',
       tab_image: null,
-      owner: user,
-      isAdmin: true
+      owner: {
+        cpt_id: user.cpt_id,
+        cpt_pseudo: user.cpt_pseudo,
+        cpt_mdp: '',
+        cpt_role: user.cpt_role,
+        profil: user.profil
+      },
+      memberRole: 'admin'
     };
 
     setBoards([...boards, newBoard]);
@@ -155,15 +196,35 @@ const Accueil: React.FC = () => {
     navigate('/login');
   };
 
-  const getStatusStyle = (etat: 'A' | 'I') => {
+  const getStatusStyle = (etat: 'A' | 'I') => ({
+    color: etat === 'A' ? '#4CAF50' : '#9E9E9E',
+    backgroundColor: etat === 'A' ? '#E8F5E9' : '#FAFAFA',
+    padding: '4px 8px',
+    borderRadius: '12px',
+    fontSize: '12px',
+    fontWeight: 'bold' as const,
+    display: 'inline-block'
+  });
+
+  const getRoleStyle = (role?: 'admin' | 'membre' | 'lecteur') => {
+    if (!role) return { display: 'none' };
+
+    const colors: Record<'admin' | 'membre' | 'lecteur', { bg: string; color: string }> = {
+      admin: { bg: '#E53935', color: '#FFFFFF' },
+      membre: { bg: '#42A5F5', color: '#FFFFFF' },
+      lecteur: { bg: '#FFB74D', color: '#000000' }
+    };
+
+    const color = colors[role] || { bg: '#CCCCCC', color: '#000000' };
+
     return {
-      color: etat === 'A' ? '#4CAF50' : '#9E9E9E',
-      backgroundColor: etat === 'A' ? '#E8F5E9' : '#FAFAFA',
-      padding: '4px 8px',
-      borderRadius: '12px',
-      fontSize: '12px',
+      padding: '3px 8px',
+      backgroundColor: color.bg,
+      color: color.color,
+      borderRadius: '10px',
+      fontSize: '11px',
       fontWeight: 'bold' as const,
-      display: 'inline-block'
+      marginLeft: '8px'
     };
   };
 
@@ -177,6 +238,7 @@ const Accueil: React.FC = () => {
       padding: '30px',
       fontFamily: 'Arial, sans-serif'
     }}>
+      {/* En-tête */}
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -194,8 +256,11 @@ const Accueil: React.FC = () => {
               color: 'white',
               border: 'none',
               borderRadius: '4px',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              transition: 'background-color 0.2s'
             }}
+            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#45a049'}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#4CAF50'}
           >
             + Nouveau Tableau
           </button>
@@ -208,15 +273,18 @@ const Accueil: React.FC = () => {
               color: 'white',
               border: 'none',
               borderRadius: '4px',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              transition: 'background-color 0.2s'
             }}
+            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#d32f2f'}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f44336'}
           >
             Se déconnecter
           </button>
         </div>
       </div>
 
-      {/* Section Admin (visible uniquement pour les admins) */}
+      {/* Section Administration - SANS les pastilles de rôle */}
       {user.cpt_role === 'admin' && (
         <div style={{
           marginBottom: '40px',
@@ -233,13 +301,13 @@ const Accueil: React.FC = () => {
           }}>
             <h2 style={{ margin: 0, color: '#e74c3c' }}>🛠 Administration - Tous les tableaux</h2>
             <span style={{
-              padding: '4px 8px',
+              padding: '6px 10px',
               backgroundColor: '#e74c3c',
               color: 'white',
               borderRadius: '4px',
               fontSize: '12px'
             }}>
-              {allBoards.length} tableaux
+              {allBoards.length} tableau{allBoards.length > 1 ? 'x' : ''}
             </span>
           </div>
 
@@ -262,7 +330,7 @@ const Accueil: React.FC = () => {
               gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
               gap: '20px'
             }}>
-              {allBoards.map(board => (
+              {allBoards.map((board) => (
                 <div
                   key={board.tab_id}
                   style={{
@@ -270,11 +338,20 @@ const Accueil: React.FC = () => {
                     borderRadius: '8px',
                     padding: '15px',
                     cursor: 'pointer',
-                    transition: 'transform 0.2s, box-shadow 0.2s',
+                    transition: 'all 0.2s',
                     border: board.tab_etat === 'I' ? '1px solid #eee' : '1px solid #e3f2fd',
-                    position: 'relative'
+                    position: 'relative',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
                   }}
                   onClick={() => navigate(`/tableau/${board.tab_id}`)}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                  }}
                 >
                   {board.tab_etat === 'I' && (
                     <div style={{
@@ -293,13 +370,17 @@ const Accueil: React.FC = () => {
                       display: 'flex',
                       justifyContent: 'space-between',
                       alignItems: 'center',
-                      marginBottom: '5px'
+                      marginBottom: '8px'
                     }}>
                       <h3 style={{
                         margin: 0,
                         color: '#2c3e50',
                         fontSize: '16px',
-                        fontWeight: '600'
+                        fontWeight: '600',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        maxWidth: '200px'
                       }}>
                         {board.tab_nom}
                       </h3>
@@ -314,19 +395,26 @@ const Accueil: React.FC = () => {
                         color: '#666',
                         marginBottom: '8px'
                       }}>
-                        Propriétaire: {board.owner.profil?.pfl_prenom} {board.owner.profil?.pfl_nom}
+                        👤 {board.owner.profil?.pfl_prenom} {board.owner.profil?.pfl_nom}
+                        {/* PASTILLE DE RÔLE RETIRÉE ICI */}
                       </div>
                     )}
                   </div>
 
-                  <p style={{
-                    margin: '0 0 10px 0',
-                    color: '#555',
-                    fontSize: '14px',
-                    minHeight: '40px'
-                  }}>
-                    {board.tab_description || 'Aucune description'}
-                  </p>
+                  {board.tab_description && (
+                    <p style={{
+                      margin: '0 0 10px 0',
+                      color: '#555',
+                      fontSize: '14px',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      minHeight: '40px'
+                    }}>
+                      {board.tab_description}
+                    </p>
+                  )}
 
                   <div style={{
                     display: 'flex',
@@ -338,7 +426,7 @@ const Accueil: React.FC = () => {
                     <span>
                       Créé le {new Date(board.tab_date).toLocaleDateString('fr-FR', {
                         day: '2-digit',
-                        month: '2-digit',
+                        month: 'short',
                         year: 'numeric'
                       })}
                     </span>
@@ -350,7 +438,7 @@ const Accueil: React.FC = () => {
         </div>
       )}
 
-      {/* Section Mes Tableaux */}
+      {/* Section Mes Tableaux - AVEC les pastilles de rôle */}
       <div style={{
         backgroundColor: 'white',
         borderRadius: '8px',
@@ -364,15 +452,32 @@ const Accueil: React.FC = () => {
           marginBottom: '20px'
         }}>
           <h2 style={{ margin: 0, color: '#2c3e50' }}>Mes Tableaux</h2>
-          <span style={{
-            padding: '4px 8px',
-            backgroundColor: '#3498db',
-            color: 'white',
-            borderRadius: '4px',
-            fontSize: '12px'
-          }}>
-            {userBoards.length} tableaux
-          </span>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <span style={{
+              padding: '6px 10px',
+              backgroundColor: '#3498db',
+              color: 'white',
+              borderRadius: '4px',
+              fontSize: '12px'
+            }}>
+              {userBoards.length} tableau{userBoards.length > 1 ? 'x' : ''}
+            </span>
+            <button
+              type="button"
+              onClick={() => document.getElementById('create-board-modal')?.classList.add('open')}
+              style={{
+                padding: '6px 12px',
+                backgroundColor: '#4CAF50',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '12px'
+              }}
+            >
+              + Nouveau tableau
+            </button>
+          </div>
         </div>
 
         {loading ? (
@@ -390,12 +495,11 @@ const Accueil: React.FC = () => {
           </div>
         ) : userBoards.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '30px', color: '#666' }}>
-            <p>Vous n'avez pas encore créé de tableaux.</p>
+            <p style={{ marginBottom: '15px' }}>Vous n'avez pas encore créé de tableaux.</p>
             <button
               type="button"
               onClick={() => document.getElementById('create-board-modal')?.classList.add('open')}
               style={{
-                marginTop: '15px',
                 padding: '8px 16px',
                 backgroundColor: '#4CAF50',
                 color: 'white',
@@ -413,7 +517,7 @@ const Accueil: React.FC = () => {
             gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
             gap: '20px'
           }}>
-            {userBoards.map(board => (
+            {userBoards.map((board) => (
               <div
                 key={board.tab_id}
                 style={{
@@ -421,11 +525,20 @@ const Accueil: React.FC = () => {
                   borderRadius: '8px',
                   padding: '15px',
                   cursor: 'pointer',
-                  transition: 'transform 0.2s, box-shadow 0.2s',
+                  transition: 'all 0.2s',
                   border: board.tab_etat === 'I' ? '1px solid #eee' : '1px solid #e3f2fd',
-                  position: 'relative'
+                  position: 'relative',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
                 }}
                 onClick={() => navigate(`/tableau/${board.tab_id}`)}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                }}
               >
                 {board.tab_etat === 'I' && (
                   <div style={{
@@ -444,13 +557,17 @@ const Accueil: React.FC = () => {
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    marginBottom: '5px'
+                    marginBottom: '8px'
                   }}>
                     <h3 style={{
                       margin: 0,
                       color: '#2c3e50',
                       fontSize: '16px',
-                      fontWeight: '600'
+                      fontWeight: '600',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      maxWidth: '200px'
                     }}>
                       {board.tab_nom}
                     </h3>
@@ -460,14 +577,20 @@ const Accueil: React.FC = () => {
                   </div>
                 </div>
 
-                <p style={{
-                  margin: '0 0 10px 0',
-                  color: '#555',
-                  fontSize: '14px',
-                  minHeight: '40px'
-                }}>
-                  {board.tab_description || 'Aucune description'}
-                </p>
+                {board.tab_description && (
+                  <p style={{
+                    margin: '0 0 10px 0',
+                    color: '#555',
+                    fontSize: '14px',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                    minHeight: '40px'
+                  }}>
+                    {board.tab_description}
+                  </p>
+                )}
 
                 <div style={{
                   display: 'flex',
@@ -479,10 +602,15 @@ const Accueil: React.FC = () => {
                   <span>
                     Créé le {new Date(board.tab_date).toLocaleDateString('fr-FR', {
                       day: '2-digit',
-                      month: '2-digit',
+                      month: 'short',
                       year: 'numeric'
                     })}
                   </span>
+                  {board.memberRole && (
+                    <span style={getRoleStyle(board.memberRole)}>
+                      {board.memberRole}
+                    </span>
+                  )}
                 </div>
               </div>
             ))}
@@ -503,104 +631,6 @@ const Accueil: React.FC = () => {
         alignItems: 'center',
         zIndex: 1000
       }}>
-        <div style={{
-          backgroundColor: 'white',
-          padding: '30px',
-          borderRadius: '8px',
-          width: '500px',
-          maxWidth: '90%',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.2)'
-        }}>
-          <h2 style={{ marginTop: 0, color: '#2c3e50' }}>Créer un nouveau tableau</h2>
-
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '5px',
-              color: '#555',
-              fontWeight: '500'
-            }}>
-              Nom du tableau
-            </label>
-            <input
-              type="text"
-              value={newBoardName}
-              onChange={(e) => setNewBoardName(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '10px 15px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                fontSize: '14px'
-              }}
-              placeholder="Ex: Projet Alpha, Marketing 2026..."
-            />
-          </div>
-
-          <div style={{ marginBottom: '25px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '5px',
-              color: '#555',
-              fontWeight: '500'
-            }}>
-              Description (optionnelle)
-            </label>
-            <textarea
-              value={newBoardDescription}
-              onChange={(e) => setNewBoardDescription(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '10px 15px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                fontSize: '14px',
-                minHeight: '100px',
-                resize: 'vertical'
-              }}
-              placeholder="Décrivez le but de ce tableau..."
-            />
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-            <button
-              type="button"
-              onClick={() => {
-                document.getElementById('create-board-modal')?.classList.remove('open');
-                setNewBoardName('');
-                setNewBoardDescription('');
-              }}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: '#95a5a6',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
-            >
-              Annuler
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                handleCreateBoard();
-                document.getElementById('create-board-modal')?.classList.remove('open');
-              }}
-              disabled={!newBoardName.trim()}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: newBoardName.trim() ? '#4CAF50' : '#cccccc',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: newBoardName.trim() ? 'pointer' : 'not-allowed'
-              }}
-            >
-              Créer le tableau
-            </button>
-          </div>
-        </div>
       </div>
 
       {/* CSS pour le modal */}
@@ -608,6 +638,11 @@ const Accueil: React.FC = () => {
         {`
           .modal.open {
             display: flex !important;
+          }
+
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
           }
         `}
       </style>

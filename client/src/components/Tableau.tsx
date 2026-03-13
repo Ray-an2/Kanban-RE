@@ -1,81 +1,116 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import type { Carte,  Liste,  Journal } from '../model/types.ts';
 import '../page/App.css';
 
-interface LogEntry {
-  action: string;
-  utilisateur: string;
-  date: string;
-  description: string;
-}
-
-interface Card {
-  id: string;
-  title: string;
-  description: string;
-  dueDate: string;
-}
-
-interface Column {
-  id: string;
-  title: string;
-  cards: Card[];
-}
-
 const Tableau: React.FC = () => {
+  // Conversion des types de la base de données en interfaces locales
+  interface Column extends Liste {
+    cartes: Carte[];
+  }
+
   const [columns, setColumns] = useState<Column[]>([
     {
-      id: 'todo',
-      title: 'To Do',
-      cards: [
-        { id: '1', title: 'Task 1', description: 'Terminer la maquette.', dueDate: '15/03/2026' },
-        { id: '2', title: 'Task 2', description: 'Préparer la réunion.', dueDate: '12/03/2026' },
+      lis_id: 'todo',
+      lis_titre: 'À faire',
+      lis_ordre: 1,
+      lis_etat: 'P',
+      tab_id: '1',
+      cartes: [
+        {
+          car_id: '1',
+          car_nom: 'Tâche 1',
+          car_des: 'Terminer la maquette.',
+          car_archiver: 'N',
+          car_terminer: 'N',
+          car_priorite: 2,
+          car_ordre: 1,
+          car_dateCreation: new Date().toISOString(),
+          car_dateDebut: new Date().toISOString(),
+          car_dateFin: '2026-03-15T00:00:00',
+          car_couverture: null,
+          lis_id: 'todo'
+        },
+        {
+          car_id: '2',
+          car_nom: 'Tâche 2',
+          car_des: 'Préparer la réunion.',
+          car_archiver: 'N',
+          car_terminer: 'N',
+          car_priorite: 1,
+          car_ordre: 2,
+          car_dateCreation: new Date().toISOString(),
+          car_dateDebut: new Date().toISOString(),
+          car_dateFin: '2026-03-12T00:00:00',
+          car_couverture: null,
+          lis_id: 'todo'
+        },
       ],
     },
     {
-      id: 'in-progress',
-      title: 'In Progress',
-      cards: [
-        { id: '3', title: 'Task 3', description: 'Développer la fonctionnalité de login.', dueDate: '20/03/2026' },
+      lis_id: 'in-progress',
+      lis_titre: 'En cours',
+      lis_ordre: 2,
+      lis_etat: 'P',
+      tab_id: '1',
+      cartes: [
+        {
+          car_id: '3',
+          car_nom: 'Tâche 3',
+          car_des: 'Développer la fonctionnalité de login.',
+          car_archiver: 'N',
+          car_terminer: 'N',
+          car_priorite: 3,
+          car_ordre: 1,
+          car_dateCreation: new Date().toISOString(),
+          car_dateDebut: new Date().toISOString(),
+          car_dateFin: '2026-03-20T00:00:00',
+          car_couverture: null,
+          lis_id: 'in-progress'
+        },
       ],
     },
   ]);
 
-   const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [logs, setLogs] = useState<Journal[]>([]);
 
-   const addLog = (action: string, description: string) => {
-    const newLog: LogEntry = {
-      action,
-      utilisateur: 'Utilisateur actuel',
-      date: new Date().toLocaleString(),
-      description,
+  const addLog = (jou_titre: string, jou_description: string) => {
+    const newLog: Journal = {
+      jou_id: Date.now().toString(),
+      jou_titre,
+      jou_description,
+      jou_auteur: 'Utilisateur actuel',
+      jou_action: 'MOVE_CARD',
+      jou_date: new Date().toISOString(),
+      jou_etat: 'SUCCESS'
     };
     setLogs([...logs, newLog]);
   };
+
   const [modal, setModal] = useState<{
     isOpen: boolean;
-    title: string;
-    description: string;
-    dueDate: string;
+    car_nom: string;
+    car_des: string;
+    car_dateFin: string;
   }>({
     isOpen: false,
-    title: '',
-    description: '',
-    dueDate: '',
+    car_nom: '',
+    car_des: '',
+    car_dateFin: '',
   });
 
-  const [draggedCard, setDraggedCard] = useState<Card | null>(null);
+  const [draggedCard, setDraggedCard] = useState<Carte | null>(null);
   const [dragSourceColumn, setDragSourceColumn] = useState<string | null>(null);
   const [dragOverCardId, setDragOverCardId] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const openModal = (e: React.MouseEvent, card: Card) => {
+  const openModal = (e: React.MouseEvent, card: Carte) => {
     e.stopPropagation();
     setModal({
       isOpen: true,
-      title: card.title,
-      description: card.description,
-      dueDate: card.dueDate,
+      car_nom: card.car_nom,
+      car_des: card.car_des || '',
+      car_dateFin: card.car_dateFin ? new Date(card.car_dateFin).toLocaleDateString('fr-FR') : '',
     });
   };
 
@@ -83,11 +118,11 @@ const Tableau: React.FC = () => {
     setModal({ ...modal, isOpen: false });
   };
 
-  const handleDragStart = (e: React.DragEvent, card: Card, columnId: string) => {
+  const handleDragStart = (e: React.DragEvent, card: Carte, columnId: string) => {
     e.stopPropagation();
     setDraggedCard(card);
     setDragSourceColumn(columnId);
-    e.dataTransfer.setData('text/plain', card.id);
+    e.dataTransfer.setData('text/plain', card.car_id);
     e.dataTransfer.effectAllowed = 'move';
   };
 
@@ -103,35 +138,38 @@ const Tableau: React.FC = () => {
     if (!draggedCard || !dragSourceColumn) return;
 
     const newColumns = [...columns];
-    const sourceColumnIndex = newColumns.findIndex(col => col.id === dragSourceColumn);
-    const targetColumnIndex = newColumns.findIndex(col => col.id === columnId);
+    const sourceColumnIndex = newColumns.findIndex(col => col.lis_id === dragSourceColumn);
+    const targetColumnIndex = newColumns.findIndex(col => col.lis_id === columnId);
 
     if (sourceColumnIndex === targetColumnIndex) {
       const column = newColumns[sourceColumnIndex];
-      const cardIndex = column.cards.findIndex(c => c.id === draggedCard.id);
-      const dropIndex = cardId ? column.cards.findIndex(c => c.id === cardId) : 0;
+      const cardIndex = column.cartes.findIndex(c => c.car_id === draggedCard.car_id);
+      const dropIndex = cardId ? column.cartes.findIndex(c => c.car_id === cardId) : 0;
 
-      const newCards = [...column.cards];
-      newCards.splice(cardIndex, 1);
-      newCards.splice(dropIndex, 0, draggedCard);
-      newColumns[sourceColumnIndex] = { ...column, cards: newCards };
+      const newCartes = [...column.cartes];
+      newCartes.splice(cardIndex, 1);
+      newCartes.splice(dropIndex, 0, draggedCard);
+      newColumns[sourceColumnIndex] = { ...column, cartes: newCartes };
     } else {
       const sourceColumn = newColumns[sourceColumnIndex];
       const targetColumn = newColumns[targetColumnIndex];
-      const newSourceCards = sourceColumn.cards.filter(c => c.id !== draggedCard.id);
-      const dropIndex = cardId ? targetColumn.cards.findIndex(c => c.id === cardId) : 0;
+      const newSourceCartes = sourceColumn.cartes.filter(c => c.car_id !== draggedCard.car_id);
+      const dropIndex = cardId ? targetColumn.cartes.findIndex(c => c.car_id === cardId) : 0;
 
-      const newTargetCards = [...targetColumn.cards];
-      newTargetCards.splice(dropIndex, 0, draggedCard);
+      const newTargetCartes = [...targetColumn.cartes];
+      newTargetCartes.splice(dropIndex, 0, {
+        ...draggedCard,
+        lis_id: columnId // Mise à jour de la liste de la carte
+      });
 
-      newColumns[sourceColumnIndex] = { ...sourceColumn, cards: newSourceCards };
-      newColumns[targetColumnIndex] = { ...targetColumn, cards: newTargetCards };
+      newColumns[sourceColumnIndex] = { ...sourceColumn, cartes: newSourceCartes };
+      newColumns[targetColumnIndex] = { ...targetColumn, cartes: newTargetCartes };
     }
 
     setColumns(newColumns);
-     addLog(
-      'Déplacement de carte',
-      `Carte "${draggedCard.title}" déplacée de "${dragSourceColumn}" vers "${columnId}"`
+    addLog(
+      `Déplacement de carte: ${draggedCard.car_nom}`,
+      `Carte "${draggedCard.car_nom}" déplacée de "${dragSourceColumn}" vers "${columnId}"`
     );
     setDraggedCard(null);
     setDragSourceColumn(null);
@@ -143,15 +181,17 @@ const Tableau: React.FC = () => {
     setDragSourceColumn(null);
     setDragOverCardId(null);
   };
-  const id='1';
+
+  const tabId = '1';
+
   return (
     <div className="app">
       <div className="header">
-        <h1>Kanban</h1>
+        <h1>Tableau Kanban</h1>
         <button
           type="button"
           className="log-button"
-          onClick={() => navigate(`/tableau/${id}/log`)}
+          onClick={() => navigate(`/tableau/${tabId}/log`)}
         >
           Voir les logs
         </button>
@@ -160,27 +200,30 @@ const Tableau: React.FC = () => {
           className="login-button"
           onClick={() => navigate('/login')}
         >
-          Deconnexion
+          Déconnexion
         </button>
       </div>
+
       <div className="board">
         {columns.map((column) => (
-          <div key={column.id} className="column">
-            <h2 className="column-title">{column.title}</h2>
+          <div key={column.lis_id} className="column">
+            <h2 className="column-title">{column.lis_titre}</h2>
             <div className="cards">
+              {/* Zone de drop pour ajouter en haut de la colonne */}
               <div
                 className="drop-zone"
-                onDragOver={(e) => handleDragOver(e, null, column.id)}
-                onDrop={(e) => handleDrop(e, null, column.id)}
+                onDragOver={(e) => handleDragOver(e, null, column.lis_id)}
+                onDrop={(e) => handleDrop(e, null, column.lis_id)}
               />
-              {column.cards.map((card) => (
+
+              {column.cartes.map((card) => (
                 <div
-                  key={card.id}
-                  className={`card ${dragOverCardId === card.id ? 'drag-over' : ''}`}
+                  key={card.car_id}
+                  className={`card ${dragOverCardId === card.car_id ? 'drag-over' : ''}`}
                   draggable
-                  onDragStart={(e) => handleDragStart(e, card, column.id)}
-                  onDragOver={(e) => handleDragOver(e, card.id, column.id)}
-                  onDrop={(e) => handleDrop(e, card.id, column.id)}
+                  onDragStart={(e) => handleDragStart(e, card, column.lis_id)}
+                  onDragOver={(e) => handleDragOver(e, card.car_id, column.lis_id)}
+                  onDrop={(e) => handleDrop(e, card.car_id, column.lis_id)}
                   onDragEnd={handleDragEnd}
                 >
                   <button
@@ -188,8 +231,37 @@ const Tableau: React.FC = () => {
                     className="card-title-button"
                     onClick={(e) => openModal(e, card)}
                   >
-                    {card.title}
+                    {card.car_nom}
                   </button>
+
+                  {/* Affichage de la priorité */}
+                  <div className="card-priority"
+                       style={{
+                         backgroundColor:
+                           card.car_priorite === 3 ? '#f44336' :
+                           card.car_priorite === 2 ? '#ff9800' :
+                           '#4caf50',
+                         color: 'white',
+                         padding: '2px 6px',
+                         borderRadius: '3px',
+                         fontSize: '10px',
+                         marginTop: '5px'
+                       }}>
+                    {card.car_priorite === 3 ? 'HAUTE' :
+                     card.car_priorite === 2 ? 'MOYENNE' : 'FAIBLE'}
+                  </div>
+
+                  {/* Affichage de la date limite */}
+                  {card.car_dateFin && (
+                    <div className="card-due-date"
+                         style={{
+                           fontSize: '11px',
+                           color: '#666',
+                           marginTop: '5px'
+                         }}>
+                      Échéance: {new Date(card.car_dateFin).toLocaleDateString('fr-FR')}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -216,11 +288,11 @@ const Tableau: React.FC = () => {
           <div
             style={{
               backgroundColor: 'white',
-              padding: '20px',
+              padding: '25px',
               borderRadius: '8px',
               width: '90%',
               maxWidth: '500px',
-              boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
               color: 'black',
               position: 'relative',
             }}
@@ -236,14 +308,43 @@ const Tableau: React.FC = () => {
                 border: 'none',
                 fontSize: '24px',
                 cursor: 'pointer',
+                color: '#666'
               }}
               onClick={closeModal}
             >
               &times;
             </button>
-            <h2 style={{ color: 'black' }}>{modal.title}</h2>
-            <p style={{ color: 'black' }}><strong>Description:</strong> {modal.description}</p>
-            <p style={{ color: 'black' }}><strong>Date limite:</strong> {modal.dueDate}</p>
+
+            <h2 style={{
+              marginTop: 0,
+              color: '#2c3e50',
+              borderBottom: '1px solid #eee',
+              paddingBottom: '10px'
+            }}>
+              {modal.car_nom}
+            </h2>
+
+            <div style={{ margin: '15px 0' }}>
+              <h3 style={{
+                fontSize: '16px',
+                color: '#2c3e50',
+                marginBottom: '8px'
+              }}>Description</h3>
+              <p style={{ color: '#555', lineHeight: '1.5' }}>
+                {modal.car_des || 'Aucune description'}
+              </p>
+            </div>
+
+            {modal.car_dateFin && (
+              <div style={{ margin: '15px 0' }}>
+                <h3 style={{
+                  fontSize: '16px',
+                  color: '#2c3e50',
+                  marginBottom: '8px'
+                }}>Date limite</h3>
+                <p style={{ color: '#555' }}>{modal.car_dateFin}</p>
+              </div>
+            )}
           </div>
         </div>
       )}

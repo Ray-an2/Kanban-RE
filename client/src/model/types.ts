@@ -94,7 +94,7 @@ export interface Journal {
   jou_description: string;
   jou_auteur: string;
   jou_action: string;
-  jou_date: string; // Format: YYYY-MM-DD HH:MM:SS
+  jou_date: string;
   jou_etat: string;
 }
 
@@ -115,4 +115,8 @@ export interface CardWithDetails extends Carte {
 
 export interface NotificationWithDetails extends Notification {
   compte?: Compte;
+}
+
+export interface MemberWithProfile extends Compte {
+  profil?: Profil;
 }
