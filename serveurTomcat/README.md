@@ -9,7 +9,11 @@ Les commentaires et les pièces jointes sont stockés dans MongoDB. Le reste des
 - `/etiquette`
 - `/journal`
 - `/notification`
-- `/user`
+- `/compte`
+- `/profil`
+- `/membre`
+- `/role`
+- `/motdepasse`
 - `/commentaire`
 - `/document`
 

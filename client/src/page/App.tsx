@@ -27,11 +27,9 @@ function App() {
     {/* Routes privées (utilisateur connecté) */}
     <Route element={<PrivateRoute />}>
       <Route path="/api/tableau" element={<TableauPage />} />
-      <Route element={/*PrivateRoute2*/}>
         <Route path="/api/tableau/:id" element={<KanbanBoard />} />
         <Route path="/api/tableau/:id/log" element={<Log />} />
         <Route path="/api/tableau/:boardId/carte/:cardId" element={<CardDetailsPage />} />
-      </Route>
       <Route path="/api/compte" element={<AccountPage />} />
       <Route path="/api/notifications" element={<Notification />} />
       <Route path="/api/tableau/logs" element={<AdminLogsPage />} />
