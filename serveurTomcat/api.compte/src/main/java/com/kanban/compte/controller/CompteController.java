@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.kanban.compte.service.CompteService;
 
 @RestController
-@RequestMapping("api/users")
+@RequestMapping("api/compte")
 public class CompteController {
 
 }
