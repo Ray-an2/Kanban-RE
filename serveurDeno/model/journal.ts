@@ -6,4 +6,6 @@ export interface Journal {
     jou_action: string;
     jou_date: string;
     jou_etat: string;
+    tab_id: string | null;
+    car_id: string | null;
 }

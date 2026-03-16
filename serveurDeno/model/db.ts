@@ -24,9 +24,9 @@ export interface CompteRow {
 export interface ProfilRow {
     pfl_nom: string;
     pfl_prenom: string;
-    pfl_date: string;
     pfl_mail: string;
     pfl_etat: string;
+    pfl_dateCreation: string;
     cpt_id: string;
     [key: string]: SQLOutputValue; // Index signature
 }
@@ -79,14 +79,14 @@ export interface ListeRow {
 export interface CarteRow {
     car_id: string;
     car_nom: string;
-    car_des: string | null;
+    car_description: string | null;
     car_archiver: string;
     car_terminer: string;
     car_priorite: number | null;
-    car_ordre: number;
-    car_dateCreation: string;
-    car_dateDebut: string | null;
-    car_dateFin: string | null;
+    car_ordre: string;
+    car_date_creation: string;
+    car_date_debut: string | null;
+    car_date_fin: string | null;
     car_couverture: string | null;
     lis_id: string;
     [key: string]: SQLOutputValue; // Index signature
@@ -101,6 +101,8 @@ export interface JournalRow {
     jou_action: string;
     jou_date: string;
     jou_etat: string;
+    tab_id: string | null;
+    car_id: string | null;
     [key: string]: SQLOutputValue; // Index signature
 }
 
@@ -141,9 +143,9 @@ export function isProfilRow(obj: Record<string, SQLOutputValue>): obj is ProfilR
         typeof obj === "object" &&
         "pfl_nom" in obj && typeof obj.pfl_nom === "string" &&
         "pfl_prenom" in obj && typeof obj.pfl_prenom === "string" &&
-        "pfl_date" in obj && typeof obj.pfl_date === "string" &&
         "pfl_mail" in obj && typeof obj.pfl_mail === "string" &&
         "pfl_etat" in obj && typeof obj.pfl_etat === "string" &&
+        "pfl_dateCreation" in obj && typeof obj.pfl_dateCreation === "string" &&
         "cpt_id" in obj && typeof obj.cpt_id === "string";
 }
 
@@ -202,14 +204,14 @@ export function isCarteRow(obj: Record<string, SQLOutputValue>): obj is CarteRow
         typeof obj === "object" &&
         "car_id" in obj && typeof obj.car_id === "string" &&
         "car_nom" in obj && typeof obj.car_nom === "string" &&
-        "car_des" in obj && (typeof obj.car_des === "string" || obj.car_des === null) &&
+        "car_description" in obj && (typeof obj.car_description === "string" || obj.car_description === null) &&
         "car_archiver" in obj && typeof obj.car_archiver === "string" &&
         "car_terminer" in obj && typeof obj.car_terminer === "string" &&
         "car_priorite" in obj && (typeof obj.car_priorite === "number" || obj.car_priorite === null) &&
-        "car_ordre" in obj && typeof obj.car_ordre === "number" &&
-        "car_dateCreation" in obj && typeof obj.car_dateCreation === "string" &&
-        "car_dateDebut" in obj && (typeof obj.car_dateDebut === "string" || obj.car_dateDebut === null) &&
-        "car_dateFin" in obj && (typeof obj.car_dateFin === "string" || obj.car_dateFin === null) &&
+        "car_ordre" in obj && typeof obj.car_ordre === "string" &&
+        "car_date_creation" in obj && typeof obj.car_date_creation === "string" &&
+        "car_date_debut" in obj && (typeof obj.car_date_debut === "string" || obj.car_date_debut === null) &&
+        "car_date_fin" in obj && (typeof obj.car_date_fin === "string" || obj.car_date_fin === null) &&
         "car_couverture" in obj && (typeof obj.car_couverture === "string" || obj.car_couverture === null) &&
         "lis_id" in obj && typeof obj.lis_id === "string";
 }
@@ -224,7 +226,9 @@ export function isJournalRow(obj: Record<string, SQLOutputValue>): obj is Journa
         "jou_auteur" in obj && typeof obj.jou_auteur === "string" &&
         "jou_action" in obj && typeof obj.jou_action === "string" &&
         "jou_date" in obj && typeof obj.jou_date === "string" &&
-        "jou_etat" in obj && typeof obj.jou_etat === "string";
+        "jou_etat" in obj && typeof obj.jou_etat === "string" &&
+        "tab_id" in obj && (typeof obj.tab_id === "string" || obj.tab_id === null) &&
+        "car_id" in obj && (typeof obj.car_id === "string" || obj.car_id === null);
 }
 
 // Etiquette
@@ -290,14 +294,14 @@ export function carteRowToApi(row: CarteRow): Carte {
     return {
         car_id: row.car_id,
         car_nom: row.car_nom,
-        car_description: row.car_des ?? "",
+        car_description: row.car_description ?? "",
         car_archiver: row.car_archiver,
         car_terminer: row.car_terminer,
         car_priorite: row.car_priorite ?? 0,
         car_ordre: row.car_ordre,
-        car_date_creation: row.car_dateCreation,
-        car_date_debut: row.car_dateDebut ?? "",
-        car_date_fin: row.car_dateFin ?? "",
+        car_date_creation: row.car_date_creation,
+        car_date_debut: row.car_date_debut ?? "",
+        car_date_fin: row.car_date_fin ?? "",
         car_couverture: row.car_couverture ?? "",
         lis_id: row.lis_id,
     };
@@ -313,6 +317,8 @@ export function journalRowToApi(row: JournalRow): Journal {
         jou_action: row.jou_action,
         jou_date: row.jou_date,
         jou_etat: row.jou_etat,
+        tab_id: row.tab_id ?? null,
+        car_id: row.car_id ?? null,
     };
 }
 

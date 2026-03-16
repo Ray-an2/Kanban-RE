@@ -316,7 +316,7 @@ router.post("/", authMiddleware, async (ctx: AuthContext) => {
 
     db.prepare(`
   INSERT INTO t_profil_pfl (
-    pfl_nom, pfl_prenom, pfl_date, pfl_mail, pfl_etat, cpt_id
+    pfl_nom, pfl_prenom, pfl_dateCreation, pfl_mail, pfl_etat, cpt_id
   ) VALUES (?, ?, ?, ?, ?, ?);
 `).run(
         body.nom,

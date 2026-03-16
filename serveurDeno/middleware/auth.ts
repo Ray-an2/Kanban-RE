@@ -7,8 +7,8 @@ export async function authMiddleware(ctx: AuthContext, next: Next) {
     const authHeader = ctx.request.headers.get("Authorization");
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
         throw new APIException(
-            APIErreurCode.UNAUTHORIZED,
-            401,
+            APIErreurCode.VALIDATION_ERROR,
+            409,
             "token manquante ou mal formée",
         );
     }
