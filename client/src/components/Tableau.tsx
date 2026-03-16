@@ -140,7 +140,7 @@ const Tableau: React.FC = () => {
 
   const handleCardClick = (e: React.MouseEvent, card: Carte) => {
     e.stopPropagation();
-    navigate(`/tableau/${id}/carte/${card.car_id}`);
+    navigate(`api/tableau/${id}/carte/${card.car_id}`);
   };
 
   if (loading) {
@@ -186,7 +186,7 @@ const Tableau: React.FC = () => {
         <div style={{ display: 'flex', gap: '10px' }}>
           <button
             type="button"
-            onClick={() => navigate(`/tableau/${id}/log`)}
+            onClick={() => navigate(`api/tableau/${id}/log`)}
             style={{
               padding: '8px 16px',
               backgroundColor: '#3498db',
