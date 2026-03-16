@@ -3,6 +3,7 @@
   "specifiers": {
     "npm:@deno/vite-plugin@^1.0.6": "1.0.6_vite@7.3.1__@types+node@24.10.10__picomatch@4.0.3_@types+node@24.10.10",
     "npm:@eslint/js@^9.39.1": "9.39.2",
+    "npm:@types/jwt-decode@^2.2.1": "2.2.1",
     "npm:@types/node@^24.10.1": "24.10.10",
     "npm:@types/react-dom@^19.2.3": "19.2.3_@types+react@19.2.14",
     "npm:@types/react@^19.2.14": "19.2.14",
@@ -11,7 +12,6 @@
     "npm:eslint-plugin-react-refresh@~0.4.24": "0.4.26_eslint@9.39.2",
     "npm:eslint@^9.39.1": "9.39.2",
     "npm:globals@^16.5.0": "16.5.0",
-    "npm:jwt-decode@4": "4.0.0",
     "npm:react-dom@^19.2.0": "19.2.4_react@19.2.4",
     "npm:react-router-dom@^7.13.1": "7.13.1_react@19.2.4_react-dom@19.2.4__react@19.2.4",
     "npm:react-router@^7.13.1": "7.13.1_react@19.2.4_react-dom@19.2.4__react@19.2.4",
@@ -558,6 +558,9 @@
     "@types/json-schema@7.0.15": {
       "integrity": "sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA=="
     },
+    "@types/jwt-decode@2.2.1": {
+      "integrity": "sha512-aWw2YTtAdT7CskFyxEX2K21/zSDStuf/ikI3yBqmwpwJF0pS+/IX5DWv+1UFffZIbruP6cnT9/LAJV1gFwAT1A=="
+    },
     "@types/node@24.10.10": {
       "integrity": "sha512-+0/4J266CBGPUq/ELg7QUHhN25WYjE0wYTPSQJn1xeu8DOlIOPxXxrNGiLmfAWl7HMMgWFWXpt9IDjMWrF5Iow==",
       "dependencies": [
@@ -1062,9 +1065,6 @@
       "integrity": "sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==",
       "bin": true
     },
-    "jwt-decode@4.0.0": {
-      "integrity": "sha512-+KJGIyHgkGuIq3IEBNftfhW/LfWhXUIY6OmyVWjliu5KH1y0fw7VQ8YndE2O4qZdMSd9SqbnC8GOcZEy0Om7sA=="
-    },
     "keyv@4.5.4": {
       "integrity": "sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==",
       "dependencies": [
@@ -1381,6 +1381,7 @@
       "dependencies": [
         "npm:@deno/vite-plugin@^1.0.6",
         "npm:@eslint/js@^9.39.1",
+        "npm:@types/jwt-decode@^2.2.1",
         "npm:@types/node@^24.10.1",
         "npm:@types/react-dom@^19.2.3",
         "npm:@types/react@^19.2.14",
@@ -1389,7 +1390,6 @@
         "npm:eslint-plugin-react-refresh@~0.4.24",
         "npm:eslint@^9.39.1",
         "npm:globals@^16.5.0",
-        "npm:jwt-decode@4",
         "npm:react-dom@^19.2.0",
         "npm:react-router-dom@^7.13.1",
         "npm:react-router@^7.13.1",
