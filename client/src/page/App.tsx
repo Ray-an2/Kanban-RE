@@ -1,4 +1,6 @@
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import jwtDecode from "jwt-decode";
+import { BrowserRouter, Route, Routes, Navigate, useNavigate } from "react-router-dom";
 //import { AuthProvider } from "./contexts/AuthProvider";
 import KanbanBoard from "../components/Tableau.tsx";
 import Log from "./Log.tsx";
@@ -18,6 +20,34 @@ import { RestrictedLoggedIn } from "./components/RestrictedLoggedIn";*/
 import "./App.css";
 
 function App() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/auth/login'); // Redirige vers la page de login si pas de token
+      return;
+    }
+
+    try {
+      const decoded: any = jwtDecode(token);
+      const role = decoded.pfl_role;
+
+      // Vérifie si le token est expiré
+      const time = Date.now() / 1000;
+      if (decoded.exp < time) {
+        localStorage.removeItem('token');
+        navigate('/auth/login');
+        return;
+      }
+
+      // Vérifie si le rôle de l'user est autorisé
+      if (!["U", "A"].includes(role)) {
+        navigate('/auth/login'); // Redirige vers la page de login si le rôle n'est pas présent
+      }
+    } catch (err) { // token expiré ou invalide
+      navigate('/auth/login'); 
+    }
+  }, [navigate]);
   return (
     //<AuthProvider>
       <BrowserRouter>
