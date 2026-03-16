@@ -6,4 +6,5 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/journal")
 public class JournalController {
+    private final JournalServiceImpl journalService;
 }
