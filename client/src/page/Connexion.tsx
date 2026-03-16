@@ -1,17 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './App.css';
 import type { APIResponse } from '../model/api.ts';
 import { isAuthResponse } from '../model/auth.ts';
 import { useAuth } from '../hooks/useAuth.ts';
-import { isTokenValid } from "../hooks/auth.ts";
-
-useEffect(() => {
-  if (!isTokenValid()) {
-    localStorage.removeItem("token");
-  }
-}, []);
 
 const API_URL = import.meta.env.VITE_API_URL;
 
