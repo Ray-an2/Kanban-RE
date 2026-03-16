@@ -1,6 +1,5 @@
 import {PrivateRoute} from "../components/PrivateRoute.tsx";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-//import { AuthProvider } from "./contexts/AuthProvider";
 import KanbanBoard from "../components/Tableau.tsx";
 import Log from "./Log.tsx";
 import Inscription from "./Inscription.tsx";
@@ -13,8 +12,6 @@ import AdminLogsPage from "./LogListe.tsx";
 import UserManagementPage from "./UserList.tsx"
 import AdminTableaux from "./TableauAdmin.tsx";
 import CompteAdmin from "./CompteAdmin.tsx";
-/*import { RestrictedGuest } from "./components/RestrictedGuest"; //les routes faites par prof sont commentées
-import { RestrictedLoggedIn } from "./components/RestrictedLoggedIn";*/
 
 import "./App.css";
 
@@ -24,7 +21,6 @@ function App() {
   <Routes>
     <Route path="/" element={<Navigate to="/auth/login" replace />} />
 
-    {/* Routes publiques */}
     <Route path="/auth/login" element={<Connexion />} />
     <Route path="/auth/inscription" element={<Inscription />} />
 
@@ -45,7 +41,6 @@ function App() {
     <Route path="*" element={<h1>Page non trouvée</h1>} />
   </Routes>
 </BrowserRouter>
-    //</AuthProvider>
   );
 }
 

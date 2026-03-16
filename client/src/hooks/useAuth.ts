@@ -1,6 +1,5 @@
-import { useState } from "react";
-import type { AuthResponse, User } from "../model/auth.ts";
-
+export { useAuth } from "../context/AuthContext.tsx";
+/*
 const TOKEN_KEY = "auth_token";
 const USER_KEY = "auth_user";
 
@@ -39,4 +38,4 @@ export function useAuth() {
     login,
     logout,
   };
-}
+}*/

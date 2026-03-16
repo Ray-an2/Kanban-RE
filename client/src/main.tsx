@@ -1,12 +1,15 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { AuthProvider } from "./context/AuthContext.tsx";
 import './index.css'
 import App from './page/App.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
-  </StrictMode>,
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  </StrictMode>
 )
 // Déclare les variables globales avec des types explicites
 let draggedCard: HTMLElement | null = null;
