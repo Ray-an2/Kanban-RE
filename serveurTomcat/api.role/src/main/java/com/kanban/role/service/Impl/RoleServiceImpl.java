@@ -21,13 +21,6 @@ public class RoleServiceImpl implements RoleService {
   private final DogRepository dogRepository;
   private final DogMapper dogMapper;
 
-  /**
-   * Constructeur avec injection des dépendances
-   * L'injection par constructeur est préférée à @Autowired car :
-   * - Elle rend les dépendances obligatoires
-   * - Elle facilite les tests unitaires
-   * - Elle permet l'immutabilité
-   */
   public RoleServiceImpl(RoleRepository roleRepository, RoleMapper roleMapper) {
     this.roleRepository = roleRepository;
     this.roleMapper = roleMapper;
