@@ -16,24 +16,24 @@ public interface RoleService {
    * Methode qui récupère les roles détenu par un utilisateur en particulier.
    * @return RoleDto
    */
-  List<RoleDto> getRoleByIdUser( Long idUser);
+  List<RoleDto> getRoleByCptId(String cptId);
 
   /**
    * Methode qui récupère les utilisateurs avec leur roles détenu par un tableau en particulier.
    * @return RoleDto
    */
-  List<RoleDto> getRoleByIdTab( Long idTab);
+  List<RoleDto> getRoleByTabId(String tabId);
 
   /**
    * Associe un tableau à un utilisateur pour un role donnée.
    * @return List<RoleDto
    */
-  RoleDto AssocieRole(final @RequestBody RoleDto roleDto);
+  RoleDto associerRole(RoleDto roleDto);
 
   /**
    * Supprime l'association d'un utilisateur au tableau.
    * @param roleDto
    * @return true si l'association est supprimée, false sinon
    */
-  boolean deleteRole(final @RequestBody RoleDto roleDto)
+  void deleteRole(String cptId, String tabId);
 }

@@ -6,12 +6,15 @@ import lombok.Data;
 
 @Data
 public class RoleDto {
-  @NotNull
-  private Long idUser;  // manque de la jointure vers leur table
+  @NotBlank(message = "L'identifiant du compte est obligatoire")
+  private String cptId;  // manque de la jointure vers leur table
 
-  @NotNull
-  private Long idTab;   // manque de la jointure vers leur table
+  @NotBlank(message = "L'identifiant du tableau est obligatoire")
+  private String tabId;   // manque de la jointure vers leur table
 
   @NotBlank(message = "Le role est obligatoire")
-  private String role;
+  private String rolRole;
+
+  private String cptPseudo;
+  private String tabNom;
 }

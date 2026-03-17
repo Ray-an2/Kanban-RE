@@ -3,7 +3,6 @@ package com.kanban.role.mappers;
 import com.kanban.role.dto.RoleDto;
 import com.kanban.role.entity.Role;
 import org.springframework.stereotype.Component;
-import java.util.Objects;
 
 @Component
 public class RoleMapper {
@@ -12,9 +11,15 @@ public class RoleMapper {
       return null;
     }
     RoleDto roleDto = new RoleDto();
-    roleDto.setIdUser(role.getIdUser());
-    roleDto.setIdTab(role.getIdTab());
-    roleDto.setRole(role.getRole());
+    roleDto.setCptId(role.getCptId());
+    roleDto.setTabId(role.getTabId());
+    roleDto.setRolRole(role.getRolRole());
+    if(role.getCompte() != null) {
+      roleDto.getCptPseudo(role.getCompte().getCptPseudo());
+    }
+    if(role.getTableau() != null) {
+      roleDto.getTabNom(role.getTableau().getTabNom());
+    }
     return roleDto;
   }
 
@@ -23,13 +28,9 @@ public class RoleMapper {
       return null;
     }
     Role role = new Role();
-    if(roleDto.getIdUser() != null){
-      role.setIdUser(roleDto.getIdUser());
-    }
-    if(roleDto.getIdTab() != null) {
-      role.setIdTab(roleDto.getIdTab());
-    }
-    role.setRole(roleDto.getRole());
+    role.setCptId(roleDto.getCptId());
+    role.setTabId(roleDto.getTabId());
+    role.setRolRole(roleDto.getRolRole());
     return role;
   }
 }
