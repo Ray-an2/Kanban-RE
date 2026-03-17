@@ -7,41 +7,41 @@ import org.springframework.stereotype.Component;
 @Component
 public class CarteMapper {
 
-  public CarteDto toDto(Carte carte){
-    if (carte == null){
-      return null;
-    }
-    CarteDto carteDto = new CarteDto();
-    carteDto.setId(carte.getId());
-    carteDto.setNom(carte.getNom());
-    carteDto.setDescription(carte.getDescription());
-    carteDto.setArchiver(carte.getArchiver());
-    carteDto.setTerminer(carte.getTerminer());
-    carteDto.setOrdre(carte.getOrdre());
-    carteDto.setPriorite(carte.getPriorite());
-    carteDto.setDateDebut(carte.getDateDebut());
-    carteDto.setDateFin(carte.getDateFin());
-    carteDto.setImage(carte.getImage());
-    return carteDto;
+  public CarteDto toDto(Carte carte) {
+    if (carte == null) return null;
+    CarteDto dto = new CarteDto();
+    dto.setId(carte.getId());
+    dto.setNom(carte.getNom());
+    dto.setDescription(carte.getDescription());
+    dto.setArchiver(carte.getArchiver());
+    dto.setTerminer(carte.getTerminer());
+    dto.setOrdre(carte.getOrdre());
+    dto.setPriorite(carte.getPriorite());
+    dto.setDateCreation(carte.getDateCreation());
+    dto.setDateDebut(carte.getDateDebut());
+    dto.setDateFin(carte.getDateFin());
+    dto.setCouverture(carte.getCouverture());
+    dto.setLisId(carte.getLisId());
+    return dto;
   }
 
-  public Carte toEntity(CarteDto carteDto){
-    if (carteDto == null){
-      return null;
-    }
+  public Carte toEntity(CarteDto dto) {
+    if (dto == null) return null;
     Carte carte = new Carte();
-    if(carteDto.getId() !=null){
-      carte.setId(carteDto.getId());
+    if (dto.getId() != null) {
+      carte.setId(dto.getId());
     }
-    carte.setNom(carteDto.getNom());
-    carte.setDescription(carteDto.getDescription());
-    carte.setArchiver(carteDto.getArchiver());
-    carte.setTerminer(carteDto.getTerminer());
-    carte.setOrdre(carteDto.getOrdre());
-    carte.setPriorite(carteDto.getPriorite());
-    carte.setDateDebut(carteDto.getDateDebut());
-    carte.setDateFin(carteDto.getDateFin());
-    carte.setImage(carteDto.getImage());
+    carte.setNom(dto.getNom());
+    carte.setDescription(dto.getDescription());
+    carte.setArchiver(dto.getArchiver());
+    carte.setTerminer(dto.getTerminer());
+    carte.setOrdre(dto.getOrdre());
+    carte.setPriorite(dto.getPriorite());
+    carte.setDateCreation(dto.getDateCreation());
+    carte.setDateDebut(dto.getDateDebut());
+    carte.setDateFin(dto.getDateFin());
+    carte.setCouverture(dto.getCouverture());
+    carte.setLisId(dto.getLisId());
     return carte;
   }
 }

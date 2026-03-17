@@ -90,6 +90,16 @@
             <artifactId>testcontainers-mongodb</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.45.1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-community-dialects</artifactId>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>
@@ -104,11 +114,31 @@
     </dependencyManagement>
 
     <build>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
+                    <compileSourceRoots>
+                        <compileSourceRoot>${project.basedir}/api.carte/src/main/java</compileSourceRoot>
+                        <compileSourceRoot>${project.basedir}/api.commentaire/src/main/java</compileSourceRoot>
+                        <compileSourceRoot>${project.basedir}/api.compte/src/main/java</compileSourceRoot>
+                        <compileSourceRoot>${project.basedir}/api.document/src/main/java</compileSourceRoot>
+                        <compileSourceRoot>${project.basedir}/api.etiquette/src/main/java</compileSourceRoot>
+                        <compileSourceRoot>${project.basedir}/api.journal/src/main/java</compileSourceRoot>
+                        <compileSourceRoot>${project.basedir}/api.liste/src/main/java</compileSourceRoot>
+                        <compileSourceRoot>${project.basedir}/api.membre/src/main/java</compileSourceRoot>
+                        <compileSourceRoot>${project.basedir}/api.notification/src/main/java</compileSourceRoot>
+                        <compileSourceRoot>${project.basedir}/api.profil/src/main/java</compileSourceRoot>
+                        <compileSourceRoot>${project.basedir}/api.role/src/main/java</compileSourceRoot>
+                        <compileSourceRoot>${project.basedir}/api.tableau/src/main/java</compileSourceRoot>
+                    </compileSourceRoots>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>

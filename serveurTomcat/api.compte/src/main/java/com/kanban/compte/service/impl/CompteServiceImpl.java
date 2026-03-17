@@ -5,11 +5,12 @@ import com.kanban.compte.entity.Compte;
 import com.kanban.compte.mappers.CompteMapper;
 import com.kanban.compte.repository.CompteRepository;
 import com.kanban.compte.service.CompteService;
-
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
+import java.util.UUID;
 
 @Service("compteService")
 @Transactional
@@ -18,49 +19,37 @@ public class CompteServiceImpl implements CompteService {
   private final CompteRepository compteRepository;
   private final CompteMapper compteMapper;
 
-  /**
-   * Constructeur de CompteServiceImpl.
-   *
-   * @param compteRepository le repository pour accéder aux données des comptes
-   * @param compteMapper le mapper pour convertir entre Compte et CompteDto
-   */
   public CompteServiceImpl(CompteRepository compteRepository, CompteMapper compteMapper) {
     this.compteRepository = compteRepository;
     this.compteMapper = compteMapper;
   }
 
   @Override
-  @Transactional
   public CompteDto create(CompteDto compteDto) {
     Compte compte = compteMapper.toEntity(compteDto);
-    Compte savedCompte = compteRepository.save(compte);
-    return compteMapper.toDto(savedCompte);
+    compte.setId(UUID.randomUUID().toString());
+    return compteMapper.toDto(compteRepository.save(compte));
   }
 
   @Override
-  @Transactional
-  public CompteDto update(CompteDto compteDto) {
-    if (compteDto.getId() == null) {
-      throw new IllegalArgumentException("L'id du compte doit être fourni pour la mise à jour");
-    }
-    Compte existingCompte = compteRepository.findById(compteDto.getId())
-        .orElseThrow(() -> new EntityNotFoundException("Aucun compte trouvé avec l'id " + compteDto.getId()));
+  public CompteDto update(String id, CompteDto compteDto) {
+    Compte existingCompte = compteRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Aucun compte trouvé avec l'id " + id));
     existingCompte.setPseudo(compteDto.getPseudo());
     existingCompte.setRole(compteDto.getRole());
-    Compte updatedCompte = compteRepository.save(existingCompte);
-    return compteMapper.toDto(updatedCompte);
+    return compteMapper.toDto(compteRepository.save(existingCompte));
   }
 
   @Override
-  public CompteDto getCompte(Long compteId) {
-    Compte compte = compteRepository.findById(compteId)
-        .orElseThrow(() -> new EntityNotFoundException("Aucun compte trouvé avec l'id " + compteId));
-    return compteMapper.toDto(compte);
+  @Transactional(readOnly = true)
+  public CompteDto getCompte(String compteId) {
+    return compteRepository.findById(compteId)
+            .map(compteMapper::toDto)
+            .orElseThrow(() -> new EntityNotFoundException("Aucun compte trouvé avec l'id " + compteId));
   }
 
-  @inheritDoc
   @Override
-  public boolean delete(Long compteId) {
+  public boolean delete(String compteId) {
     if (!compteRepository.existsById(compteId)) {
       return false;
     }
@@ -69,14 +58,9 @@ public class CompteServiceImpl implements CompteService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public List<CompteDto> getAll() {
-    List<Compte> comptes = (List<Compte>) compteRepository.findAll();
-    return comptes.stream().map(compteMapper::toDto).toList();
+    return compteRepository.findAll()
+            .stream().map(compteMapper::toDto).toList();
   }
-
-  @Override
-  public List<CompteDto> getByRole(String role) {
-    List<Compte> comptes = (List<Compte>) compteRepository.findByRole(role);
-    return comptes.stream().map(compteMapper::toDto).toList();
-   }
 }

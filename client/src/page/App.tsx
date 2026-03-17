@@ -6,7 +6,8 @@ import Inscription from "./Inscription.tsx";
 import Connexion from "./Connexion.tsx";
 import TableauPage from "./Accueil.tsx";
 import CardDetailsPage from "./CarteDetails.tsx";
-import AccountPage from "./Compte.tsx";
+// @ts-ignore
+import Compte from "./Compte.tsx";
 import Notification from "./Notification.tsx";
 import AdminLogsPage from "./LogListe.tsx";
 import UserManagementPage from "./UserList.tsx"
@@ -30,7 +31,7 @@ function App() {
         <Route path="/api/tableau/:id" element={<KanbanBoard />} />
         <Route path="/api/tableau/:id/log" element={<Log />} />
         <Route path="/api/tableau/:boardId/carte/:cardId" element={<CardDetailsPage />} />
-      <Route path="/api/compte" element={<AccountPage />} />
+      <Route path="/api/compte" element={<Compte />} />
       <Route path="/api/notifications" element={<Notification />} />
       <Route path="/api/tableau/logs" element={<AdminLogsPage />} />
       <Route path="/api/admin/tableaux" element={<AdminTableaux />} />

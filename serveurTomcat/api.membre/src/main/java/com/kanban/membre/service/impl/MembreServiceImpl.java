@@ -6,8 +6,8 @@ import com.kanban.membre.mappers.MembreMapper;
 import com.kanban.membre.repository.MembreRepository;
 import com.kanban.membre.service.MembreService;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,9 +16,9 @@ import java.util.List;
 public class MembreServiceImpl implements MembreService {
 
     private final MembreRepository membreRepository;
-    private  final MembreMapper membreMapper;
+    private final MembreMapper membreMapper;
 
-    public MembreServiceImpl(MembreRepository membreRepository, MembreMapper membreMapper){
+    public MembreServiceImpl(MembreRepository membreRepository, MembreMapper membreMapper) {
         this.membreMapper = membreMapper;
         this.membreRepository = membreRepository;
     }

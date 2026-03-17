@@ -1,16 +1,14 @@
 package com.kanban.membre.repository;
 
 import com.kanban.membre.entity.Membre;
-import com.kanban.role.entity.Associer;
-import com.kanban.role.entity.AssocierId;
+import com.kanban.membre.entity.MembreId;
 import org.springframework.data.jpa.repository.JpaRepository;
-
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface MembreRepository extends JpaRepository<Associer, AssocierId>  {
+public interface MembreRepository extends JpaRepository<Membre, MembreId> {
 
     List<Membre> findByCarId(String carId);
 

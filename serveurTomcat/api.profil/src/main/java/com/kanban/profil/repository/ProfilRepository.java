@@ -1,8 +1,9 @@
 package com.kanban.profil.repository;
 
-import com.kanban.profil.model.Profil;
+import com.kanban.profil.entity.Profil;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-public interface ProfilRepository extends JpaRepository<Profil, Long> {
+@Repository
+public interface ProfilRepository extends JpaRepository<Profil, String> {
 }

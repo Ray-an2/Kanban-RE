@@ -2,13 +2,12 @@ package com.kanban.carte.controller;
 
 import com.kanban.carte.dtos.CarteDto;
 import com.kanban.carte.service.impl.CarteServiceImpl;
-
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("api/carte")
+@RequestMapping("/carte")
 public class CarteController {
 
   private final CarteServiceImpl carteService;
@@ -28,12 +27,14 @@ public class CarteController {
   }
 
   @PostMapping
-  public CarteDto createCarte(final @RequestBody CarteDto carteDto){
+  public CarteDto createCarte(@RequestBody CarteDto carteDto) {
     return carteService.createCarte(carteDto);
   }
 
   @PutMapping("/{carId}")
-
+  public CarteDto updateCarte(@PathVariable String carId, @RequestBody CarteDto carteDto) {
+    return carteService.updateCarte(carId, carteDto);
+  }
 
   @DeleteMapping("/{carId}")
   public boolean deleteCarte(@PathVariable String carId) {

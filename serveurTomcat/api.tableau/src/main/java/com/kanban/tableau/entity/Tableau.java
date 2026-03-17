@@ -1,22 +1,28 @@
 package com.kanban.tableau.entity;
 
-import java.time.LocalDateTime;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
 @Data
+@Table(name = "t_tableau_tab")
 public class Tableau {
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @Id
+  @Column(name = "tab_id")
+  private String id;
+
+  @Column(name = "tab_nom", nullable = false)
   private String nom;
+
+  @Column(name = "tab_description")
   private String description;
+
+  @Column(name = "tab_date", nullable = false)
+  private String date;
+
+  @Column(name = "tab_etat", nullable = false)
   private String etat;
-  private LocalDateTime dateCreation;
+
+  @Column(name = "tab_image")
   private String image;
 }

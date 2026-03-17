@@ -42,7 +42,8 @@ const UserManagementPage: React.FC = () => {
               pfl_date: new Date().toISOString(),
               cpt_id: '1'
             },
-            role: 'admin' 
+            role: 'admin',
+            cpt_role: ""
           },
           {
             cpt_id: '2',
@@ -56,7 +57,8 @@ const UserManagementPage: React.FC = () => {
               pfl_date: new Date().toISOString(),
               cpt_id: '2'
             },
-            role: 'user'
+            role: 'user',
+            cpt_role: ""
           }
         ];
 
@@ -116,6 +118,7 @@ const UserManagementPage: React.FC = () => {
 
     if (modalMode === 'create') {
       const newUser: UserWithRole = {
+        cpt_role: "",
         cpt_id: Date.now().toString(),
         cpt_pseudo: formData.cpt_pseudo,
         cpt_mdp: '',

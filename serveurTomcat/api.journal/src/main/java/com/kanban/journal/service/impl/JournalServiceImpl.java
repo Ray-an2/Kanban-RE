@@ -1,46 +1,55 @@
 package com.kanban.journal.service.impl;
 
 import com.kanban.journal.dtos.JournalDto;
+import com.kanban.journal.entity.Journal;
 import com.kanban.journal.mappers.JournalMapper;
-import com.kanban.journal.repositories.JournalRepository;
+import com.kanban.journal.repository.JournalRepository;
+import com.kanban.journal.service.JournalService;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.stereotype.Service;
 
-public class JournalServiceImpl extends JournalService {
+import java.util.List;
+import java.util.UUID;
+
+@Service
+public class JournalServiceImpl implements JournalService {
     private final JournalRepository journalRepository;
     private final JournalMapper journalMapper;
-
-    public JournalServiceImpl() {
-        this.journalRepository = null;
-        this.journalMapper = null;
-    }
 
     public JournalServiceImpl(JournalRepository journalRepository, JournalMapper journalMapper) {
         this.journalRepository = journalRepository;
         this.journalMapper = journalMapper;
     }
-    
 
+    @Override
     public JournalDto createJournal(JournalDto journalDto) {
         var journal = journalMapper.toEntity(journalDto);
-        journal = journalRepository.save(journal);
-        return journalMapper.toDto(journal);
+        journal.setId(UUID.randomUUID().toString());
+        return journalMapper.toDto(journalRepository.save(journal));
     }
 
+    @Override
     public JournalDto getJournalById(String id) {
-        var journal = journalRepository.findById(id);
-        return journal != null ? journalMapper.toDto(journal) : null;
+        return journalRepository.findById(id)
+                .map(journalMapper::toDto)
+                .orElseThrow(() -> new EntityNotFoundException("Journal non trouvé avec l'id: " + id));
     }
 
-    public JournalDto getJournalByTabId(String tabId) {
-        var journal = journalRepository.findByTabId(tabId);
-        return journal != null ? journalMapper.toDto(journal) : null;
-    }
-    public JournalDto getJournalByCarId(String carId) {
-        var journal = journalRepository.findByCarId(carId);
-        return journal != null ? journalMapper.toDto(journal) : null;
+    @Override
+    public List<JournalDto> getJournalByTabId(String tabId) {
+        return journalRepository.findByTabId(tabId)
+                .stream().map(journalMapper::toDto).toList();
     }
 
-    public JournalDto putEtat(String etat) {
-        var journal = journalRepository.findByEtat(etat);
-        return journal != null ? journalMapper.toDto(journal) : null;
+    @Override
+    public List<JournalDto> getJournalByCarId(String carId) {
+        return journalRepository.findByCarId(carId)
+                .stream().map(journalMapper::toDto).toList();
+    }
+
+    @Override
+    public List<JournalDto> getByEtat(String etat) {
+        return journalRepository.findByEtat(etat)
+                .stream().map(journalMapper::toDto).toList();
     }
 }

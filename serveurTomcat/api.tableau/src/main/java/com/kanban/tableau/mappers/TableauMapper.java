@@ -14,6 +14,7 @@ public class TableauMapper {
     dto.setId(tab.getId());
     dto.setNom(tab.getNom());
     dto.setDescription(tab.getDescription());
+    dto.setDate(tab.getDate());
     dto.setEtat(tab.getEtat());
     dto.setImage(tab.getImage());
     return dto;
@@ -27,6 +28,7 @@ public class TableauMapper {
     }
     tab.setNom(dto.getNom());
     tab.setDescription(dto.getDescription());
+    tab.setDate(dto.getDate());
     tab.setEtat(dto.getEtat());
     tab.setImage(dto.getImage());
     return tab;

@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class CarteDto {
   @NotNull
-  private Long id;
+  private String id;
 
   @NotBlank(message = "Le nom est obligatoire")
   private String nom;
@@ -24,11 +24,15 @@ public class CarteDto {
   @NotBlank(message = "L'ordre de la carte est obligatoire")
   private String ordre;
 
-  private Long priorite;
+  private Integer priorite;
+
+  private String dateCreation;
 
   private String dateDebut;
 
   private String dateFin;
 
-  private String image;
+  private String couverture;
+
+  private String lisId;
 }

@@ -1,14 +1,10 @@
 package com.kanban.compte.dtos;
 
+import lombok.Data;
+
 @Data
 public class CompteDto {
-  @NotNull
-  private Long id;
-
-  @NotBlank(message = "Le pseudo est obligatoire")
+  private String id;
   private String pseudo;
-  @NotBlank(message = "Le mot de passe est obligatoire")
-  private String mdp;
-  @NotBlank(message = "Le rôle est obligatoire")
   private String role;
 }

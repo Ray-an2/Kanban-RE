@@ -1,14 +1,13 @@
 package com.kanban.profil.controller;
 
-import com.kanban.profil.Dto.ProfilDto;
-import com.kanban.profil.service.impl.ProfilService;
-
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.kanban.profil.dtos.ProfilDto;
+import com.kanban.profil.service.ProfilService;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/profil")
+@RequestMapping("/profil")
 public class ProfilController {
+
   private final ProfilService profilService;
 
   public ProfilController(ProfilService profilService) {
@@ -21,8 +20,8 @@ public class ProfilController {
    * @return profil trouvé
    */
   @GetMapping("/{id}")
-  public ProfilDto getProfilById(@PathVariable Long Compteid) {
-    return profilService.getProfilById(Compteid);
+  public ProfilDto getProfilById(@PathVariable String id) {
+    return profilService.getProfilById(id);
   }
 
   /**
@@ -42,7 +41,7 @@ public class ProfilController {
    * @return profil modifié
    */
   @PutMapping("/{id}")
-  public ProfilDto updateProfil(@PathVariable Long id, @RequestBody ProfilDto profilDto) {
+  public ProfilDto updateProfil(@PathVariable String id, @RequestBody ProfilDto profilDto) {
     return profilService.updateProfil(id, profilDto);
   }
 
@@ -52,8 +51,7 @@ public class ProfilController {
    * @return true si le profil a été supprimé avec succès, sinon false
    */
   @DeleteMapping("/{id}")
-  public boolean deleteProfil(@PathVariable Long id) {
+  public boolean deleteProfil(@PathVariable String id) {
     return profilService.deleteProfil(id);
   }
-
 }

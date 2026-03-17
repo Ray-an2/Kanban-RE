@@ -1,23 +1,24 @@
 package com.kanban.profil.service.impl;
 
-import com.kanban.profil.service.ProfilService;
 import com.kanban.profil.dtos.ProfilDto;
-import com.kanban.profil.entities.Profil;
-import com.kanban.profil.repositories.ProfilRepository;
+import com.kanban.profil.entity.Profil;
+import com.kanban.profil.mappers.ProfilMapper;
+import com.kanban.profil.repository.ProfilRepository;
+import com.kanban.profil.service.ProfilService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service("profilService")
-@Transactional
-public class ProfilService implements ProfilService {
+public class ProfilServiceImpl implements ProfilService {
   private final ProfilRepository profilRepository;
   private final ProfilMapper profilMapper;
 
-  public ProfilService(ProfilRepository profilRepository, ProfilMapper profilMapper) {
+  public ProfilServiceImpl(ProfilRepository profilRepository, ProfilMapper profilMapper) {
     this.profilRepository = profilRepository;
     this.profilMapper = profilMapper;
   }
 
-  @inheritedoc
   @Override
   public ProfilDto createProfil(ProfilDto profilDto) {
     Profil profil = profilMapper.toEntity(profilDto);
@@ -25,32 +26,28 @@ public class ProfilService implements ProfilService {
     return profilMapper.toDto(savedProfil);
   }
 
-  @inheritedoc
   @Override
-  @transactional(readOnly = true)
-  public ProfilDto getProfilById(Long id) {
+  @Transactional(readOnly = true)
+  public ProfilDto getProfilById(String id) {
     Profil profil = profilRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Profil non trouvé avec l'id: " + id));
+            .orElseThrow(() -> new EntityNotFoundException("Profil non trouvé avec l'id: " + id));
     return profilMapper.toDto(profil);
   }
 
-  @inheritedoc
   @Override
-  public ProfilDto updateProfil(Long id, ProfilDto profilDto) {
+  public ProfilDto updateProfil(String id, ProfilDto profilDto) {
     Profil existingProfil = profilRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Profil non trouvé avec l'id: " + id));
+            .orElseThrow(() -> new EntityNotFoundException("Profil non trouvé avec l'id: " + id));
     existingProfil.setNom(profilDto.getNom());
     existingProfil.setPrenom(profilDto.getPrenom());
     existingProfil.setMail(profilDto.getMail());
     existingProfil.setEtat(profilDto.getEtat());
-    Profil updatedProfil = profilRepository.save(existingProfil);
-    return profilMapper.toDto(updatedProfil);
-    }
+    return profilMapper.toDto(profilRepository.save(existingProfil));
+  }
 
-  @inheritedoc
   @Override
-  public boolean deleteProfil(Long id) {
-    profilRepository.delete(existingProfil);
+  public boolean deleteProfil(String id) {
+    profilRepository.deleteById(id);
     return true;
   }
 }

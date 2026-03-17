@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type{ Profil } from '../model/types.ts';
+import type{ Profil,Compte } from '../model/types.ts';
 
 const Compte: React.FC = () => {
   const navigate = useNavigate();
@@ -11,8 +11,10 @@ const Compte: React.FC = () => {
     pfl_nom: '',
     pfl_prenom: '',
     pfl_mail: '',
-    pfl_etat: 'A' as 'A' | 'D'
+    pfl_etat: 'A' as 'A' | 'D',
+    cpt_pseudo: ''
   });
+  const [compte, setCompte] = useState<Compte | null>(null);
 
   //à remplacer par un appel API réel
   useEffect(() => {
@@ -21,6 +23,15 @@ const Compte: React.FC = () => {
         setLoading(true);
 
         await new Promise(resolve => setTimeout(resolve, 800));
+
+        const mockCompte: Compte = {
+          cpt_id: '1',
+          cpt_pseudo: 'jdupont',
+          cpt_mdp: '',
+          cpt_role: 'U'
+        };
+        setCompte(mockCompte);
+        setFormData(prev => ({ ...prev, cpt_pseudo: mockCompte.cpt_pseudo }));
 
         const mockProfile: Profil = {
           pfl_nom: 'Dupont',
@@ -33,6 +44,7 @@ const Compte: React.FC = () => {
 
         setProfile(mockProfile);
         setFormData({
+          cpt_pseudo: "",
           pfl_nom: mockProfile.pfl_nom || '',
           pfl_prenom: mockProfile.pfl_prenom || '',
           pfl_mail: mockProfile.pfl_mail || '',
@@ -54,7 +66,9 @@ const Compte: React.FC = () => {
     try {
       //à remplacer par un appel API réel
       await new Promise(resolve => setTimeout(resolve, 500));
-
+      if (compte) {
+        setCompte({ ...compte, cpt_pseudo: formData.cpt_pseudo });
+      }
       if (profile) {
         const updatedProfile: Profil = {
           ...profile,
@@ -157,6 +171,7 @@ const Compte: React.FC = () => {
       </div>
 
       <div style={{
+        color:"black",
         backgroundColor: 'white',
         borderRadius: '8px',
         boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
@@ -225,6 +240,17 @@ const Compte: React.FC = () => {
                 />
               </div>
 
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ display: 'block', marginBottom: '5px' }}>Pseudo</label>
+                <input
+                    type="text"
+                    value={formData.cpt_pseudo}
+                    onChange={(e) => setFormData({...formData, cpt_pseudo: e.target.value})}
+                    style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
+                    required
+                />
+              </div>
+
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ display: 'block', marginBottom: '5px' }}>Statut</label>
                 <div style={getStatusStyle(formData.pfl_etat)}>
@@ -238,6 +264,7 @@ const Compte: React.FC = () => {
                   onClick={() => {
                     setEditMode(false);
                     setFormData({
+                      cpt_pseudo: "",
                       pfl_nom: profile.pfl_nom || '',
                       pfl_prenom: profile.pfl_prenom || '',
                       pfl_mail: profile.pfl_mail || '',
@@ -282,6 +309,9 @@ const Compte: React.FC = () => {
                 <strong>Email:</strong> {profile.pfl_mail || 'Non renseigné'}
               </div>
               <div style={{ marginBottom: '10px' }}>
+                <strong>Pseudo:</strong> {compte?.cpt_pseudo || 'Non renseigné'}
+              </div>
+              <div style={{ marginBottom: '10px' }}>
                 <strong>Statut:</strong>
                 <div style={getStatusStyle(profile.pfl_etat)}>
                   {profile.pfl_etat === 'A' ? 'Actif' : 'Désactivé'}
@@ -318,5 +348,6 @@ const Compte: React.FC = () => {
     </div>
   );
 };
+export default Compte
 
-export default Compte;
+

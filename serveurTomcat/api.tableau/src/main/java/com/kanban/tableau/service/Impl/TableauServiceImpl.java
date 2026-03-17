@@ -13,7 +13,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service("TabService")
-public class TableauServiceImpl extends TableauService {
+public class TableauServiceImpl implements TableauService {
   private final TableauRepository tableauRepository;
   private final TableauMapper tableauMapper;
 
@@ -27,8 +27,9 @@ public class TableauServiceImpl extends TableauService {
    * @param tableauDto : corps de la requetes.
    * @return TableauDto
    */
-  public TableauDto createTab(TableauDto tableauDto){
+  public TableauDto createTab(TableauDto tableauDto) {
     var tableau = tableauMapper.toEntity(tableauDto);
+    tableau.setId(UUID.randomUUID().toString());
     var savedTab = tableauRepository.save(tableau);
     return tableauMapper.toDto(savedTab);
   }
@@ -38,9 +39,9 @@ public class TableauServiceImpl extends TableauService {
    * @param id : id du tableau
    * @return TableauDto
    */
-  public TableauDto getTabById(Long id){
+  public TableauDto getTabById(String id) {
     var tableau = tableauRepository.findById(id)
-        .orElseThrow(() -> new EntityNotFoundException("Tableau non trouvé avec l'id: " + id));
+            .orElseThrow(() -> new EntityNotFoundException("Tableau non trouvé avec l'id: " + id));
     return tableauMapper.toDto(tableau);
   }
 
@@ -49,7 +50,7 @@ public class TableauServiceImpl extends TableauService {
    * @param id : id du tableau
    * @return true si le tableau a été supprimé, false sinon.
    */
-  public boolean deleteTab(Long id) {
+  public boolean deleteTab(String id) {
     tableauRepository.deleteById(id);
     return true;
   }

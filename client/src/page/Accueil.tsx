@@ -10,6 +10,7 @@ interface BoardWithOwner extends Tableau {
 const Accueil: React.FC = () => {
   const navigate = useNavigate();
   const [user] = useState<UserWithProfile>({
+    cpt_role: "",
     cpt_id: '1',
     cpt_pseudo: 'jdupont',
     cpt_mdp: '',
@@ -60,7 +61,8 @@ const Accueil: React.FC = () => {
                 pfl_etat: 'A',
                 pfl_date: new Date().toISOString(),
                 cpt_id: '2'
-              }
+              },
+              cpt_role: ""
             },
             userRole: { cpt_id: user.cpt_id, tab_id: '2', rol_role: 'U' }
           }
@@ -118,6 +120,20 @@ const Accueil: React.FC = () => {
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '30px', fontFamily: 'Arial, sans-serif' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
         <h1 style={{ margin: 0, color: '#2c3e50' }}>Mes Tableaux</h1>
+        <button
+            type = "button"
+            onClick={() => navigate('/api/compte')}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#95a5a6',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+        >
+          Mon compte
+        </button>
         <button
           type="button"
           onClick={handleLogout}

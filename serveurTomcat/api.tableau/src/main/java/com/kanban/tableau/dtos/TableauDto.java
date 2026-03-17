@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class TableauDto {
   @NotNull
-  private Long id;
+  private String id;
 
   @NotBlank(message = "Le nom est obligatoire")
   private String nom;
@@ -17,5 +17,5 @@ public class TableauDto {
   @NotBlank(message = "Un etat est obligatoire")
   private String etat;
 
-  private image;
+  private String image;
 }

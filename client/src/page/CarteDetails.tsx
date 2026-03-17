@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import type{ Carte as CarteType, Etiquette } from '../model/types.ts';
 
 const CarteDetail: React.FC = () => {
-  const { id, cardId } = useParams<{ id: string; cardId: string }>();
+  const { boardId, cardId } = useParams<{ boardId: string; cardId: string }>();
   const navigate = useNavigate();
 
   const [carte, setCarte] = useState<CarteType | null>(null);
@@ -46,7 +46,7 @@ const CarteDetail: React.FC = () => {
     };
 
     fetchCarteData();
-  }, [id, cardId]);
+  }, [boardId, cardId]);
 
   const getPriorityInfo = (priorite: number) => {
     switch (priorite) {
@@ -119,7 +119,7 @@ const CarteDetail: React.FC = () => {
         </div>
         <button
           type="button"
-          onClick={() => navigate(`/tableau/${id}`)}
+          onClick={() => navigate(`/api/tableau/${boardId}`)}
           style={{
             padding: '8px 16px',
             backgroundColor: '#95a5a6',

@@ -1,8 +1,7 @@
 package com.kanban.tableau.controller;
 
 import com.kanban.tableau.dtos.TableauDto;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.kanban.tableau.service.Impl.TableauServiceImpl;
 
 import java.util.List;
@@ -19,8 +18,8 @@ public class TableauController {
   /**
    * Récupère tous les tableaux du systemes
    */
-  GetMapping
-  List<TableauDto> getTableaux(){
+  @GetMapping
+  public List<TableauDto> getTableaux(){
     return tableauService.getAllTab();
   }
 
@@ -28,7 +27,7 @@ public class TableauController {
    * Retourne le nombre de tableaux dans le systeme
    * @return
    */
-  GetMapping("/nombre")
+  @GetMapping("/nombre")
   public Long getNombreTableaux(){
     return tableauService.getNombreTab();
   }
