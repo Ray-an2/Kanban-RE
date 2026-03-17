@@ -42,4 +42,6 @@ public class JournalController {
         return journalService.getJournalByCarId(carId);
     }
 
+    @GetMapping("/{etat")
+    public JournalDto putEtat(@PathVariable String etat){ return journalService.putEtat(etat);}
 }

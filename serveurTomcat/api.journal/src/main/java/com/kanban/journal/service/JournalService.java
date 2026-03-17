@@ -7,4 +7,5 @@ public interface  JournalService {
     public JournalDto getJournalById(String id);
     public JournalDto getJournalByTabId(String tabId);
     public JournalDto getJournalByCarId(String carId);
+    public JournalDto putEtat(String etat);
 }

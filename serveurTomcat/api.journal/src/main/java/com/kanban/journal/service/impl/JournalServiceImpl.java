@@ -38,4 +38,9 @@ public class JournalServiceImpl extends JournalService {
         var journal = journalRepository.findByCarId(carId);
         return journal != null ? journalMapper.toDto(journal) : null;
     }
+
+    public JournalDto putEtat(String etat) {
+        var journal = journalRepository.findByEtat(etat);
+        return journal != null ? journalMapper.toDto(journal) : null;
+    }
 }

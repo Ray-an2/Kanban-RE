@@ -2,10 +2,12 @@ package com.kanban.journal.dtos;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.Data;
 import jakarta.validation.constraints.NotBlank;
 
 @Setter
 @Getter
+@Data
 public class JournalDto {
     @NotBlank(message="L'identifiant du journal est obligatoire")
     private String id;
