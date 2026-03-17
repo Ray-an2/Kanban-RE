@@ -10,7 +10,7 @@ import com.kanban.role.service.impl.RoleServiceImpl;
 import java.util.List;
 
 @RestController
-@RequestMapping("/role")
+@RequestMapping("api/role")
 public class RoleController {
 
   private final RoleServiceImpl roleService;
@@ -34,7 +34,7 @@ public class RoleController {
    */
   @GetMapping("/compte/{cptId}")
   public List<RoleDto> getRolesCompte(@PathVariable String cptId) {
-    return roleService.getRoleByIdCompte(cptId);
+    return roleService.getRoleByCptId(cptId);
   }
 
   /**
@@ -43,7 +43,7 @@ public class RoleController {
    */
   @GetMapping("/tableau/{tabId}")
   public List<RoleDto> getRolesTab(@PathVariable String tabId) {
-    return roleService.getRoleByIdTab(tabId);
+    return roleService.getRoleByTabId(tabId);
   }
 
   /**
@@ -59,7 +59,8 @@ public class RoleController {
 
   /**
    * Supprime l'association d'un utilisateur au tableau.
-   * @param roleDto :
+   * @param cptId : l'identifiant du compte utilisateur
+   * @param tabId : l'identifiant du tableau
    * @return true si l'association est supprimée, false sinon
    */
   @DeleteMapping("/tableau/{tabId}/compte/{cptId}")
@@ -70,13 +71,12 @@ public class RoleController {
 
   /**
    * Modifie le role d'un compte associe à un tableau.
-   * @param roleDto
+   * @param rolRole : Le nouveau role de l'utilisateur
    * @return
    */
-  @PutMapping("compte/{cptId}/tableau/{tabId}")
-  public ResponseEntity<RoleDto> updateRole(@PathVariable String rolRole, @Valid @RequestBody RoleDto roleDto) {
-    roleDto.setRolRole(rolRole);
-    RoleDto updated = roleService.updateRole(roleDto);
+  @PutMapping("/compte/{cptId}/tableau/{tabId}")
+  public ResponseEntity<RoleDto> updateRole(@PathVariable String rolRole) {
+    RoleDto updated = roleService.updateRole(rolRole);
     return ResponseEntity.ok(updated);
   }
 }

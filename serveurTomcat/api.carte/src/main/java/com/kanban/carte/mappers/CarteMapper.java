@@ -3,7 +3,6 @@ package com.kanban.carte.mappers;
 import com.kanban.carte.dtos.CarteDto;
 import com.kanban.carte.entity.Carte;
 import org.springframework.stereotype.Component;
-import java.util.Objects;
 
 @Component
 public class CarteMapper {

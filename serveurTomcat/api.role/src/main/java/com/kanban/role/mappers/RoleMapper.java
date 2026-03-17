@@ -1,6 +1,6 @@
 package com.kanban.role.mappers;
 
-import com.kanban.role.dto.RoleDto;
+import com.kanban.role.dtos.RoleDto;
 import com.kanban.role.entity.Role;
 import org.springframework.stereotype.Component;
 

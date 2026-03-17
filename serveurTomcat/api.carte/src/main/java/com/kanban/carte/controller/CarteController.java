@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/carte")
+@RequestMapping("api/carte")
 public class CarteController {
 
   private final CarteServiceImpl carteService;
@@ -22,9 +22,9 @@ public class CarteController {
     return carteService.getAllCartes();
   }
 
-  @GetMapping("/{id}")
-  public CarteDto getCarte(@PathVariable Long id) {
-    return carteService.getCarteById(id);
+  @GetMapping("/{carId}")
+  public CarteDto getCarte(@PathVariable String carId) {
+    return carteService.getCarteById(carId);
   }
 
   @PostMapping
@@ -32,8 +32,11 @@ public class CarteController {
     return carteService.createCarte(carteDto);
   }
 
-  @DeleteMapping("/{id}")
-  public boolean deleteCarte(@PathVariable Long id) {
-    return carteService.deleteCarte(id);
+  @PutMapping("/{carId}")
+
+
+  @DeleteMapping("/{carId}")
+  public boolean deleteCarte(@PathVariable String carId) {
+    return carteService.deleteCarte(carId);
   }
 }

@@ -12,8 +12,8 @@
     <artifactId>Tomcat</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
-    <name>ServeurTomca</name>
-    <description>ServeurTomca</description>
+    <name>ServeurTomcat</name>
+    <description>ServeurTomcat</description>
     <url/>
     <licenses>
         <license/>
