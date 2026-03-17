@@ -38,7 +38,7 @@ public class TableauController {
    * @return TableauDto
    */
   @GetMapping("/{id}")
-  public TableauDto getTableau(@PathVariable Long id){
+  public TableauDto getTableau(@PathVariable String id) {
     return tableauService.getTabById(id);
   }
 
@@ -58,7 +58,7 @@ public class TableauController {
    * @return true si le tableau a été supprimé, false sinon.
    */
   @DeleteMapping("/{id}")
-  public boolean deleteTab(@PathVariable Long id){
+  public boolean deleteTab(@PathVariable String id) {
     return tableauService.deleteTab(id);
   }
 }

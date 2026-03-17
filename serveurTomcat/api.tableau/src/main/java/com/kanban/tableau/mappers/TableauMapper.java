@@ -3,13 +3,12 @@ package com.kanban.tableau.mappers;
 import com.kanban.tableau.dtos.TableauDto;
 import com.kanban.tableau.entity.Tableau;
 import org.springframework.stereotype.Component;
-import java.util.Objects;
 
 @Component
 public class TableauMapper {
 
-  public TableauDto toDto(Tableau tab){
-    if(tab == null) return null;
+  public TableauDto toDto(Tableau tab) {
+    if (tab == null) return null;
     TableauDto dto = new TableauDto();
     dto.setId(tab.getId());
     dto.setNom(tab.getNom());
@@ -20,10 +19,10 @@ public class TableauMapper {
     return dto;
   }
 
-  public Tableau toEntity(TableauDto dto){
-    if(dto == null) return null;
+  public Tableau toEntity(TableauDto dto) {
+    if (dto == null) return null;
     Tableau tab = new Tableau();
-    if (tableauDto.getId() != null) {
+    if (dto.getId() != null) {
       tab.setId(dto.getId());
     }
     tab.setNom(dto.getNom());

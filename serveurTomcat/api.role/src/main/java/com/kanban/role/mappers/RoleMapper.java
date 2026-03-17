@@ -6,31 +6,22 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RoleMapper {
-  public RoleDto toDto(Role role){
-    if(role==null){
-      return null;
-    }
-    RoleDto roleDto = new RoleDto();
-    roleDto.setCptId(role.getCptId());
-    roleDto.setTabId(role.getTabId());
-    roleDto.setRolRole(role.getRolRole());
-    if(role.getCompte() != null) {
-      roleDto.getCptPseudo(role.getCompte().getCptPseudo());
-    }
-    if(role.getTableau() != null) {
-      roleDto.getTabNom(role.getTableau().getTabNom());
-    }
-    return roleDto;
+
+  public RoleDto toDto(Role role) {
+    if (role == null) return null;
+    RoleDto dto = new RoleDto();
+    dto.setCptId(role.getCptId());
+    dto.setTabId(role.getTabId());
+    dto.setRolRole(role.getRolRole());
+    return dto;
   }
 
-  public Role toEntity(RoleDto roleDto){
-    if(roleDto==null){
-      return null;
-    }
+  public Role toEntity(RoleDto dto) {
+    if (dto == null) return null;
     Role role = new Role();
-    role.setCptId(roleDto.getCptId());
-    role.setTabId(roleDto.getTabId());
-    role.setRolRole(roleDto.getRolRole());
+    role.setCptId(dto.getCptId());
+    role.setTabId(dto.getTabId());
+    role.setRolRole(dto.getRolRole());
     return role;
   }
 }

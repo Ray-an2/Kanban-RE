@@ -2,12 +2,13 @@ package com.kanban.journal.mappers;
 
 import com.kanban.journal.dtos.JournalDto;
 import com.kanban.journal.entity.Journal;
+import org.springframework.stereotype.Component;
 
+@Component
 public class JournalMapper {
 
-    public static JournalDto toDTO(Journal journal) {
+    public JournalDto toDto(Journal journal) {
         if (journal == null) return null;
-
         JournalDto dto = new JournalDto();
         dto.setId(journal.getId());
         dto.setTitre(journal.getTitre());
@@ -21,11 +22,12 @@ public class JournalMapper {
         return dto;
     }
 
-    public static Journal toEntity(JournalDto dto) {
+    public Journal toEntity(JournalDto dto) {
         if (dto == null) return null;
-
         Journal journal = new Journal();
-        journal.setId(dto.getId());
+        if (dto.getId() != null) {
+            journal.setId(dto.getId());
+        }
         journal.setTitre(dto.getTitre());
         journal.setDescription(dto.getDescription());
         journal.setAuteur(dto.getAuteur());
