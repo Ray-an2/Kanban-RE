@@ -76,7 +76,7 @@ public class RoleController {
   @PutMapping("compte/{cptId}/tableau/{tabId}")
   public ResponseEntity<RoleDto> updateRole(@PathVariable String rolRole, @Valid @RequestBody RoleDto roleDto) {
     roleDto.setRolRole(rolRole);
-    RoleDto updated = roleService.associerRole(roleDto);
+    RoleDto updated = roleService.updateRole(roleDto);
     return ResponseEntity.ok(updated);
   }
 }

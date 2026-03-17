@@ -1,15 +1,16 @@
 package com.kanban.compte.controller;
 
+import com.kanban.compte.dtos.CompteDto;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
 
 import com.kanban.compte.service.CompteService;
 
 @RestController
-@RequestMapping("api/compte")
+@RequestMapping("/compte")
 public class CompteController {
 
-}
   private final CompteService compteService;
 
   public CompteController(CompteService compteService) {
@@ -83,6 +84,5 @@ public class CompteController {
   @DeleteMapping("/{id}")
   public boolean deleteCompte(@PathVariable Long id) {
     return compteService.delete(id);
-
-
+  }
 }

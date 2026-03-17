@@ -36,4 +36,6 @@ public interface RoleService {
    * @return true si l'association est supprimée, false sinon
    */
   void deleteRole(String cptId, String tabId);
+
+  RoleDto updateRole(String rolRole);
 }
