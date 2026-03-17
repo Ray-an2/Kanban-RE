@@ -73,20 +73,21 @@ CREATE TABLE t_membre_mem (
 
 CREATE TABLE t_notification_not (
   not_id TEXT NOT NULL,
-  not_titre TEXT,
+  not_titre TEXT NOT NULL,
   not_date TEXT NOT NULL,
   not_lien TEXT,
-  cpt_id TEXT,
+  not_etat TEXT NOT NULL,
+  cpt_id TEXT NOT NULL,
   PRIMARY KEY (not_id),
   FOREIGN KEY (cpt_id) REFERENCES t_compte_cpt(cpt_id) ON DELETE SET NULL
 );
 
 CREATE TABLE t_profil_pfl (
-  pfl_nom TEXT,
-  pfl_prenom TEXT,
-  pfl_mail TEXT,
+  pfl_nom TEXT NOT NULL,
+  pfl_prenom TEXT NOT NULL,
+  pfl_mail TEXT NOT NULL,
   pfl_etat TEXT NOT NULL DEFAULT 'D',
-  pfl_dateCreation TEXT,
+  pfl_dateCreation TEXT NOT NULL,
   cpt_id TEXT NOT NULL,
   PRIMARY KEY (cpt_id),
   FOREIGN KEY (cpt_id) REFERENCES t_compte_cpt(cpt_id) ON DELETE CASCADE
@@ -125,13 +126,15 @@ INSERT INTO t_compte_cpt (cpt_id, cpt_pseudo, cpt_mdp, cpt_role) VALUES
   ('cpt_001', 'a.martin', '7f3f2b1c5d6e7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2', 'A'),
   ('cpt_002', 'l.dupont', '9c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1', 'U'),
   ('cpt_003', 's.bernard', '1a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8', 'U'),
-  ('cpt_004', 'p.legrand', '0f1e2d3c4b5a69788796a5b4c3d2e1f00112233445566778899aabbccddeeff', 'U');
+  ('cpt_004', 'p.legrand', '0f1e2d3c4b5a69788796a5b4c3d2e1f00112233445566778899aabbccddeeff', 'U'),
+  ('bdffaf2e-d36e-4f4b-b67f-435a74585f7d', 'bosswaza','692d00e94a67dd036acdb7f67885dadbd8f457a810a8f27f6f79af76d186230e2d829cde10654c598e296a4371b8e08dd9fed6c316cc041d61a1ec1b309f3e0d.a19a63c1d9b99042e26ea3801c532fc9', 'A');
 
 INSERT INTO t_profil_pfl (pfl_nom, pfl_prenom, pfl_mail, pfl_etat, pfl_dateCreation, cpt_id) VALUES
   ('Martin', 'Alice', 'alice.martin@acme-consulting.fr', 'D', '2026-03-01T09:10:00Z', 'cpt_001'),
   ('Dupont', 'Lucas', 'lucas.dupont@acme-consulting.fr', 'D', '2026-03-02T10:05:00Z', 'cpt_002'),
   ('Bernard', 'Sophie', 'sophie.bernard@acme-consulting.fr', 'D', '2026-03-03T08:45:00Z', 'cpt_003'),
-  ('Legrand', 'Paul', 'paul.legrand@acme-consulting.fr', 'D', '2026-03-04T11:20:00Z', 'cpt_004');
+  ('Legrand', 'Paul', 'paul.legrand@acme-consulting.fr', 'D', '2026-03-04T11:20:00Z', 'cpt_004'),
+  ('Droneau', 'Ewan', 'bossswaza@gmail.com', 'D', '2026-03-13T14:20:28.088Z', 'bdffaf2e-d36e-4f4b-b67f-435a74585f7d');
 
 INSERT INTO t_tableau_tab (tab_id, tab_nom, tab_description, tab_date, tab_etat, tab_image) VALUES
   ('tab_roadmap_2026', 'Roadmap Produit 2026', 'Planification des livrables produit pour 2026.', '2026-03-10T09:00:00Z', 'A', 'https://cdn.acme-consulting.fr/boards/roadmap.jpg'),
@@ -189,9 +192,9 @@ INSERT INTO t_membre_mem (cpt_id, car_id, mem_date) VALUES
   ('cpt_003', 'car_access_setup', '2026-03-11T10:00:00Z'),
   ('cpt_004', 'car_kickoff', '2026-03-10T09:40:00Z');
 
-INSERT INTO t_notification_not (not_id, not_titre, not_date, not_lien, cpt_id) VALUES
-  ('not_001', 'Nouvelle carte assignée', '2026-03-11T10:01:00Z', '/tableau/tab_client_onboarding', 'cpt_003'),
-  ('not_002', 'Carte terminée', '2026-03-07T16:05:00Z', '/tableau/tab_roadmap_2026', 'cpt_001');
+INSERT INTO t_notification_not (not_id, not_titre, not_date, not_lien, not_etat, cpt_id) VALUES
+  ('not_001', 'Nouvelle carte assignée', '2026-03-11T10:01:00Z', '/tableau/tab_client_onboarding', 'A', 'cpt_003'),
+  ('not_002', 'Carte terminée', '2026-03-07T16:05:00Z', '/tableau/tab_roadmap_2026', 'D', 'cpt_001');
 
 INSERT INTO t_journal_jou (
   jou_id, jou_titre, jou_description, jou_auteur, jou_action, jou_date, jou_etat, tab_id, car_id
