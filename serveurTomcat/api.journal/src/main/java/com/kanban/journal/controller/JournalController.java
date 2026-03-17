@@ -10,7 +10,7 @@ import com.kanban.journal.dtos.JournalDto;
 import com.kanban.journal.service.impl.JournalServiceImpl;
 
 @RestController
-@RequestMapping("/journal")
+@RequestMapping("/api/journal")
 public class JournalController {
     private final JournalServiceImpl journalService;
 
