@@ -1,6 +1,5 @@
 package com.kanban.membre.controller;
 
-import com.kanban.carte.dtos.CarteDto;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +32,7 @@ public class MembreController {
      * @return RoleDto
      */
     @GetMapping("/carte/{carId}")
-    public List<CarteDto> getMembresCarte(@PathVariable String carId) {
+    public List<MembreDto> getMembresCarte(@PathVariable String carId) {
         return membreService.getMembreByCarId(carId);
     }
 

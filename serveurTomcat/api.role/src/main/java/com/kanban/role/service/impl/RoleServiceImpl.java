@@ -85,7 +85,7 @@ public class RoleServiceImpl implements RoleService {
     RoleId id = new RoleId(cptId, tabId);
     if (!roleRepository.existsById(id)) {
       throw new EntityNotFoundException(
-          "Association introuvable pour compte=" + cptId + " tableau=" + tabId
+          "Association introuvable pour compte=" + cptId + " et le tableau=" + tabId
       );
     }
     roleRepository.deleteById(id);

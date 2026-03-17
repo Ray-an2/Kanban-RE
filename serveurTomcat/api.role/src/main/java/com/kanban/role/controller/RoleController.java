@@ -74,9 +74,9 @@ public class RoleController {
    * @param rolRole : Le nouveau role de l'utilisateur
    * @return
    */
-  @PutMapping("/compte/{cptId}/tableau/{tabId}")
+  /*@PutMapping("/compte/{cptId}/tableau/{tabId}")
   public ResponseEntity<RoleDto> updateRole(@PathVariable String rolRole) {
     RoleDto updated = roleService.updateRole(rolRole);
     return ResponseEntity.ok(updated);
-  }
+  }*/
 }
