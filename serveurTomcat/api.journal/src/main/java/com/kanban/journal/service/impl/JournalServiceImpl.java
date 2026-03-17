@@ -29,26 +29,7 @@ public class JournalServiceImpl extends JournalService {
         var journal = journalRepository.findById(id);
         return journal != null ? journalMapper.toDto(journal) : null;
     }
-    public JournalDto getJournalByTitle(String title) {
-        var journal = journalRepository.findByTitle(title);
-        return journal != null ? journalMapper.toDto(journal) : null;
-    }
-    public JournalDto getJournalByAuthor(String author) {
-        var journal = journalRepository.findByAuthor(author);
-        return journal != null ? journalMapper.toDto(journal) : null;
-    }
-    public JournalDto getJournalByAction(String action) {
-        var journal = journalRepository.findByAction(action);
-        return journal != null ? journalMapper.toDto(journal) : null;
-    }
-    public JournalDto getJournalByDate(String date) {
-        var journal = journalRepository.findByDate(date);
-        return journal != null ? journalMapper.toDto(journal) : null;
-    }
-    public JournalDto getJournalByEtat(String etat) {
-        var journal = journalRepository.findByEtat(etat);
-        return journal != null ? journalMapper.toDto(journal) : null;
-    }
+
     public JournalDto getJournalByTabId(String tabId) {
         var journal = journalRepository.findByTabId(tabId);
         return journal != null ? journalMapper.toDto(journal) : null;

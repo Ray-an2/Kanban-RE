@@ -32,31 +32,6 @@ public class JournalController {
         return journalService.getJournalById(id);
     }
 
-    @GetMapping("/{title}")
-    public JournalDto getJournalByTitle(@PathVariable String title) {
-        return journalService.getJournalByTitle(title);
-    }
-
-    @GetMapping("/{author}")
-    public JournalDto getJournalByAuthor(@PathVariable String author) {
-        return journalService.getJournalByAuthor(author);
-    }
-
-    @GetMapping("/{action}")
-    public JournalDto getJournalByAction(@PathVariable String action) {
-        return journalService.getJournalByAction(action);
-    }
-
-    @GetMapping("/{date}")
-    public JournalDto getJournalByDate(@PathVariable String date) {
-        return journalService.getJournalByDate(date);
-    }
-
-    @GetMapping("/{etat}")
-    public JournalDto getJournalByEtat(@PathVariable String etat) {
-        return journalService.getJournalByEtat(etat);
-    }
-
     @GetMapping("/tableau/{tabId}")
     public JournalDto getJournalByTabId(@PathVariable String tabId) {
         return journalService.getJournalByTabId(tabId);
