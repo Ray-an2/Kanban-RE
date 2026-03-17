@@ -37,5 +37,5 @@ public interface RoleService {
    */
   void deleteRole(String cptId, String tabId);
 
-  RoleDto updateRole(String rolRole);
+  //RoleDto updateRole(String rolRole);
 }

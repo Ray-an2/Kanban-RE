@@ -102,10 +102,11 @@ public class RoleServiceImpl implements RoleService {
         .map(roleMapper::toDto)
         .toList();
   }
-
+  /**
   @Override
   public RoleDto updateRole(String rolRole) {
     RoleDto updated = setRolRole(RoleDto.getRolRole());
     return updated;
   }
+  */
 }
