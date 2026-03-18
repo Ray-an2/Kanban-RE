@@ -52,4 +52,16 @@ public class JournalServiceImpl implements JournalService {
         return journalRepository.findByEtat(etat)
                 .stream().map(journalMapper::toDto).toList();
     }
+
+    @Override
+    public Long countByTabId(String tabId) {
+        return journalRepository.countByTabId(tabId);
+    }
+
+    @Override
+    public JournalDto getLastByTabId(String tabId) {
+        return journalRepository.findFirstByTabIdOrderByDateDesc(tabId)
+                .map(journalMapper::toDto)
+                .orElse(null);
+    }
 }

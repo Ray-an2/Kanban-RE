@@ -1,30 +1,36 @@
 package com.kanban.journal.dtos;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.Data;
-import jakarta.validation.constraints.NotBlank;
 
 @Setter
 @Getter
-@Data
 public class JournalDto {
-    @NotBlank(message="L'identifiant du journal est obligatoire")
+    @JsonProperty("jou_id")
     private String id;
-    @NotBlank(message="Le titre du journal est obligatoire")
+
+    @JsonProperty("jou_titre")
     private String titre;
-    @NotBlank(message="La description du journal est obligatoire")
+
+    @JsonProperty("jou_description")
     private String description;
-    @NotBlank(message="L'auteur du journal est obligatoire")
+
+    @JsonProperty("jou_auteur")
     private String auteur;
-    @NotBlank(message="L'action du journal est obligatoire")
+
+    @JsonProperty("jou_action")
     private String action;
-    @NotBlank(message="La date du journal est obligatoire")
+
+    @JsonProperty("jou_date")
     private String date;
-    @NotBlank(message="L'etat du journal est obligatoire")
+
+    @JsonProperty("jou_etat")
     private String etat;
-    @NotBlank(message="Le tableau du journal est obligatoire")
+
+    @JsonProperty("tab_id")
     private String tabId;
-    @NotBlank(message="La carte du journal est obligatoire")
+
+    @JsonProperty("car_id")
     private String carId;
 }

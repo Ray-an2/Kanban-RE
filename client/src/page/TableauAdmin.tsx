@@ -159,10 +159,10 @@ const AdminTableaux: React.FC = () => {
                 <div style={{ display: 'flex', gap: '10px' }}>
                     <button
                         type="button"
-                        onClick={() => navigate('/api/tableau')}
+                        onClick={() => navigate('/api/tableau/logs')}
                         style={{ padding: '8px 16px', backgroundColor: '#3498db', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
                     >
-                        Retour à l'accueil
+                        Logs
                     </button>
                     <button
                         type="button"

@@ -9,4 +9,6 @@ public interface JournalService {
     List<JournalDto> getJournalByTabId(String tabId);
     List<JournalDto> getJournalByCarId(String carId);
     List<JournalDto> getByEtat(String etat);
+    Long countByTabId(String tabId);
+    JournalDto getLastByTabId(String tabId);
 }

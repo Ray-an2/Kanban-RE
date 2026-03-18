@@ -39,4 +39,14 @@ public class JournalController {
     public List<JournalDto> getByEtat(@PathVariable String etat) {
         return journalService.getByEtat(etat);
     }
+
+    @GetMapping("/tableau/{tabId}/count")
+    public Long countByTabId(@PathVariable String tabId) {
+        return journalService.countByTabId(tabId);
+    }
+
+    @GetMapping("/tableau/{tabId}/last")
+    public JournalDto getLastByTabId(@PathVariable String tabId) {
+        return journalService.getLastByTabId(tabId);
+    }
 }
