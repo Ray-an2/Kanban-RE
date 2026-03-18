@@ -1,7 +1,6 @@
 package com.kanban.associer.service;
 
 import com.kanban.associer.dtos.AssocierDto;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 

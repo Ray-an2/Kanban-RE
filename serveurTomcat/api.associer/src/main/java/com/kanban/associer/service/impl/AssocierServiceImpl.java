@@ -25,6 +25,10 @@ public class AssocierServiceImpl implements AssocierService {
   }
 
 
+  /**
+   * Liste tous les associations entre les cartes et les etiquettes.
+   * @return la liste des associations.
+   */
   @Override
   public List<AssocierDto> getAllAssocier() {
     return associerRepository.findAll().stream()
@@ -32,15 +36,25 @@ public class AssocierServiceImpl implements AssocierService {
             .toList();
   }
 
+  /**
+   * Retourne une association pour une carte donnée si elle existe
+   * @param carId : identifiant de la carte
+   * @return la liste des associations pour une carte donnée.
+   */
   @Override
   public List<AssocierDto> getAssocierByCarId(String carId) {
-    List<Associer> associers = associerRepository.findByEtiId(carId);
+    List<Associer> associers = associerRepository.findByCarId(carId);
     if (associers.isEmpty()) {
       throw new EntityNotFoundException("Aucune associations trouvé pour la carte : " + carId);
     }
     return associers.stream().map(associerMapper::toDto).toList();
   }
 
+  /**
+   * Retourne une association pour une etiquette donnée si elle existe
+   * @param etiId : identifiant de l'etiquette
+   * @return la liste des associations pour une etiquette donnée.
+   */
   @Override
   public List<AssocierDto> getAssocierByEtiId(String etiId) {
     List<Associer> associers = associerRepository.findByEtiId(etiId);
@@ -50,6 +64,11 @@ public class AssocierServiceImpl implements AssocierService {
     return associers.stream().map(associerMapper::toDto).toList();
   }
 
+  /**
+   * Création d'une association entre une carte et une etiquette. On vérifie si elle n'existe pas déjà.
+   * @param associerDto
+   * @return
+   */
   @Override
   public AssocierDto createAssocier(AssocierDto associerDto) {
     if (associerRepository.existsByCarIdAndEtiId(associerDto.getCarId(), associerDto.getEtiId())) {
@@ -62,6 +81,11 @@ public class AssocierServiceImpl implements AssocierService {
     return associerMapper.toDto(saved);
   }
 
+  /**
+   * Supprime une association entre une carte donnée et une etiquette donnée.
+   * @param carId : identifiant d'une carte
+   * @param etiId : identifiant d'une etiquette
+   */
   @Override
   public void deleteAssocier(String carId, String etiId) {
     AssocierId id = new AssocierId(carId, etiId);
