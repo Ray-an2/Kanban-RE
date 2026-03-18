@@ -7,7 +7,6 @@ import com.kanban.associer.repository.AssocierRepository;
 import com.kanban.associer.service.AssocierService;
 import com.kanban.associer.mappers.AssocierMapper;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -28,45 +27,50 @@ public class AssocierServiceImpl implements AssocierService {
 
   @Override
   public List<AssocierDto> getAllAssocier() {
-    /**
-     * A finir d'implémenter
-     */
-
-    return List.of();
+    return associerRepository.findAll().stream()
+            .map(associerMapper::toDto)
+            .toList();
   }
 
   @Override
-  public List<AssocierDto> getAllByCarId(String carId) {
-    /**
-     * A finir d'implémenter
-     */
-
-    return List.of();
+  public List<AssocierDto> getAssocierByCarId(String carId) {
+    List<Associer> associers = associerRepository.findByEtiId(carId);
+    if (associers.isEmpty()) {
+      throw new EntityNotFoundException("Aucune associations trouvé pour la carte : " + carId);
+    }
+    return associers.stream().map(associerMapper::toDto).toList();
   }
 
   @Override
-  public List<AssocierDto> getAllByEtiId(String etiId) {
-    /**
-     * A finir d'implémenter
-     */
-
-    return List.of();
+  public List<AssocierDto> getAssocierByEtiId(String etiId) {
+    List<Associer> associers = associerRepository.findByEtiId(etiId);
+    if (associers.isEmpty()) {
+      throw new EntityNotFoundException("Aucune associations trouvé pour l'étiquette : " + etiId);
+    }
+    return associers.stream().map(associerMapper::toDto).toList();
   }
 
   @Override
   public AssocierDto createAssocier(AssocierDto associerDto) {
-    /**
-     * A finir d'implémenter
-     */
-
-    return null;
+    if (associerRepository.existsByCarIdAndEtiId(associerDto.getCarId(), associerDto.getEtiId())) {
+      throw new IllegalStateException(
+              "La carte " + associerDto.getCarId() + " a déjà cette étiquette."
+      );
+    }
+    Associer associer = associerMapper.toEntity(associerDto);
+    Associer saved = associerRepository.save(associer);
+    return associerMapper.toDto(saved);
   }
 
   @Override
   public void deleteAssocier(String carId, String etiId) {
-    /**
-     * A finir d'implémenter
-     */
+    AssocierId id = new AssocierId(carId, etiId);
+    if (!associerRepository.existsById(id)) {
+      throw new EntityNotFoundException(
+              "Association introuvable pour compte=" + carId + " et le tableau=" + etiId
+      );
+    }
+    associerRepository.deleteById(id);
 
   }
 }

@@ -9,9 +9,9 @@ import java.util.List;
 public interface AssocierService {
   List<AssocierDto> getAllAssocier();
 
-  List<AssocierDto> getAllByCarId(String carId);
+  List<AssocierDto> getAssocierByCarId(String carId);
 
-  List<AssocierDto> getAllByEtiId(String etiId);
+  List<AssocierDto> getAssocierByEtiId(String etiId);
 
   AssocierDto createAssocier(AssocierDto associerDto);
 

@@ -13,12 +13,6 @@ public class AssocierMapper {
     AssocierDto associerDto = new AssocierDto();
     associerDto.setCarId(associer.getCarId());
     associerDto.setEtiId(associer.getEtiId());
-    if(associer.getCarte() != null) {
-      associerDto.getCarNom(associer.getCarte().getCarNom());
-    }
-    if(associer.getEtiquette() != null) {
-      associerDto.getEtiNom(associer.getEtiquette().getEtiNom());
-    }
     return associerDto;
   }
 
