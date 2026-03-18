@@ -36,11 +36,6 @@ public class CommentaireController {
         return commentaireService.createCommentaire(commentaireDto);
     }
 
-    @PutMapping("/{comId}")
-    public CommentaireDto updateCommentaire(@PathVariable String comId, @RequestBody CommentaireDto commentaireDto) {
-        return commentaireService.updateCommentaire(comId, commentaireDto);
-    }
-
     @DeleteMapping("/{comId}")
     public boolean deleteCommentaire(@PathVariable String comId) {
         return commentaireService.deleteCommentaire(comId);
