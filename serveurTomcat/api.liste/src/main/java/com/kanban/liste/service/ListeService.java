@@ -1,7 +1,12 @@
 package com.kanban.liste.service;
 
-import org.springframework.stereotype.Service;
+import com.kanban.liste.dtos.ListeDto;
 
-@Service
-public class ListeService {
+import java.util.List;
+
+public interface ListeService {
+    ListeDto createListe(ListeDto listeDto);
+    ListeDto getListeById(String id);
+    List<ListeDto> getListesByTabId(String tabId);
+    boolean deleteListe(String id);
 }

@@ -1,6 +1,7 @@
 package com.kanban.carte.service.impl;
 
 import com.kanban.carte.dtos.CarteDto;
+import com.kanban.carte.entity.Carte;
 import com.kanban.carte.mappers.CarteMapper;
 import com.kanban.carte.repository.CarteRepository;
 import com.kanban.carte.service.CarteService;
@@ -69,5 +70,13 @@ public class CarteServiceImpl implements CarteService {
   public boolean deleteCarte(String id) {
     carteRepository.deleteById(id);
     return true;
+  }
+
+  @Override
+  public CarteDto moveCard(String carId, String newLisId) {
+    Carte carte = carteRepository.findById(carId)
+            .orElseThrow(() -> new EntityNotFoundException("Carte non trouvée avec l'id: " + carId));
+    carte.setLisId(newLisId);
+    return carteMapper.toDto(carteRepository.save(carte));
   }
 }

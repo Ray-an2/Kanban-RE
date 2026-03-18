@@ -1,38 +1,45 @@
 package com.kanban.carte.dtos;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
 
-
-@Data
+@Setter
+@Getter
 public class CarteDto {
-  @NotNull
+  @JsonProperty("car_id")
   private String id;
 
-  @NotBlank(message = "Le nom est obligatoire")
+  @JsonProperty("car_nom")
   private String nom;
 
+  @JsonProperty("car_des")
   private String description;
 
-  @NotBlank(message = "Il est obligatoire de savoir si il est archiver ou non")
+  @JsonProperty("car_archiver")
   private String archiver;
 
-  @NotBlank(message = "Il est obligatoire de savoir si il est terminer ou non")
+  @JsonProperty("car_terminer")
   private String terminer;
 
-  @NotBlank(message = "L'ordre de la carte est obligatoire")
+  @JsonProperty("car_ordre")
   private String ordre;
 
+  @JsonProperty("car_priorite")
   private Integer priorite;
 
+  @JsonProperty("car_dateCreation")
   private String dateCreation;
 
+  @JsonProperty("car_dateDebut")
   private String dateDebut;
 
+  @JsonProperty("car_dateFin")
   private String dateFin;
 
+  @JsonProperty("car_couverture")
   private String couverture;
 
+  @JsonProperty("lis_id")
   private String lisId;
 }

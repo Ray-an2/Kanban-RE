@@ -1,4 +1,3 @@
-// Tableau.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import type { Tableau as TableauType, Liste, Carte } from '../model/types.ts';
@@ -18,75 +17,17 @@ const Tableau: React.FC = () => {
       try {
         setLoading(true);
 
-        //à remplacer par un vrai appel
-        await new Promise(resolve => setTimeout(resolve, 800));
+        const [tableauResponse, listesResponse] = await Promise.all([
+          fetch(`http://localhost:8081/api/tableau/${id}`),
+          fetch(`http://localhost:8081/api/liste/tableau/${id}`)
+        ]);
 
-        const mockTableau: TableauType = {
-          tab_id: id || '1',
-          tab_nom: 'Projet Alpha',
-          tab_description: 'Développement de la nouvelle application mobile',
-          tab_date: new Date().toISOString(),
-          tab_etat: 'A',
-          tab_image: null
-        };
+        const tableauData = await tableauResponse.json();
+        const listesData = await listesResponse.json();
 
-        const mockLists: Liste[] = [
-          {
-            lis_id: '1',
-            lis_titre: 'À faire',
-            lis_ordre: 1,
-            lis_etat: 'P',
-            tab_id: id || '1',
-            cartes: [
-              {
-                car_id: '1',
-                car_nom: 'Créer la maquette',
-                car_des: 'Créer la maquette de l\'application mobile',
-                car_archiver: 'N',
-                car_terminer: 'N',
-                car_priorite: 2,
-                car_ordre: 1,
-                car_dateCreation: new Date().toISOString(),
-                car_dateDebut: new Date().toISOString(),
-                car_dateFin: new Date(Date.now() + 86400000).toISOString(),
-                lis_id: '1'
-              }
-            ]
-          },
-          {
-            lis_id: '2',
-            lis_titre: 'En cours',
-            lis_ordre: 2,
-            lis_etat: 'P',
-            tab_id: id || '1',
-            cartes: [
-              {
-                car_id: '2',
-                car_nom: 'Développer l\'API',
-                car_des: 'Développer les endpoints de l\'API principale',
-                car_archiver: 'N',
-                car_terminer: 'N',
-                car_priorite: 3,
-                car_ordre: 1,
-                car_dateCreation: new Date().toISOString(),
-                car_dateDebut: new Date().toISOString(),
-                car_dateFin: new Date(Date.now() + 172800000).toISOString(),
-                lis_id: '2'
-              }
-            ]
-          },
-          {
-            lis_id: '3',
-            lis_titre: 'Terminé',
-            lis_ordre: 3,
-            lis_etat: 'P',
-            tab_id: id || '1',
-            cartes: []
-          }
-        ];
+        setTableau(tableauData);
+        setLists(listesData);
 
-        setTableau(mockTableau);
-        setLists(mockLists);
       } catch (error) {
         console.error("Erreur lors du chargement du tableau:", error);
       } finally {
@@ -107,35 +48,46 @@ const Tableau: React.FC = () => {
     e.preventDefault();
   };
 
-  const handleDrop = (e: React.DragEvent, targetListId: string) => {
+  const handleDrop = async (e: React.DragEvent, targetListId: string) => {
     e.preventDefault();
-
     if (!draggedCard) return;
 
-    setLists(prevLists => {
-      const newLists = [...prevLists];
+    try {
+      // Appel API
+      await fetch(`http://localhost:8081/api/carte/${draggedCard.car_id}/move?newLisId=${targetListId}`, {
+        method: 'PATCH'
+      });
 
-      const sourceListIndex = newLists.findIndex(l => l.cartes.some(c => c.car_id === draggedCard.car_id));
-      if (sourceListIndex !== -1) {
-        newLists[sourceListIndex] = {
-          ...newLists[sourceListIndex],
-          cartes: newLists[sourceListIndex].cartes.filter(c => c.car_id !== draggedCard.car_id)
-        };
-      }
-
-      const targetListIndex = newLists.findIndex(l => l.lis_id === targetListId);
-      if (targetListIndex !== -1) {
-        const updatedCard = { ...draggedCard, lis_id: targetListId };
-        newLists[targetListIndex] = {
-          ...newLists[targetListIndex],
-          cartes: [...newLists[targetListIndex].cartes, updatedCard]
-        };
-      }
-
-      return newLists;
-    });
-
-    setDraggedCard(null);
+      // Mise à jour locale
+      setLists(prevLists => {
+        const newLists = [...prevLists];
+        const sourceListIndex = newLists.findIndex(l =>
+            l.cartes.some(c => c.car_id === draggedCard.car_id)
+        );
+        if (sourceListIndex !== -1) {
+          newLists[sourceListIndex] = {
+            ...newLists[sourceListIndex],
+            cartes: newLists[sourceListIndex].cartes.filter(c =>
+                c.car_id !== draggedCard.car_id
+            )
+          };
+        }
+        const targetListIndex = newLists.findIndex(l => l.lis_id === targetListId);
+        if (targetListIndex !== -1) {
+          const updatedCard = { ...draggedCard, lis_id: targetListId };
+          newLists[targetListIndex] = {
+            ...newLists[targetListIndex],
+            cartes: [...newLists[targetListIndex].cartes, updatedCard]
+          };
+        }
+        return newLists;
+      });
+    } catch (error) {
+      console.error("Erreur lors du déplacement de la carte:", error);
+      // Optionnel : revert l'état local si l'API échoue
+    } finally {
+      setDraggedCard(null);
+    }
   };
 
   const handleCardClick = (e: React.MouseEvent, card: Carte) => {

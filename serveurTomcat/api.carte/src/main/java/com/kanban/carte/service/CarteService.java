@@ -14,4 +14,6 @@ public interface CarteService {
   CarteDto updateCarte(String id, CarteDto carteDto);
 
   boolean deleteCarte(String id);
+
+  CarteDto moveCard(String carId, String newLisId);
 }

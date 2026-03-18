@@ -40,4 +40,11 @@ public class CarteController {
   public boolean deleteCarte(@PathVariable String carId) {
     return carteService.deleteCarte(carId);
   }
+
+  @PatchMapping("/{carId}/move")
+  public CarteDto moveCard(
+          @PathVariable String carId,
+          @RequestParam String newLisId) {
+    return carteService.moveCard(carId, newLisId);
+  }
 }
