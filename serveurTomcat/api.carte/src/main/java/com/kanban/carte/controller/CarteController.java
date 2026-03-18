@@ -1,6 +1,7 @@
 package com.kanban.carte.controller;
 
 import com.kanban.carte.dtos.CarteDto;
+import com.kanban.carte.dtos.MoveCarteRequest;
 import com.kanban.carte.service.impl.CarteServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,15 +52,10 @@ public class CarteController {
     return carteService.deleteCarte(carId);
   }
 
-  @PatchMapping("/{carId}/move-liste")
-  public CarteDto moveCarteToList(
+  @PatchMapping("/{carId}/move")
+  public CarteDto moveCarte(
           @PathVariable String carId,
-          @RequestParam String newLisId) {
-    return carteService.moveCarteToList(carId, newLisId);
-  }
-
-  @PatchMapping("/{carId}/move-carte")
-  public CarteDto moveCarte(@PathVariable String carId) {
-    return carteService.moveCarte(carId);
+          @RequestBody MoveCarteRequest request) {
+    return carteService.moveCarte(carId, request.getNewLisId(), request.getNewOrdre());
   }
 }

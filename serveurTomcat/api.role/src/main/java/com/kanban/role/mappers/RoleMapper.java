@@ -12,7 +12,7 @@ public class RoleMapper {
     RoleDto dto = new RoleDto();
     dto.setCptId(role.getCptId());
     dto.setTabId(role.getTabId());
-    dto.setRolRole(role.getRolRole());
+    dto.setRolRole(role.getRole());
     return dto;
   }
 
@@ -21,7 +21,7 @@ public class RoleMapper {
     Role role = new Role();
     role.setCptId(dto.getCptId());
     role.setTabId(dto.getTabId());
-    role.setRolRole(dto.getRolRole());
+    role.setRole(dto.getRolRole());
     return role;
   }
 }
