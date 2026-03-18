@@ -100,6 +100,10 @@
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-community-dialects</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>
@@ -134,6 +138,7 @@
                         <compileSourceRoot>${project.basedir}/api.etiquette/src/main/java</compileSourceRoot>
                         <compileSourceRoot>${project.basedir}/api.journal/src/main/java</compileSourceRoot>
                         <compileSourceRoot>${project.basedir}/api.liste/src/main/java</compileSourceRoot>
+                        <compileSourceRoot>${project.basedir}/api.associer/src/main/java</compileSourceRoot>
                         <compileSourceRoot>${project.basedir}/api.membre/src/main/java</compileSourceRoot>
                         <compileSourceRoot>${project.basedir}/api.notification/src/main/java</compileSourceRoot>
                         <compileSourceRoot>${project.basedir}/api.profil/src/main/java</compileSourceRoot>
