@@ -36,7 +36,10 @@ services:
       dockerfile: Dockerfile
     env_file:
       - ./serveurTomcat/.env
+    volumes:
+      - ./serveurDeno/kanban.db:/app/kanban.db
     environment:
+      SPRING_DATASOURCE_URL: jdbc:sqlite:/app/kanban.db
       SPRING_DATA_MONGODB_URI: ${MONGO_URI}
       SPRING_DOCKER_COMPOSE_ENABLED: "false"
     ports:
