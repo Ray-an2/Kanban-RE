@@ -7,7 +7,7 @@ import com.kanban.tableau.service.Impl.TableauServiceImpl;
 import java.util.List;
 
 @RestController
-@RequestMapping("/tableau")
+@RequestMapping("/api/tableau")
 public class TableauController {
   private final TableauServiceImpl tableauService;
 

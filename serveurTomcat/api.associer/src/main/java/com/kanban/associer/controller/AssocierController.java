@@ -10,7 +10,7 @@ import com.kanban.associer.dtos.AssocierDto;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/associer")
+@RequestMapping("/api/associer")
 public class AssocierController {
 
   private final AssocierServiceImpl AssocierService;

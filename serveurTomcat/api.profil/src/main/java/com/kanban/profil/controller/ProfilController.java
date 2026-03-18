@@ -5,7 +5,7 @@ import com.kanban.profil.service.ProfilService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/profil")
+@RequestMapping("/api/profil")
 public class ProfilController {
 
   private final ProfilService profilService;

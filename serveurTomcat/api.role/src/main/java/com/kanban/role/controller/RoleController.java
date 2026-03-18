@@ -10,7 +10,7 @@ import com.kanban.role.service.impl.RoleServiceImpl;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/role")
+@RequestMapping("/api/role")
 public class RoleController {
 
   private final RoleServiceImpl roleService;
