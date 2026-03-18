@@ -1,6 +1,6 @@
 package com.kanban.associer.controller;
 
-import com.kanban.associer.service.impl.AssocierServiceImpl;
+import com.kanban.associer.service.AssocierService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,19 +13,19 @@ import java.util.List;
 @RequestMapping("/api/associer")
 public class AssocierController {
 
-  private final AssocierServiceImpl AssocierService;
+  private final AssocierService associerService;
 
-  public AssocierController(AssocierServiceImpl AssocierService) {
-    this.AssocierService = AssocierService;
+  public AssocierController(AssocierService associerService) {
+    this.associerService = associerService;
   }
 
   /**
-   * Liste de tous les liaisons entre les cartes et les etiquettes dans le systemes.
+   * Liste tous les liaisons entre les cartes et les etiquettes dans le systeme.
    * @return List<AssocierDto
    */
   @GetMapping
   public List<AssocierDto> getAllAssociers() {
-    return AssocierService.getAllAssocier();
+    return associerService.getAllAssocier();
   }
 
   /**
@@ -34,49 +34,38 @@ public class AssocierController {
    */
   @GetMapping("/carte/{carId}")
   public List<AssocierDto> getAssociersCarte(@PathVariable String carId) {
-    return AssocierService.getAssocierByCarId(carId);
+    return associerService.getAssocierByCarId(carId);
   }
 
   /**
-   * Methode qui récupère les utilisateurs avec leur roles détenu par un tableau en particulier.
+   * Methode qui récupère les etiquettes avec leur roles détenu par un tableau en particulier.
    * @return RoleDto
    */
   @GetMapping("/etiquette/{etiId}")
   public List<AssocierDto> getAssociersEti(@PathVariable String etiId) {
-    return AssocierService.getAssocierByEtiId(etiId);
+    return associerService.getAssocierByEtiId(etiId);
   }
 
   /**
-   * Associe un tableau à un utilisateur pour un role donnée.
-   * @param AssocierDto :
+   * Associe une carte à une etiquette.
+   * @param associerDto :
    * @return List<AssocierDto>
    */
   @PostMapping
-  public ResponseEntity<AssocierDto> createAssocier(@Valid @RequestBody AssocierDto AssocierDto) {
-    AssocierDto created = AssocierService.createAssocier(AssocierDto);
+  public ResponseEntity<AssocierDto> createAssocier(@Valid @RequestBody AssocierDto associerDto) {
+    AssocierDto created = associerService.createAssocier(associerDto);
     return ResponseEntity.status(HttpStatus.CREATED).body(created);
   }
 
   /**
-   * Supprime l'association d'un utilisateur au tableau.
-   * @param cptId : l'identifiant du compte utilisateur
-   * @param tabId : l'identifiant du tableau
+   * Supprime l'association d'une carte à une etiquette.
+   * @param carId : l'identifiant d'une carte
+   * @param etiId : l'identifiant d'une etiquette
    * @return true si l'association est supprimée, false sinon
    */
-  @DeleteMapping("/tableau/{tabId}/compte/{cptId}")
-  public ResponseEntity<Void> deleteAssocier(@PathVariable String cptId, @PathVariable String tabId) {
-    AssocierService.deleteAssocier(cptId, tabId);
+  @DeleteMapping("/carte/{carId}/etiquette/{etiId}")
+  public ResponseEntity<Void> deleteAssocier(@PathVariable String carId, @PathVariable String etiId) {
+    associerService.deleteAssocier(carId, etiId);
     return ResponseEntity.noContent().build();
   }
-
-  /**
-   * Modifie l'association entre une carte et une etiquette.
-   *
-   * @return
-   */
-  /*@PutMapping("/compte/{cptId}/tableau/{tabId}")
-  public ResponseEntity<RoleDto> updateRole(@PathVariable String rolRole) {
-    RoleDto updated = roleService.updateRole(rolRole);
-    return ResponseEntity.ok(updated);
-  }*/
 }

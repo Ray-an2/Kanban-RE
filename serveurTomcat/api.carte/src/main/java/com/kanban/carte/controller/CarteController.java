@@ -36,15 +36,30 @@ public class CarteController {
     return carteService.updateCarte(carId, carteDto);
   }
 
+  @PatchMapping("/{carId}/archiver")
+  public CarteDto archiver(@PathVariable String carId) {
+    return carteService.archiver(carId);
+  }
+
+  @PatchMapping("/{carId}/terminer")
+  public CarteDto terminer(@PathVariable String carId) {
+    return carteService.terminer(carId);
+  }
+
   @DeleteMapping("/{carId}")
   public boolean deleteCarte(@PathVariable String carId) {
     return carteService.deleteCarte(carId);
   }
 
-  @PatchMapping("/{carId}/move")
-  public CarteDto moveCard(
+  @PatchMapping("/{carId}/move-liste")
+  public CarteDto moveCarteToList(
           @PathVariable String carId,
           @RequestParam String newLisId) {
-    return carteService.moveCard(carId, newLisId);
+    return carteService.moveCarteToList(carId, newLisId);
+  }
+
+  @PatchMapping("/{carId}/move-carte")
+  public CarteDto moveCarte(@PathVariable String carId) {
+    return carteService.moveCarte(carId);
   }
 }

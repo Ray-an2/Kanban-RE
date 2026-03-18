@@ -27,9 +27,9 @@ public class Associer {
   private Carte carte;
 
   /**
-   * Jointure vers t_tableau_tab.
+   * Jointure vers t_etiquette_eti.
    */
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "tab_id", insertable = false, updatable = false)
+  @JoinColumn(name = "eti_id", insertable = false, updatable = false)
   private Etiquette etiquette;
 }

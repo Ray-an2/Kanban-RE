@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface AssocierRepository extends JpaRepository<Associer, AssocierId> {
 
-  List<Associer> findByCarId(String cptId);
+  List<Associer> findByCarId(String carId);
 
   List<Associer> findByEtiId(String etiId);
 

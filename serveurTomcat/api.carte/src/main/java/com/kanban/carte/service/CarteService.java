@@ -15,5 +15,11 @@ public interface CarteService {
 
   boolean deleteCarte(String id);
 
-  CarteDto moveCard(String carId, String newLisId);
+  CarteDto moveCarteToList(String carId, String newLisId);
+
+  CarteDto terminer(String carId);
+
+  CarteDto archiver(String carId);
+
+  CarteDto moveCarte(String carId);
 }

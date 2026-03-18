@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface CarteRepository extends JpaRepository<Carte, String> {
-    List<Carte> findByLisId(String lisId);  // ← ajouter cette ligne
+    List<Carte> findByLisId(String lisId);
 }

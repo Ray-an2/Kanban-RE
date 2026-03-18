@@ -14,6 +14,6 @@ public interface AssocierService {
 
   AssocierDto createAssocier(AssocierDto associerDto);
 
-  void deleteAssocier(String carId, String etiId);
+  boolean deleteAssocier(String carId, String etiId);
 
 }

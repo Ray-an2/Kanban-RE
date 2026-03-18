@@ -19,9 +19,9 @@ public class AssocierServiceImpl implements AssocierService {
   private final AssocierRepository associerRepository;
   private final AssocierMapper associerMapper;
 
-  public AssocierServiceImpl(AssocierRepository roleRepository, AssocierMapper roleMapper) {
-    this.associerRepository = roleRepository;
-    this.associerMapper = roleMapper;
+  public AssocierServiceImpl(AssocierRepository associerRepository, AssocierMapper associerMapper) {
+    this.associerRepository = associerRepository;
+    this.associerMapper = associerMapper;
   }
 
 
@@ -37,7 +37,7 @@ public class AssocierServiceImpl implements AssocierService {
   }
 
   /**
-   * Retourne une association pour une carte donnée si elle existe
+   * Retourne une liste d'association pour une carte donnée si elle existe
    * @param carId : identifiant de la carte
    * @return la liste des associations pour une carte donnée.
    */
@@ -51,7 +51,7 @@ public class AssocierServiceImpl implements AssocierService {
   }
 
   /**
-   * Retourne une association pour une etiquette donnée si elle existe
+   * Retourne une liste association pour une etiquette donnée si elle existe
    * @param etiId : identifiant de l'etiquette
    * @return la liste des associations pour une etiquette donnée.
    */
@@ -65,7 +65,7 @@ public class AssocierServiceImpl implements AssocierService {
   }
 
   /**
-   * Création d'une association entre une carte et une etiquette. On vérifie si elle n'existe pas déjà.
+   * Création d'une association entre une carte et une etiquette si elle n'existe pas déjà.
    * @param associerDto
    * @return
    */
@@ -87,14 +87,14 @@ public class AssocierServiceImpl implements AssocierService {
    * @param etiId : identifiant d'une etiquette
    */
   @Override
-  public void deleteAssocier(String carId, String etiId) {
+  public boolean deleteAssocier(String carId, String etiId) {
     AssocierId id = new AssocierId(carId, etiId);
     if (!associerRepository.existsById(id)) {
       throw new EntityNotFoundException(
-              "Association introuvable pour compte=" + carId + " et le tableau=" + etiId
+              "Association introuvable pour la carte : " + carId + " et l'etiquette  :" + etiId
       );
     }
     associerRepository.deleteById(id);
-
+    return true;
   }
 }

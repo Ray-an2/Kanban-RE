@@ -73,10 +73,47 @@ public class CarteServiceImpl implements CarteService {
   }
 
   @Override
-  public CarteDto moveCard(String carId, String newLisId) {
+  public CarteDto moveCarte(String carId) {
+    /**
+     * Notification existing = notificationRepository.findById(id)
+     *                 .orElseThrow(() -> new EntityNotFoundException("Aucune notification trouvée avec l'id " + id));
+     *         existing.setEtat("L");
+     *         return notificationMapper.toDto(notificationRepository.save(existing));
+     */
+    Carte existing = carteRepository.findById(carId).orElseThrow(() -> new EntityNotFoundException("Aucun carte n'existe avec l'id " + carId));
+    // existing.setOrdre();
+    return carteMapper.toDto(carteRepository.save(existing));
+  }
+
+  @Override
+  public CarteDto moveCarteToList(String carId, String newLisId) {
     Carte carte = carteRepository.findById(carId)
             .orElseThrow(() -> new EntityNotFoundException("Carte non trouvée avec l'id: " + carId));
     carte.setLisId(newLisId);
     return carteMapper.toDto(carteRepository.save(carte));
+  }
+
+  @Override
+  public CarteDto terminer(String carId) {
+    Carte existing = carteRepository.findById(carId).orElseThrow(() -> new EntityNotFoundException("Aucun carte n'existe avec l'id " + carId));
+    if(existing.getTerminer().equals("T")){
+        existing.setTerminer("N");
+    }
+    else {
+      existing.setTerminer("T");
+    }
+    return carteMapper.toDto(carteRepository.save(existing));
+  }
+
+  @Override
+  public CarteDto archiver(String carId) {
+    Carte existing = carteRepository.findById(carId).orElseThrow(() -> new EntityNotFoundException("Aucun carte n'existe avec l'id " + carId));
+    if(existing.getTerminer().equals("A")){
+      existing.setTerminer("P");
+    }
+    else {
+      existing.setTerminer("A");
+    }
+    return carteMapper.toDto(carteRepository.save(existing));
   }
 }
