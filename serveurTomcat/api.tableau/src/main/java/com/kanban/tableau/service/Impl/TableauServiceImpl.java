@@ -4,71 +4,61 @@ import com.kanban.tableau.dtos.TableauDto;
 import com.kanban.tableau.mappers.TableauMapper;
 import com.kanban.tableau.repository.TableauRepository;
 import com.kanban.tableau.service.TableauService;
-
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
 
-import org.springframework.stereotype.Service;
+import java.util.List;
 import java.util.UUID;
 
 @Service("TabService")
 public class TableauServiceImpl implements TableauService {
+
   private final TableauRepository tableauRepository;
   private final TableauMapper tableauMapper;
 
-  public TableauServiceImpl(TableauRepository tableauRepository, TableauMapper tableauMapper){
+  public TableauServiceImpl(TableauRepository tableauRepository, TableauMapper tableauMapper) {
     this.tableauRepository = tableauRepository;
     this.tableauMapper = tableauMapper;
   }
 
-  /**
-   * Crée un nouveau tableau
-   * @param tableauDto : corps de la requetes.
-   * @return TableauDto
-   */
   public TableauDto createTab(TableauDto tableauDto) {
     var tableau = tableauMapper.toEntity(tableauDto);
     tableau.setId(UUID.randomUUID().toString());
-    var savedTab = tableauRepository.save(tableau);
-    return tableauMapper.toDto(savedTab);
+    return tableauMapper.toDto(tableauRepository.save(tableau));
   }
 
-  /**
-   * Récupère un tableau par son id
-   * @param id : id du tableau
-   * @return TableauDto
-   */
   public TableauDto getTabById(String id) {
-    var tableau = tableauRepository.findById(id)
+    return tableauRepository.findById(id)
+            .map(tableauMapper::toDto)
             .orElseThrow(() -> new EntityNotFoundException("Tableau non trouvé avec l'id: " + id));
-    return tableauMapper.toDto(tableau);
   }
 
-  /**
-   * Supprime un tableau
-   * @param id : id du tableau
-   * @return true si le tableau a été supprimé, false sinon.
-   */
   public boolean deleteTab(String id) {
     tableauRepository.deleteById(id);
     return true;
   }
 
-  /**
-   * Récupère tous les tableaux du systemes
-   * @return List<TableauDto>
-   */
-  public List<TableauDto> getAllTab(){
+  public List<TableauDto> getAllTab() {
     return tableauRepository.findAll().stream().map(tableauMapper::toDto).toList();
   }
 
-  /**
-   * Retourne le nombre de tableaux dans le systeme
-   * @return le nombre de tableaux
-   */
-  public Long getNombreTab(){
+  public Long getNombreTab() {
     return tableauRepository.count();
+  }
+
+  // ← NOUVEAU : tableaux d'un utilisateur
+  public List<TableauDto> getTabByCompteId(String cptId) {
+    return tableauRepository.findByCompteId(cptId)
+            .stream().map(tableauMapper::toDto).toList();
+  }
+
+  // ← NOUVEAU : modifier un tableau
+  public TableauDto updateTab(String id, TableauDto tableauDto) {
+    var tableau = tableauRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Tableau non trouvé avec l'id: " + id));
+    tableau.setNom(tableauDto.getNom());
+    tableau.setDescription(tableauDto.getDescription());
+    tableau.setEtat(tableauDto.getEtat());
+    return tableauMapper.toDto(tableauRepository.save(tableau));
   }
 }

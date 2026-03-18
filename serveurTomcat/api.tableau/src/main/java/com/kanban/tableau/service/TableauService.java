@@ -1,17 +1,15 @@
 package com.kanban.tableau.service;
 
 import com.kanban.tableau.dtos.TableauDto;
+
 import java.util.List;
 
 public interface TableauService {
-
-  List<TableauDto> getAllTab();
-
   TableauDto createTab(TableauDto tableauDto);
-
-  boolean deleteTab(String id);
-
-  Long getNombreTab();
-
   TableauDto getTabById(String id);
+  boolean deleteTab(String id);
+  List<TableauDto> getAllTab();
+  Long getNombreTab();
+  List<TableauDto> getTabByCompteId(String cptId);  // ← NOUVEAU
+  TableauDto updateTab(String id, TableauDto tableauDto);  // ← NOUVEAU
 }
