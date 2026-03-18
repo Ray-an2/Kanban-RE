@@ -2,6 +2,7 @@ FROM maven:3.9-eclipse-temurin-25 AS build
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
+COPY api.associer ./api.associer
 COPY api.carte ./api.carte
 COPY api.commentaire ./api.commentaire
 COPY api.compte ./api.compte

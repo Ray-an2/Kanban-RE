@@ -36,6 +36,9 @@ services:
       dockerfile: Dockerfile
     env_file:
       - ./serveurTomcat/.env
+    environment:
+      SPRING_DATA_MONGODB_URI: ${MONGO_URI}
+      SPRING_DOCKER_COMPOSE_ENABLED: "false"
     ports:
       - "8080:8080"
     depends_on:
