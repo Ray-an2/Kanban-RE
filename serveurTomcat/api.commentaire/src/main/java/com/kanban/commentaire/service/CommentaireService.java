@@ -1,7 +1,13 @@
 package com.kanban.commentaire.service;
 
-import org.springframework.stereotype.Service;
+import com.kanban.commentaire.dtos.CommentaireDto;
 
-@Service
-public class CommentaireService {
+import java.util.List;
+
+public interface CommentaireService {
+    List<CommentaireDto> getAllCommentaires();
+    List<CommentaireDto> getCommentairesByCarteId(String carteId);
+    CommentaireDto getCommentaireById(String id);
+    CommentaireDto createCommentaire(CommentaireDto commentaireDto);
+    boolean deleteCommentaire(String id);
 }

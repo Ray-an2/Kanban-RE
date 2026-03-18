@@ -157,7 +157,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.kanban.tomcat.ServerTomcatApplication</mainClass>
+                    <mainClass>com.kanban.ServerTomcatApplication</mainClass>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
