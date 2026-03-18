@@ -11,10 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Implémentation des opérations métier pour la gestion des cartes.
- * Cette classe suit le principe de Single Responsibility (SOLID).
- */
 @Service("carteService")
 @Transactional
 public class CarteServiceImpl implements CarteService {
