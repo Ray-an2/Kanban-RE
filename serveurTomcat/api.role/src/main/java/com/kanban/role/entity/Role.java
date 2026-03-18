@@ -8,13 +8,15 @@ import lombok.Data;
 @Table(name = "t_role_rol")
 public class Role {
 
-  @Id
-  @Column(name = "cpt_id")
-  private String cptId;
-
-  @Column(name = "tab_id")
-  private String tabId;
+  @EmbeddedId
+  private RoleId id = new RoleId();
 
   @Column(name = "rol_role")
-  private String role;
+  private String rolRole;
+
+  public String getCptId() { return id.getCptId(); }
+  public String getTabId() { return id.getTabId(); }
+
+  public void setCptId(String cptId) { id.setCptId(cptId); }
+  public void setTabId(String tabId) { id.setTabId(tabId); }
 }

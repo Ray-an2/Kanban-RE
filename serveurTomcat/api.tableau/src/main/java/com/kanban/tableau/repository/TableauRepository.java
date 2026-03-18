@@ -11,6 +11,6 @@ import java.util.List;
 @Repository
 public interface TableauRepository extends JpaRepository<Tableau, String> {
 
-    @Query("SELECT t FROM Tableau t JOIN Role r ON t.id = r.tabId WHERE r.cptId = :cptId AND r.role != 'P'")
+    @Query("SELECT t FROM Tableau t JOIN Role r ON t.id = r.id.tabId WHERE r.id.cptId = :cptId AND r.rolRole != 'P'")
     List<Tableau> findByCompteId(@Param("cptId") String cptId);
 }

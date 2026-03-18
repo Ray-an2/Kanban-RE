@@ -1,7 +1,7 @@
 import type { User } from '../model/auth.ts';
 
 export const getToken = (): string | null => {
-    return localStorage.getItem('token');
+    return localStorage.getItem('auth_token');
 };
 
 export const getUser = (): User | null => {
