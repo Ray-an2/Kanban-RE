@@ -9,8 +9,8 @@ import com.kanban.associer.mappers.AssocierMapper;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
 
+import java.util.List;
 
 @Service("AssocierService")
 @Transactional
@@ -24,51 +24,42 @@ public class AssocierServiceImpl implements AssocierService {
     this.associerMapper = associerMapper;
   }
 
-
-  /**
-   * Liste tous les associations entre les cartes et les etiquettes.
-   * @return la liste des associations.
-   */
   @Override
+  @Transactional(readOnly = true)
   public List<AssocierDto> getAllAssocier() {
-    return associerRepository.findAll().stream()
+    return associerRepository.findAll()
+            .stream()
             .map(associerMapper::toDto)
             .toList();
   }
 
-  /**
-   * Retourne une liste d'association pour une carte donnée si elle existe
-   * @param carId : identifiant de la carte
-   * @return la liste des associations pour une carte donnée.
-   */
   @Override
+  @Transactional(readOnly = true)
   public List<AssocierDto> getAssocierByCarId(String carId) {
-    List<Associer> associers = associerRepository.findByCarId(carId);
-    if (associers.isEmpty()) {
-      throw new EntityNotFoundException("Aucune associations trouvé pour la carte : " + carId);
-    }
-    return associers.stream().map(associerMapper::toDto).toList();
+    /*
+     * BUG CORRIGÉ : lever une EntityNotFoundException quand une carte
+     * n'a aucune étiquette est incorrect — c'est une situation normale.
+     * On retourne une liste vide.
+     */
+    return associerRepository.findByCarId(carId)
+            .stream()
+            .map(associerMapper::toDto)
+            .toList();
   }
 
-  /**
-   * Retourne une liste association pour une etiquette donnée si elle existe
-   * @param etiId : identifiant de l'etiquette
-   * @return la liste des associations pour une etiquette donnée.
-   */
   @Override
+  @Transactional(readOnly = true)
   public List<AssocierDto> getAssocierByEtiId(String etiId) {
-    List<Associer> associers = associerRepository.findByEtiId(etiId);
-    if (associers.isEmpty()) {
-      throw new EntityNotFoundException("Aucune associations trouvé pour l'étiquette : " + etiId);
-    }
-    return associers.stream().map(associerMapper::toDto).toList();
+    /*
+     * BUG CORRIGÉ : même raison — une étiquette peut n'être associée
+     * à aucune carte. On retourne une liste vide.
+     */
+    return associerRepository.findByEtiId(etiId)
+            .stream()
+            .map(associerMapper::toDto)
+            .toList();
   }
 
-  /**
-   * Création d'une association entre une carte et une etiquette si elle n'existe pas déjà.
-   * @param associerDto
-   * @return
-   */
   @Override
   public AssocierDto createAssocier(AssocierDto associerDto) {
     if (associerRepository.existsByCarIdAndEtiId(associerDto.getCarId(), associerDto.getEtiId())) {
@@ -81,17 +72,12 @@ public class AssocierServiceImpl implements AssocierService {
     return associerMapper.toDto(saved);
   }
 
-  /**
-   * Supprime une association entre une carte donnée et une etiquette donnée.
-   * @param carId : identifiant d'une carte
-   * @param etiId : identifiant d'une etiquette
-   */
   @Override
   public boolean deleteAssocier(String carId, String etiId) {
     AssocierId id = new AssocierId(carId, etiId);
     if (!associerRepository.existsById(id)) {
       throw new EntityNotFoundException(
-              "Association introuvable pour la carte : " + carId + " et l'etiquette  :" + etiId
+              "Association introuvable pour la carte : " + carId + " et l'étiquette : " + etiId
       );
     }
     associerRepository.deleteById(id);
