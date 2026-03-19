@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import type {  Tableau } from '../model/types.ts';
-import '../page/App.css';
+import '../css/App.css';
 
 interface UserBoardsProps {
   tableaux: Tableau[];
@@ -136,12 +136,12 @@ const Accueil: React.FC<UserBoardsProps> = ({ tableaux, isAdmin = false }) => {
                 </span>
                 <span style={{
                   padding: '2px 6px',
-                  backgroundColor: tableau.tab_etat === 'A' ? '#e8f5e9' : '#f5f5f5',
+                  backgroundColor: tableau.tab_etat === 'O' ? '#e8f5e9' : '#f5f5f5',
                   borderRadius: '4px',
                   fontSize: '11px',
-                  color: tableau.tab_etat === 'A' ? '#4caf50' : '#9e9e9e'
+                  color: tableau.tab_etat === 'O' ? '#4caf50' : '#9e9e9e'
                 }}>
-                  {tableau.tab_etat === 'A' ? 'Actif' : 'Inactif'}
+                  {tableau.tab_etat === 'O' ? 'Ouvert' : 'Fermé'}
                 </span>
               </div>
 

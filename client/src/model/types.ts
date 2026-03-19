@@ -1,32 +1,38 @@
+
+// --- Compte (CompteDto — pas de @JsonProperty) ---
 export interface Compte {
-  cpt_id: string;
-  cpt_pseudo: string;
-  cpt_mdp: string;
-  cpt_role: string;
+  id: string;
+  pseudo: string;
+  role: string;
 }
 
+// --- Profil (ProfilDto — pas de @JsonProperty) ---
 export interface Profil {
-  pfl_nom?: string;
-  pfl_prenom?: string;
-  pfl_mail?: string;
-  pfl_etat: 'A' | 'D';
-  pfl_date?: string;
-  cpt_id: string;
+  compteId: string;
+  nom?: string;
+  prenom?: string;
+  mail?: string;
+  etat: 'A' | 'D';
+  dateCreation?: string;
 }
 
-export interface UserWithProfile extends Compte {
+export interface UserWithProfile {
+  compte: Compte;
   profil?: Profil;
 }
 
+// --- Tableau (TableauDto — @JsonProperty snake_case) ---
 export interface Tableau {
   tab_id: string;
   tab_nom: string;
   tab_description?: string;
   tab_date: string;
-  tab_etat: 'A' | 'I';
+  /** 'O' = Ouvert, 'F' = Fermé */
+  tab_etat: 'O' | 'F';
   tab_image?: string | null;
 }
 
+// --- Liste (ListeDto — @JsonProperty snake_case) ---
 export interface Liste {
   lis_id: string;
   lis_titre: string;
@@ -36,14 +42,17 @@ export interface Liste {
   cartes: Carte[];
 }
 
+// --- Carte (CarteDto — @JsonProperty snake_case) ---
 export interface Carte {
   car_id: string;
   car_nom: string;
+  /** @JsonProperty("car_des") dans CarteDto.java */
   car_des?: string;
   car_archiver: 'O' | 'N';
-  car_terminer: 'O' | 'N';
+  /** 'T' = Terminé, 'N' = Non terminé */
+  car_terminer: 'T' | 'N';
+  car_ordre: string;
   car_priorite: number;
-  car_ordre: number;
   car_dateCreation: string;
   car_dateDebut?: string;
   car_dateFin?: string;
@@ -51,12 +60,22 @@ export interface Carte {
   lis_id: string;
 }
 
+// --- Étiquette (EtiquetteDto — pas de @JsonProperty) ---
 export interface Etiquette {
-  eti_id: string;
-  eti_nom: string;
-  eti_couleur: string;
+  id: string;
+  nom: string;
+  couleur: string;
 }
 
+// --- Associer (AssocierDto — pas de @JsonProperty) ---
+export interface Associer {
+  carId: string;
+  etiId: string;
+  carNom?: string;
+  etiNom?: string;
+}
+
+// --- Journal (JournalDto — @JsonProperty snake_case) ---
 export interface Journal {
   jou_id: string;
   jou_titre: string;
@@ -69,17 +88,55 @@ export interface Journal {
   car_id?: string;
 }
 
-export interface Role {
-  cpt_id: string;
-  tab_id: string;
-  rol_role: 'A' | 'U';
+// --- Notification (NotificationDto — pas de @JsonProperty) ---
+export interface Notification {
+  id: string;
+  titre: string;
+  dateCreation: string;
+  lien?: string;
+  /** 'L' = Lu, 'N' = Non lu */
+  etat: 'L' | 'N';
+  cptId: string;
 }
 
-export interface Notification {
-  not_id: string;
-  not_titre: string;
-  not_date: string;
-  not_lien?: string;
-  not_lue: 'O' | 'N';
+// --- Rôle (RoleDto — pas de @JsonProperty) ---
+export interface Role {
+  cptId: string;
+  tabId: string;
+  /** 'A' = Admin, 'M' = Membre, 'C' = Créateur, 'E' = En attente */
+  rolRole: 'A' | 'M' | 'C' | 'E';
+  cptPseudo?: string;
+  tabNom?: string;
+}
+
+// --- Membre (MembreDto — pas de @JsonProperty) ---
+export interface Membre {
+  cptId: string;
+  carId: string;
+  dateCreation: string;
+}
+
+// --- Commentaire (CommentaireDto — pas de @JsonProperty) ---
+export interface Commentaire {
+  id: string;
+  carteId: string;
+  auteurId: string;
+  contenu: string;
+  dateCreation: string;
+}
+
+// --- Document (DocumentDto — pas de @JsonProperty) ---
+export interface Document {
+  id: string;
+  carteId: string;
+  nomFichier: string;
+  url: string;
+  dateCreation: string;
+}
+
+// --- Auth (local, pas de DTO Tomcat) ---
+export interface AuthUser {
   cpt_id: string;
+  cpt_pseudo: string;
+  cpt_role: string;
 }

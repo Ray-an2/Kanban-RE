@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './App.css';
+import '../css/App.css';
 import type { APIResponse } from '../model/api.ts';
 import { isAuthResponse } from '../model/auth.ts';
 import { useAuth } from '../hooks/useAuth.ts';

@@ -14,7 +14,7 @@ import UserManagementPage from "./UserList.tsx"
 import AdminTableaux from "./TableauAdmin.tsx";
 import CompteAdmin from "./CompteAdmin.tsx";
 
-import "./App.css";
+import "../css/App.css";
 
 function App() {
   return (

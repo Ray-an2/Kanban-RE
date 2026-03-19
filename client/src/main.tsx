@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { AuthProvider } from "./context/AuthContext.tsx";
-import './index.css'
+import './css/index.css'
 import App from './page/App.tsx'
 
 createRoot(document.getElementById('root')!).render(
