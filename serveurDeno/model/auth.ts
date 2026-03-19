@@ -1,5 +1,5 @@
 import { Context, State } from "@oak/oak";
-import {User} from "./user.ts";
+import { User } from "./user.ts";
 
 export interface LoginRequest {
     pseudo: string;

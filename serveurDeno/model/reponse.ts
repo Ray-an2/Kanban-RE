@@ -1,7 +1,3 @@
-// ============================================================
-// Modèle de réponse unifié de l'API Deno
-// ============================================================
-
 export type APIResponse<T> = APISuccess<T> | APIFailure;
 
 interface APISuccess<T> {

@@ -1,13 +1,16 @@
 import { Context } from "@oak/oak";
-import { APIErreurCode, APIException, APIFailure } from "../model/reponse.ts";
+import { APIErreurCode, APIException } from "../model/reponse.ts";
+import { type AuthContext } from "../model/auth.ts";
+
+// ============================================================
+// Proxy vers le serveur Tomcat
+// ============================================================
 
 const TOMCAT_BASE_URL = Deno.env.get("TOMCAT_BASE_URL");
-
-// Délai maximum d'attente d'une réponse Tomcat (10 secondes)
 const TOMCAT_TIMEOUT_MS = 10_000;
 
 /**
- * Mappe le code HTTP retourné par Tomcat vers un APIErreurCode Deno.
+ * Mappe le code HTTP Tomcat vers un APIErreurCode Deno.
  */
 function tomcatStatusToErreurCode(status: number): APIErreurCode {
   switch (true) {
@@ -22,33 +25,21 @@ function tomcatStatusToErreurCode(status: number): APIErreurCode {
 }
 
 /**
- * Tente d'extraire un message d'erreur lisible depuis la réponse Tomcat.
- * Tomcat Spring Boot retourne par défaut un JSON avec un champ "message".
- * Si le parsing échoue, on retourne un message générique.
+ * Extrait le message d'erreur depuis la réponse JSON de Tomcat.
  */
 async function extractTomcatErrorMessage(response: Response): Promise<string> {
   try {
     const text = await response.text();
     if (!text) return `Erreur serveur (HTTP ${response.status})`;
     const json = JSON.parse(text);
-    // Spring Boot retourne { "message": "..." } ou { "error": "...", "message": "..." }
     return json.message ?? json.error ?? `Erreur serveur (HTTP ${response.status})`;
   } catch {
     return `Erreur serveur (HTTP ${response.status})`;
   }
 }
 
-/**
- * Relaie une requête vers Tomcat et retourne la réponse au client.
- *
- * Comportement :
- *  - Si Tomcat répond avec 2xx/3xx : la réponse est retournée telle quelle.
- *  - Si Tomcat répond avec 4xx/5xx : on extrait le message d'erreur et on
- *    lève une APIException pour que errorMiddleware la formate en APIFailure.
- *  - Si Tomcat est injoignable (réseau KO) : TypeError capturée par errorMiddleware.
- *  - Si Tomcat ne répond pas dans le délai : AbortError → TIMEOUT.
- */
-export async function proxyToTomcat(ctx: Context): Promise<void> {
+
+export async function proxyToTomcat(ctx: AuthContext): Promise<void> {
   if (!TOMCAT_BASE_URL) {
     throw new APIException(
         APIErreurCode.SERVER_ERROR,
@@ -62,37 +53,57 @@ export async function proxyToTomcat(ctx: Context): Promise<void> {
       TOMCAT_BASE_URL,
   );
 
-  // Copier les headers de la requête entrante (sauf host)
   const headers = new Headers(ctx.request.headers);
   headers.delete("host");
 
-  // Lire le body pour les méthodes non-GET
-  let body: Uint8Array | undefined;
-  if (
-      ctx.request.hasBody &&
-      ctx.request.method !== "GET" &&
-      ctx.request.method !== "HEAD"
-  ) {
+  // --- Lecture et enrichissement du body ---
+  let bodyBytes: Uint8Array | undefined;
+
+  const method = ctx.request.method;
+  const hasBody = ctx.request.hasBody && method !== "GET" && method !== "HEAD";
+
+  if (hasBody) {
     const raw = await ctx.request.body({ type: "bytes" }).value;
-    body = raw instanceof Uint8Array ? raw : new Uint8Array(raw);
+    const bytes = raw instanceof Uint8Array ? raw : new Uint8Array(raw);
+
+    // Injecter l'auteur dans les requêtes JSON si l'utilisateur est connecté
+    const contentType = ctx.request.headers.get("content-type") ?? "";
+    const auteur = ctx.state.user?.cpt_pseudo;
+
+    if (auteur && contentType.includes("application/json") && bytes.length > 0) {
+      try {
+        const text = new TextDecoder().decode(bytes);
+        const json = JSON.parse(text);
+        // On n'écrase pas si l'auteur est déjà fourni
+        if (!json.auteur) {
+          json.auteur = auteur;
+        }
+        const enriched = new TextEncoder().encode(JSON.stringify(json));
+        bodyBytes = enriched;
+        headers.set("content-length", enriched.length.toString());
+      } catch {
+        // Si le JSON est invalide, on envoie le body tel quel
+        bodyBytes = bytes;
+      }
+    } else {
+      bodyBytes = bytes;
+    }
   }
 
-  // Timeout via AbortController
+  // --- Timeout ---
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), TOMCAT_TIMEOUT_MS);
 
   let response: Response;
   try {
     response = await fetch(targetUrl.toString(), {
-      method: ctx.request.method,
+      method,
       headers,
-      body,
+      body: bodyBytes,
       signal: controller.signal,
     });
   } catch (err) {
     clearTimeout(timeoutId);
-
-    // Timeout
     if (err instanceof DOMException && err.name === "AbortError") {
       throw new APIException(
           APIErreurCode.TIMEOUT,
@@ -100,13 +111,12 @@ export async function proxyToTomcat(ctx: Context): Promise<void> {
           "Le serveur de traitement n'a pas répondu dans les délais.",
       );
     }
-    // Réseau KO — remontée vers errorMiddleware qui gère TypeError
-    throw err;
+    throw err; // TypeError réseau → errorMiddleware → 503
   } finally {
     clearTimeout(timeoutId);
   }
 
-  // --- Réponse en erreur de Tomcat ---
+  // --- Erreur Tomcat ---
   if (!response.ok) {
     const message = await extractTomcatErrorMessage(response);
     throw new APIException(
@@ -116,16 +126,14 @@ export async function proxyToTomcat(ctx: Context): Promise<void> {
     );
   }
 
-  // --- Réponse OK : retransmettre telle quelle ---
+  // --- Réponse OK ---
   ctx.response.status = response.status;
-
   response.headers.forEach((value, key) => {
-    // Transfer-Encoding chunked est géré par Oak lui-même
     if (key.toLowerCase() === "transfer-encoding") return;
     ctx.response.headers.set(key, value);
   });
 
-  if (ctx.request.method !== "HEAD") {
+  if (method !== "HEAD") {
     const buffer = await response.arrayBuffer();
     ctx.response.body = new Uint8Array(buffer);
   }

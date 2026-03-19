@@ -2,8 +2,8 @@ import { randomBytes, scrypt } from "node:crypto";
 import { jwtVerify, SignJWT } from "jose";
 import { type AuthPayload, isAuthPayload } from "../model/auth.ts";
 
-const JWT_SECRET = Deno.env.get("JWT_SECRET") ?? "dev-insecure";
-const PASSWORD_PEPPER = Deno.env.get("PASSWORD_PEPPER") ?? "";
+const JWT_SECRET = Deno.env.get("JWT_SECRET");
+const PASSWORD_PEPPER = Deno.env.get("PASSWORD_PEPPER");
 const JWT_KEY = new TextEncoder().encode(JWT_SECRET);
 
 export async function createJWT(

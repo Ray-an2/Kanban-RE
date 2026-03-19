@@ -1,5 +1,4 @@
 import { SQLOutputValue } from "node:sqlite";
-import { VoteCastMessage } from "./webSocket.ts";
 import { User } from "./user.ts";
 import { Tableau } from "./tableau.ts";
 import { Liste } from "./liste.ts";

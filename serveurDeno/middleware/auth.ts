@@ -7,12 +7,7 @@ export async function authMiddleware(ctx: AuthContext, next: Next) {
     const authHeader = ctx.request.headers.get("Authorization");
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        /*
-         * BUG CORRIGÉ : VALIDATION_ERROR + 409 pour un token manquant
-         * est sémantiquement incorrect.
-         * 401 Unauthorized est le code standard pour une authentification
-         * absente ou mal formée.
-         */
+
         throw new APIException(
             APIErreurCode.UNAUTHORIZED,
             401,
