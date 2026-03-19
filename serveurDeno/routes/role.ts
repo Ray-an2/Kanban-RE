@@ -12,7 +12,7 @@ import { proxyToTomcat } from "../middleware/proxy.ts";
  * PATCH  /role/tableau/:tabId/compte/:cptId       → modifier un rôle
  * DELETE /role/tableau/:tabId/compte/:cptId       → retirer un membre
  */
-const routeRole = new Router({ prefix: "/api/role" });
+const routeRole = new Router({ prefix: "/role" });
 
 routeRole
     .get("/",                                   authMiddleware, proxyToTomcat)

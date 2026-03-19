@@ -10,7 +10,7 @@ import { proxyToTomcat } from "../middleware/proxy.ts";
  * PUT    /profil/:id      → modifier un profil
  * DELETE /profil/:id      → supprimer un profil
  */
-const routeProfil = new Router({ prefix: "/api/profil" });
+const routeProfil = new Router({ prefix: "/profil" });
 
 routeProfil
     .get("/:id",        authMiddleware, proxyToTomcat)

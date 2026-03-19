@@ -12,7 +12,7 @@ import { proxyToTomcat } from "../middleware/proxy.ts";
  * PUT    /document/:docId              → modifier un document
  * DELETE /document/:docId              → supprimer un document
  */
-const routeDocument = new Router({ prefix: "/api/document" });
+const routeDocument = new Router({ prefix: "/document" });
 
 routeDocument
     .get("/",               authMiddleware, proxyToTomcat)

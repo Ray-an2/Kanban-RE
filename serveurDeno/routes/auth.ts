@@ -84,7 +84,7 @@ router.post("/inscription", async (ctx) => {
         try {
             const json = await tomcatResponse.json();
             message = json.message ?? message;
-        } catch { /* ignorer */ }
+        } catch {  }
 
         throw new APIException(
             tomcatResponse.status === 409
@@ -159,8 +159,6 @@ router.post("/login", async (ctx) => {
             APIErreurCode.UNAUTHORIZED,
             401,
             "Identifiants invalides.",
-            // Note : message volontairement identique pour ne pas
-            // indiquer si c'est le pseudo ou le mot de passe qui est faux.
         );
     }
 

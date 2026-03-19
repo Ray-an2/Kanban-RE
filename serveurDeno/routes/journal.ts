@@ -13,7 +13,7 @@ import { proxyToTomcat } from "../middleware/proxy.ts";
  * GET    /journal/carte/:carId             → journal d'une carte
  * GET    /journal/etat/:etat               → entrées par état
  */
-const routeJournal = new Router({ prefix: "/api/journal" });
+const routeJournal = new Router({ prefix: "/journal" });
 
 routeJournal
     .post("/",                          authMiddleware, proxyToTomcat)

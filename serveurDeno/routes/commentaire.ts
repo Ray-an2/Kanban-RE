@@ -12,7 +12,7 @@ import { proxyToTomcat } from "../middleware/proxy.ts";
  * POST   /commentaire                  → créer un commentaire
  * DELETE /commentaire/:comId           → supprimer un commentaire
  */
-const routeCommentaire = new Router({ prefix: "/api/commentaire" });
+const routeCommentaire = new Router({ prefix: "/commentaire" });
 
 routeCommentaire
     .get("/",               authMiddleware, proxyToTomcat)

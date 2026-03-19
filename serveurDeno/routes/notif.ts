@@ -15,7 +15,7 @@ import { proxyToTomcat } from "../middleware/proxy.ts";
  * PATCH  /notification/:notId/read            → marquer comme lue
  * DELETE /notification/:notId                 → supprimer
  */
-const routeNotification = new Router({ prefix: "/api/notification" });
+const routeNotification = new Router({ prefix: "/notification" });
 
 routeNotification
     .get("/",                       authMiddleware, proxyToTomcat)
