@@ -8,6 +8,7 @@ import com.kanban.role.dtos.RoleDto;
 import com.kanban.role.service.impl.RoleServiceImpl;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/role")
@@ -19,38 +20,25 @@ public class RoleController {
     this.roleService = roleService;
   }
 
-  /**
-   * Liste de tous les roles du sytemes.
-   * @return List<RoleDto
-   */
+  /** GET /api/role — tous les rôles */
   @GetMapping
   public List<RoleDto> getAllRoles() {
     return roleService.getAllRole();
   }
 
-  /**
-   * Methode qui récupère les roles détenu par un utilisateur en particulier.
-   * @return RoleDto
-   */
+  /** GET /api/role/compte/:cptId — rôles d'un compte */
   @GetMapping("/compte/{cptId}")
   public List<RoleDto> getRolesCompte(@PathVariable String cptId) {
     return roleService.getRoleByCptId(cptId);
   }
 
-  /**
-   * Methode qui récupère les utilisateurs avec leur roles détenu par un tableau en particulier.
-   * @return RoleDto
-   */
+  /** GET /api/role/tableau/:tabId — membres d'un tableau avec leur rôle */
   @GetMapping("/tableau/{tabId}")
   public List<RoleDto> getRolesTab(@PathVariable String tabId) {
     return roleService.getRoleByTabId(tabId);
   }
 
-  /**
-   * Associe un tableau à un utilisateur pour un role donnée.
-   * @param roleDto :
-   * @return List<RoleDto>
-   */
+  /** POST /api/role — associer un compte à un tableau */
   @PostMapping
   public ResponseEntity<RoleDto> associeRole(@Valid @RequestBody RoleDto roleDto) {
     RoleDto created = roleService.associerRole(roleDto);
@@ -58,25 +46,30 @@ public class RoleController {
   }
 
   /**
-   * Supprime l'association d'un utilisateur au tableau.
-   * @param cptId : l'identifiant du compte utilisateur
-   * @param tabId : l'identifiant du tableau
-   * @return true si l'association est supprimée, false sinon
+   * PATCH /api/role/tableau/:tabId/compte/:cptId
+   * Modifie le rôle d'un membre dans un tableau.
+   * Body : { "role": "A" }
    */
+  @PatchMapping("/tableau/{tabId}/compte/{cptId}")
+  public ResponseEntity<RoleDto> updateRole(
+          @PathVariable String cptId,
+          @PathVariable String tabId,
+          @RequestBody Map<String, String> body) {
+
+    String newRole = body.get("role");
+    if (newRole == null || newRole.isBlank()) {
+      return ResponseEntity.badRequest().build();
+    }
+    RoleDto updated = roleService.updateRole(cptId, tabId, newRole);
+    return ResponseEntity.ok(updated);
+  }
+
+  /** DELETE /api/role/tableau/:tabId/compte/:cptId — retirer un membre */
   @DeleteMapping("/tableau/{tabId}/compte/{cptId}")
-  public ResponseEntity<Void> deleteRole(@PathVariable String cptId, @PathVariable String tabId) {
+  public ResponseEntity<Void> deleteRole(
+          @PathVariable String cptId,
+          @PathVariable String tabId) {
     roleService.deleteRole(cptId, tabId);
     return ResponseEntity.noContent().build();
   }
-
-  /**
-   * Modifie le role d'un compte associe à un tableau.
-   * @param rolRole : Le nouveau role de l'utilisateur
-   * @return
-   */
-  /*@PutMapping("/compte/{cptId}/tableau/{tabId}")
-  public ResponseEntity<RoleDto> updateRole(@PathVariable String rolRole) {
-    RoleDto updated = roleService.updateRole(rolRole);
-    return ResponseEntity.ok(updated);
-  }*/
 }
