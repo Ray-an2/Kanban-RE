@@ -7,13 +7,14 @@ import lombok.Setter;
 @Setter
 @Getter
 public class CarteDto {
+
   @JsonProperty("car_id")
   private String id;
 
   @JsonProperty("car_nom")
   private String nom;
 
-  @JsonProperty("car_des")
+  @JsonProperty("car_description")  // corrigé : était "car_des"
   private String description;
 
   @JsonProperty("car_archiver")
@@ -28,13 +29,13 @@ public class CarteDto {
   @JsonProperty("car_priorite")
   private Integer priorite;
 
-  @JsonProperty("car_dateCreation")
+  @JsonProperty("car_date_creation")  // corrigé : était "car_dateCreation"
   private String dateCreation;
 
-  @JsonProperty("car_dateDebut")
+  @JsonProperty("car_date_debut")     // corrigé : était "car_dateDebut"
   private String dateDebut;
 
-  @JsonProperty("car_dateFin")
+  @JsonProperty("car_date_fin")       // corrigé : était "car_dateFin"
   private String dateFin;
 
   @JsonProperty("car_couverture")
