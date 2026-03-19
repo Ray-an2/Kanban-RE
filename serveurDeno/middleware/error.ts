@@ -1,16 +1,12 @@
 import { Context, Next } from "@oak/oak";
 import { APIErreurCode, APIException, APIFailure } from "../model/reponse.ts";
 
-// ============================================================
-// Middleware de gestion centralisée des erreurs
-// ============================================================
-
 export async function errorMiddleware(ctx: Context, next: Next) {
     try {
         await next();
     } catch (err) {
 
-        // --- 1. Erreur métier Deno (APIException levée manuellement) ---
+        // --- 1. Erreur métier Deno ---
         if (err instanceof APIException) {
             const body: APIFailure = {
                 success: false,
@@ -22,14 +18,13 @@ export async function errorMiddleware(ctx: Context, next: Next) {
             return;
         }
 
-        // --- 2. Erreur réseau : Tomcat injoignable ---
-        // TypeError est levé par fetch() quand la connexion est refusée
+        // --- 2. Tomcat injoignable ---
         if (err instanceof TypeError && err.message.includes("error trying to connect")) {
             const body: APIFailure = {
                 success: false,
                 error: {
                     code: APIErreurCode.TOMCAT_UNAVAILABLE,
-                    message: "Le serveur de traitement est actuellement indisponible. Réessayez dans quelques instants.",
+                    message: "Le serveur de traitement est actuellement indisponible.",
                 },
             };
             ctx.response.status = 503;

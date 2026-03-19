@@ -1,17 +1,9 @@
-import { Context } from "@oak/oak";
 import { APIErreurCode, APIException } from "../model/reponse.ts";
 import { type AuthContext } from "../model/auth.ts";
-
-// ============================================================
-// Proxy vers le serveur Tomcat
-// ============================================================
 
 const TOMCAT_BASE_URL = Deno.env.get("TOMCAT_BASE_URL");
 const TOMCAT_TIMEOUT_MS = 10_000;
 
-/**
- * Mappe le code HTTP Tomcat vers un APIErreurCode Deno.
- */
 function tomcatStatusToErreurCode(status: number): APIErreurCode {
   switch (true) {
     case status === 400: return APIErreurCode.BAD_REQUEST;
@@ -19,14 +11,11 @@ function tomcatStatusToErreurCode(status: number): APIErreurCode {
     case status === 403: return APIErreurCode.ROLE_UNAUTHORIZED;
     case status === 404: return APIErreurCode.NOT_FOUND;
     case status === 409: return APIErreurCode.VALIDATION_ERROR;
-    case status >= 500:  return APIErreurCode.TOMCAT_ERROR;
-    default:             return APIErreurCode.SERVER_ERROR;
+    case status >= 500: return APIErreurCode.TOMCAT_ERROR;
+    default: return APIErreurCode.SERVER_ERROR;
   }
 }
 
-/**
- * Extrait le message d'erreur depuis la réponse JSON de Tomcat.
- */
 async function extractTomcatErrorMessage(response: Response): Promise<string> {
   try {
     const text = await response.text();
@@ -37,7 +26,6 @@ async function extractTomcatErrorMessage(response: Response): Promise<string> {
     return `Erreur serveur (HTTP ${response.status})`;
   }
 }
-
 
 export async function proxyToTomcat(ctx: AuthContext): Promise<void> {
   if (!TOMCAT_BASE_URL) {
@@ -56,9 +44,7 @@ export async function proxyToTomcat(ctx: AuthContext): Promise<void> {
   const headers = new Headers(ctx.request.headers);
   headers.delete("host");
 
-  // --- Lecture et enrichissement du body ---
   let bodyBytes: Uint8Array | undefined;
-
   const method = ctx.request.method;
   const hasBody = ctx.request.hasBody && method !== "GET" && method !== "HEAD";
 
@@ -66,7 +52,7 @@ export async function proxyToTomcat(ctx: AuthContext): Promise<void> {
     const raw = await ctx.request.body({ type: "bytes" }).value;
     const bytes = raw instanceof Uint8Array ? raw : new Uint8Array(raw);
 
-    // Injecter l'auteur dans les requêtes JSON si l'utilisateur est connecté
+    // Injecter l'auteur dans le body JSON si l'utilisateur est connecté
     const contentType = ctx.request.headers.get("content-type") ?? "";
     const auteur = ctx.state.user?.cpt_pseudo;
 
@@ -74,15 +60,11 @@ export async function proxyToTomcat(ctx: AuthContext): Promise<void> {
       try {
         const text = new TextDecoder().decode(bytes);
         const json = JSON.parse(text);
-        // On n'écrase pas si l'auteur est déjà fourni
-        if (!json.auteur) {
-          json.auteur = auteur;
-        }
+        if (!json.auteur) json.auteur = auteur;
         const enriched = new TextEncoder().encode(JSON.stringify(json));
         bodyBytes = enriched;
         headers.set("content-length", enriched.length.toString());
       } catch {
-        // Si le JSON est invalide, on envoie le body tel quel
         bodyBytes = bytes;
       }
     } else {
@@ -90,7 +72,6 @@ export async function proxyToTomcat(ctx: AuthContext): Promise<void> {
     }
   }
 
-  // --- Timeout ---
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), TOMCAT_TIMEOUT_MS);
 
@@ -111,12 +92,11 @@ export async function proxyToTomcat(ctx: AuthContext): Promise<void> {
           "Le serveur de traitement n'a pas répondu dans les délais.",
       );
     }
-    throw err; // TypeError réseau → errorMiddleware → 503
+    throw err;
   } finally {
     clearTimeout(timeoutId);
   }
 
-  // --- Erreur Tomcat ---
   if (!response.ok) {
     const message = await extractTomcatErrorMessage(response);
     throw new APIException(
@@ -126,7 +106,6 @@ export async function proxyToTomcat(ctx: AuthContext): Promise<void> {
     );
   }
 
-  // --- Réponse OK ---
   ctx.response.status = response.status;
   response.headers.forEach((value, key) => {
     if (key.toLowerCase() === "transfer-encoding") return;

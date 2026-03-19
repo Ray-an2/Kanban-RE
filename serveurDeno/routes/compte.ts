@@ -19,7 +19,7 @@ import { proxyToTomcat } from "../middleware/proxy.ts";
  * PATCH  /compte/:id/mdp                       → modifier le mot de passe
  * DELETE /compte/:id                           → supprimer un compte
  */
-const routeCompte = new Router({ prefix: "/compte" });
+const routeCompte = new Router({ prefix: "/api/compte" });
 
 routeCompte
     .get("/",                               authMiddleware, proxyToTomcat)

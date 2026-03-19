@@ -3,41 +3,21 @@ import { db } from "../main.ts";
 
 import { isCompteRow, compteRowToApi } from "../model/db.ts";
 import { APIErreurCode, APIException, APIResponse } from "../model/reponse.ts";
-import {
-    type AuthResponse,
-    type LoginRequest,
-    type RegisterRequest,
-    type AuthContext,
-} from "../model/auth.ts";
+import {type AuthResponse, type LoginRequest, type RegisterRequest, type AuthContext,} from "../model/auth.ts";
 import { type User } from "../model/user.ts";
 import { authMiddleware } from "../middleware/auth.ts";
 import { createJWT, hashPassword, verifyPassword } from "../middleware/jwt.ts";
 
 const router = new Router({ prefix: "/auth" });
 
-// URL du serveur Tomcat — utilisée pour déléguer la création du compte
+// URL du serveur Tomcat
 const TOMCAT_BASE_URL = Deno.env.get("TOMCAT_BASE_URL");
 
-// ============================================================
 // POST /auth/inscription
-// ============================================================
-/**
- * Flux corrigé :
- *  1. Deno valide les champs requis.
- *  2. Deno hache le mot de passe (scrypt — seul Deno connaît le pepper).
- *  3. Deno appelle Tomcat POST /api/compte avec le hash et les infos profil.
- *     → Tomcat crée le compte ET le profil dans SQLite en une transaction.
- *  4. Deno retourne { success, data: user } au client.
- *
- * Pourquoi Deno hache et ne laisse pas Tomcat le faire ?
- *   Le PASSWORD_PEPPER est une variable d'env du serveur Deno uniquement.
- *   Tomcat ne le connaît pas et ne doit pas le connaître — il reçoit
- *   le hash final et le stocke tel quel.
- */
 router.post("/inscription", async (ctx) => {
     const body = (await ctx.request.body.json()) as RegisterRequest;
 
-    // --- Validation des champs ---
+    /* --- Validation des champs --- */
     if (!body?.pseudo || !body?.motDePasse || !body?.email || !body?.nom || !body?.prenom) {
         throw new APIException(
             APIErreurCode.BAD_REQUEST,
@@ -62,7 +42,7 @@ router.post("/inscription", async (ctx) => {
         );
     }
 
-    // --- Vérification pseudo disponible (lecture SQLite locale) ---
+    /* --- Vérification pseudo disponible --- */
     const existing = db.prepare(`
         SELECT cpt_id FROM t_compte_cpt WHERE cpt_pseudo = ?;
     `).get(body.pseudo);
@@ -75,10 +55,8 @@ router.post("/inscription", async (ctx) => {
         );
     }
 
-    // --- Hachage du mot de passe (scrypt + pepper, côté Deno uniquement) ---
     const passwordHash = await hashPassword(body.motDePasse);
 
-    // --- Délégation à Tomcat pour créer compte + profil ---
     if (!TOMCAT_BASE_URL) {
         throw new APIException(
             APIErreurCode.SERVER_ERROR,

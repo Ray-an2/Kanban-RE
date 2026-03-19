@@ -19,7 +19,7 @@ import { proxyToTomcat } from "../middleware/proxy.ts";
  * PATCH  /carte/:carId/deplacer              → déplacer avec ordre (drag & drop simple)
  * PATCH  /carte/:carId/drag-drop             → drag & drop complet avec renumérotation
  */
-const routeCarte = new Router({ prefix: "/carte" });
+const routeCarte = new Router({ prefix: "/api/carte" });
 
 routeCarte
     .get("/",                               authMiddleware, proxyToTomcat)

@@ -10,7 +10,7 @@ import { proxyToTomcat } from "../middleware/proxy.ts";
  * POST   /membre                              → associer un membre à une carte
  * DELETE /membre/carte/:carId/compte/:cptId   → retirer un membre d'une carte
  */
-const routeMembre = new Router({ prefix: "/membre" });
+const routeMembre = new Router({ prefix: "/api/membre" });
 
 routeMembre
     .get("/",                                   authMiddleware, proxyToTomcat)

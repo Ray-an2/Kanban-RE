@@ -6,7 +6,6 @@ import Inscription from "./Inscription.tsx";
 import Connexion from "./Connexion.tsx";
 import TableauPage from "./Accueil.tsx";
 import CardDetailsPage from "./CarteDetails.tsx";
-// @ts-ignore
 import Compte from "./Compte.tsx";
 import Notification from "./Notification.tsx";
 import AdminLogsPage from "./LogListe.tsx";
