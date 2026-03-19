@@ -14,7 +14,7 @@ public class CarteDto {
   @JsonProperty("car_nom")
   private String nom;
 
-  @JsonProperty("car_description")  // corrigé : était "car_des"
+  @JsonProperty("car_description")
   private String description;
 
   @JsonProperty("car_archiver")
@@ -29,13 +29,13 @@ public class CarteDto {
   @JsonProperty("car_priorite")
   private Integer priorite;
 
-  @JsonProperty("car_date_creation")  // corrigé : était "car_dateCreation"
+  @JsonProperty("car_date_creation")
   private String dateCreation;
 
-  @JsonProperty("car_date_debut")     // corrigé : était "car_dateDebut"
+  @JsonProperty("car_date_debut")
   private String dateDebut;
 
-  @JsonProperty("car_date_fin")       // corrigé : était "car_dateFin"
+  @JsonProperty("car_date_fin")
   private String dateFin;
 
   @JsonProperty("car_couverture")
@@ -43,4 +43,7 @@ public class CarteDto {
 
   @JsonProperty("lis_id")
   private String lisId;
+
+  @JsonProperty("auteur")
+  private String auteur;
 }

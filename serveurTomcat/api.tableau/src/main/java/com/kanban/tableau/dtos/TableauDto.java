@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class TableauDto {
+
   @JsonProperty("tab_id")
   private String id;
 
@@ -24,4 +25,7 @@ public class TableauDto {
 
   @JsonProperty("tab_image")
   private String image;
+
+  @JsonProperty("auteur")
+  private String auteur;
 }
