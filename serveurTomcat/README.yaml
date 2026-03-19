@@ -1,0 +1,1927 @@
+openapi: 3.0.3
+info:
+  title: Kanban API - ServeurTomcat
+  description: >
+    API REST du serveur Spring Boot pour l'application Kanban.
+    Gère les tableaux, listes, cartes, comptes, rôles, étiquettes,
+    commentaires, documents, notifications, journaux et profils.
+  version: 0.1.0
+  contact:
+    name: Équipe Kanban
+
+servers:
+  - url: http://localhost:8081
+    description: Serveur local de développement
+
+tags:
+  - name: Associer
+    description: Association entre cartes et étiquettes
+  - name: Carte
+    description: Gestion des cartes
+  - name: Commentaire
+    description: Gestion des commentaires
+  - name: Compte
+    description: Gestion des comptes utilisateurs
+  - name: Document
+    description: Gestion des documents attachés aux cartes
+  - name: Etiquette
+    description: Gestion des étiquettes
+  - name: Journal
+    description: Journalisation des actions
+  - name: Liste
+    description: Gestion des listes d'un tableau
+  - name: Membre
+    description: Association entre comptes et cartes
+  - name: Notification
+    description: Gestion des notifications
+  - name: Profil
+    description: Gestion des profils utilisateurs
+  - name: Role
+    description: Gestion des rôles dans les tableaux
+  - name: Tableau
+    description: Gestion des tableaux
+
+paths:
+
+  # ===========================================================================
+  # ASSOCIER
+  # ===========================================================================
+  /api/associer:
+    get:
+      tags: [Associer]
+      summary: Liste toutes les associations carte-étiquette
+      responses:
+        '200':
+          description: Liste des associations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AssocierDto'
+    post:
+      tags: [Associer]
+      summary: Associer une carte à une étiquette
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssocierDto'
+      responses:
+        '201':
+          description: Association créée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssocierDto'
+        '400':
+          description: Données invalides
+
+  /api/associer/carte/{carId}:
+    get:
+      tags: [Associer]
+      summary: Récupère les associations d'une carte
+      parameters:
+        - $ref: '#/components/parameters/carId'
+      responses:
+        '200':
+          description: Liste des associations de la carte
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AssocierDto'
+        '404':
+          description: Carte non trouvée
+
+  /api/associer/etiquette/{etiId}:
+    get:
+      tags: [Associer]
+      summary: Récupère les associations d'une étiquette
+      parameters:
+        - $ref: '#/components/parameters/etiId'
+      responses:
+        '200':
+          description: Liste des associations de l'étiquette
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AssocierDto'
+        '404':
+          description: Etiquette non trouvée
+
+  /api/associer/carte/{carId}/etiquette/{etiId}:
+    delete:
+      tags: [Associer]
+      summary: Supprime l'association entre une carte et une étiquette
+      parameters:
+        - $ref: '#/components/parameters/carId'
+        - $ref: '#/components/parameters/etiId'
+      responses:
+        '204':
+          description: Association supprimée
+        '404':
+          description: Association non trouvée
+
+  # ===========================================================================
+  # CARTE
+  # ===========================================================================
+  /api/carte:
+    get:
+      tags: [Carte]
+      summary: Récupère toutes les cartes
+      responses:
+        '200':
+          description: Liste des cartes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CarteDto'
+    post:
+      tags: [Carte]
+      summary: Créer une carte
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarteDto'
+      responses:
+        '201':
+          description: Carte créée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarteDto'
+        '400':
+          description: Données invalides
+
+  /api/carte/{carId}:
+    get:
+      tags: [Carte]
+      summary: Récupère une carte par son id
+      parameters:
+        - $ref: '#/components/parameters/carId'
+      responses:
+        '200':
+          description: Carte trouvée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarteDto'
+        '404':
+          description: Carte non trouvée
+    put:
+      tags: [Carte]
+      summary: Modifier une carte
+      parameters:
+        - $ref: '#/components/parameters/carId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarteDto'
+      responses:
+        '200':
+          description: Carte modifiée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarteDto'
+        '404':
+          description: Carte non trouvée
+    delete:
+      tags: [Carte]
+      summary: Supprimer une carte
+      parameters:
+        - $ref: '#/components/parameters/carId'
+      responses:
+        '204':
+          description: Carte supprimée
+        '404':
+          description: Carte non trouvée
+
+  /api/carte/{carId}/archiver:
+    patch:
+      tags: [Carte]
+      summary: Basculer l'état d'archivage d'une carte
+      parameters:
+        - $ref: '#/components/parameters/carId'
+      responses:
+        '200':
+          description: Etat d'archivage mis à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarteDto'
+        '404':
+          description: Carte non trouvée
+
+  /api/carte/{carId}/terminer:
+    patch:
+      tags: [Carte]
+      summary: Basculer l'état terminé d'une carte
+      parameters:
+        - $ref: '#/components/parameters/carId'
+      responses:
+        '200':
+          description: Etat terminé mis à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarteDto'
+        '404':
+          description: Carte non trouvée
+
+  /api/carte/{carId}/move-liste:
+    patch:
+      tags: [Carte]
+      summary: Déplacer une carte vers une autre liste
+      parameters:
+        - $ref: '#/components/parameters/carId'
+        - name: newLisId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Carte déplacée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarteDto'
+        '404':
+          description: Carte ou liste non trouvée
+
+  /api/carte/{carId}/deplacer:
+    patch:
+      tags: [Carte]
+      summary: Déplacer une carte avec mise à jour de l'ordre
+      parameters:
+        - $ref: '#/components/parameters/carId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoveCarteDto'
+      responses:
+        '200':
+          description: Carte déplacée avec nouvel ordre
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarteDto'
+        '404':
+          description: Carte ou liste non trouvée
+
+  /api/carte/{carId}/drag-drop:
+    patch:
+      tags: [Carte]
+      summary: Déplacer une carte via drag and drop avec renumérotation
+      parameters:
+        - $ref: '#/components/parameters/carId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DragDropDto'
+      responses:
+        '200':
+          description: Listes affectées mises à jour
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ListeDto'
+        '404':
+          description: Carte ou liste non trouvée
+
+  /api/carte/tableau/{tabId}/archivees:
+    get:
+      tags: [Carte]
+      summary: Récupère les cartes archivées d'un tableau
+      parameters:
+        - $ref: '#/components/parameters/tabId'
+      responses:
+        '200':
+          description: Liste des cartes archivées
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CarteDto'
+
+  /api/carte/liste/{lisId}/count:
+    get:
+      tags: [Carte]
+      summary: Compte le nombre de cartes dans une liste
+      parameters:
+        - $ref: '#/components/parameters/lisId'
+      responses:
+        '200':
+          description: Nombre de cartes
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
+
+  /api/carte/{carId}/retard:
+    get:
+      tags: [Carte]
+      summary: Vérifie si une carte est en retard
+      parameters:
+        - $ref: '#/components/parameters/carId'
+      responses:
+        '200':
+          description: True si la date de fin est dépassée
+          content:
+            application/json:
+              schema:
+                type: boolean
+
+  # ===========================================================================
+  # COMMENTAIRE
+  # ===========================================================================
+  /api/commentaire:
+    get:
+      tags: [Commentaire]
+      summary: Récupère tous les commentaires ou ceux d'une carte
+      parameters:
+        - name: carteId
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Liste des commentaires
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CommentaireDto'
+    post:
+      tags: [Commentaire]
+      summary: Créer un commentaire
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentaireDto'
+      responses:
+        '201':
+          description: Commentaire créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentaireDto'
+        '400':
+          description: Données invalides
+
+  /api/commentaire/{comId}:
+    get:
+      tags: [Commentaire]
+      summary: Récupère un commentaire par son id
+      parameters:
+        - $ref: '#/components/parameters/comId'
+      responses:
+        '200':
+          description: Commentaire trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentaireDto'
+        '404':
+          description: Commentaire non trouvé
+    delete:
+      tags: [Commentaire]
+      summary: Supprimer un commentaire
+      parameters:
+        - $ref: '#/components/parameters/comId'
+      responses:
+        '200':
+          description: Commentaire supprimé
+        '404':
+          description: Commentaire non trouvé
+
+  # ===========================================================================
+  # COMPTE
+  # ===========================================================================
+  /api/compte:
+    get:
+      tags: [Compte]
+      summary: Récupère tous les comptes (admin)
+      responses:
+        '200':
+          description: Liste des comptes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CompteDto'
+    post:
+      tags: [Compte]
+      summary: Créer un compte
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompteCreateDto'
+      responses:
+        '201':
+          description: Compte créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompteDto'
+        '400':
+          description: Données invalides
+        '409':
+          description: Pseudo ou email déjà utilisé
+
+  /api/compte/{id}:
+    get:
+      tags: [Compte]
+      summary: Récupère un compte par son id
+      parameters:
+        - $ref: '#/components/parameters/cptId'
+      responses:
+        '200':
+          description: Compte trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompteDto'
+        '404':
+          description: Compte non trouvé
+    delete:
+      tags: [Compte]
+      summary: Supprimer un compte
+      parameters:
+        - $ref: '#/components/parameters/cptId'
+      responses:
+        '200':
+          description: Compte supprimé
+        '404':
+          description: Compte non trouvé
+
+  /api/compte/pseudo/{pseudo}/disponible:
+    get:
+      tags: [Compte]
+      summary: Vérifie si un pseudo est disponible
+      parameters:
+        - name: pseudo
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Disponibilité du pseudo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  disponible:
+                    type: boolean
+
+  /api/compte/{id}/pseudo:
+    patch:
+      tags: [Compte]
+      summary: Modifier le pseudo d'un compte
+      parameters:
+        - $ref: '#/components/parameters/cptId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pseudo:
+                  type: string
+      responses:
+        '200':
+          description: Pseudo mis à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompteDto'
+        '400':
+          description: Pseudo invalide
+        '404':
+          description: Compte non trouvé
+
+  /api/compte/{id}/role:
+    patch:
+      tags: [Compte]
+      summary: Modifier le rôle d'un compte (admin uniquement)
+      parameters:
+        - $ref: '#/components/parameters/cptId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+                  enum: [A, U]
+      responses:
+        '200':
+          description: Rôle mis à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompteDto'
+        '400':
+          description: Rôle invalide
+        '404':
+          description: Compte non trouvé
+
+  /api/compte/{id}/mdp:
+    patch:
+      tags: [Compte]
+      summary: Modifier le mot de passe d'un compte
+      parameters:
+        - $ref: '#/components/parameters/cptId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompteUpdateMdpDto'
+      responses:
+        '204':
+          description: Mot de passe mis à jour
+        '400':
+          description: Données invalides
+        '401':
+          description: Ancien mot de passe incorrect
+        '404':
+          description: Compte non trouvé
+
+  # ===========================================================================
+  # DOCUMENT
+  # ===========================================================================
+  /api/document:
+    get:
+      tags: [Document]
+      summary: Récupère tous les documents ou ceux d'une carte
+      parameters:
+        - name: carteId
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Liste des documents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DocumentDto'
+    post:
+      tags: [Document]
+      summary: Créer un document
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentDto'
+      responses:
+        '201':
+          description: Document créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentDto'
+        '400':
+          description: Données invalides
+
+  /api/document/{docId}:
+    get:
+      tags: [Document]
+      summary: Récupère un document par son id
+      parameters:
+        - $ref: '#/components/parameters/docId'
+      responses:
+        '200':
+          description: Document trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentDto'
+        '404':
+          description: Document non trouvé
+    put:
+      tags: [Document]
+      summary: Modifier un document
+      parameters:
+        - $ref: '#/components/parameters/docId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentDto'
+      responses:
+        '200':
+          description: Document modifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentDto'
+        '404':
+          description: Document non trouvé
+    delete:
+      tags: [Document]
+      summary: Supprimer un document
+      parameters:
+        - $ref: '#/components/parameters/docId'
+      responses:
+        '200':
+          description: Document supprimé
+        '404':
+          description: Document non trouvé
+
+  # ===========================================================================
+  # ETIQUETTE
+  # ===========================================================================
+  /api/etiquette:
+    get:
+      tags: [Etiquette]
+      summary: Récupère toutes les étiquettes
+      responses:
+        '200':
+          description: Liste des étiquettes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EtiquetteDto'
+    post:
+      tags: [Etiquette]
+      summary: Créer une étiquette
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EtiquetteDto'
+      responses:
+        '201':
+          description: Etiquette créée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EtiquetteDto'
+        '400':
+          description: Données invalides
+
+  /api/etiquette/{id}:
+    get:
+      tags: [Etiquette]
+      summary: Récupère une étiquette par son id
+      parameters:
+        - $ref: '#/components/parameters/etiId'
+      responses:
+        '200':
+          description: Etiquette trouvée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EtiquetteDto'
+        '404':
+          description: Etiquette non trouvée
+    put:
+      tags: [Etiquette]
+      summary: Modifier une étiquette
+      parameters:
+        - $ref: '#/components/parameters/etiId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EtiquetteDto'
+      responses:
+        '200':
+          description: Etiquette modifiée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EtiquetteDto'
+        '404':
+          description: Etiquette non trouvée
+    delete:
+      tags: [Etiquette]
+      summary: Supprimer une étiquette
+      parameters:
+        - $ref: '#/components/parameters/etiId'
+      responses:
+        '204':
+          description: Etiquette supprimée
+        '404':
+          description: Etiquette non trouvée
+
+  /api/etiquette/nom/{nom}:
+    get:
+      tags: [Etiquette]
+      summary: Recherche des étiquettes par nom
+      parameters:
+        - name: nom
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Liste des étiquettes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EtiquetteDto'
+
+  /api/etiquette/couleur/{couleur}:
+    get:
+      tags: [Etiquette]
+      summary: Recherche des étiquettes par couleur
+      parameters:
+        - name: couleur
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Liste des étiquettes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EtiquetteDto'
+
+  # ===========================================================================
+  # JOURNAL
+  # ===========================================================================
+  /api/journal:
+    post:
+      tags: [Journal]
+      summary: Créer une entrée de journal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JournalDto'
+      responses:
+        '201':
+          description: Entrée créée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JournalDto'
+
+  /api/journal/{id}:
+    get:
+      tags: [Journal]
+      summary: Récupère une entrée de journal par son id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Entrée trouvée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JournalDto'
+        '404':
+          description: Entrée non trouvée
+
+  /api/journal/tableau/{tabId}:
+    get:
+      tags: [Journal]
+      summary: Récupère les journaux d'un tableau
+      parameters:
+        - $ref: '#/components/parameters/tabId'
+      responses:
+        '200':
+          description: Liste des journaux du tableau
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/JournalDto'
+
+  /api/journal/tableau/{tabId}/count:
+    get:
+      tags: [Journal]
+      summary: Compte le nombre de journaux d'un tableau
+      parameters:
+        - $ref: '#/components/parameters/tabId'
+      responses:
+        '200':
+          description: Nombre de journaux
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
+
+  /api/journal/tableau/{tabId}/last:
+    get:
+      tags: [Journal]
+      summary: Récupère le dernier journal d'un tableau
+      parameters:
+        - $ref: '#/components/parameters/tabId'
+      responses:
+        '200':
+          description: Dernier journal du tableau
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JournalDto'
+        '404':
+          description: Aucun journal trouvé
+
+  /api/journal/carte/{carId}:
+    get:
+      tags: [Journal]
+      summary: Récupère les journaux d'une carte
+      parameters:
+        - $ref: '#/components/parameters/carId'
+      responses:
+        '200':
+          description: Liste des journaux de la carte
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/JournalDto'
+
+  /api/journal/etat/{etat}:
+    get:
+      tags: [Journal]
+      summary: Récupère les journaux par état
+      parameters:
+        - name: etat
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Liste des journaux filtrés
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/JournalDto'
+
+  # ===========================================================================
+  # LISTE
+  # ===========================================================================
+  /api/liste/{id}:
+    get:
+      tags: [Liste]
+      summary: Récupère une liste par son id
+      parameters:
+        - $ref: '#/components/parameters/lisId'
+      responses:
+        '200':
+          description: Liste trouvée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListeDto'
+        '404':
+          description: Liste non trouvée
+    put:
+      tags: [Liste]
+      summary: Modifier une liste
+      parameters:
+        - $ref: '#/components/parameters/lisId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListeDto'
+      responses:
+        '200':
+          description: Liste modifiée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListeDto'
+        '404':
+          description: Liste non trouvée
+    delete:
+      tags: [Liste]
+      summary: Supprimer une liste et ses cartes
+      parameters:
+        - $ref: '#/components/parameters/lisId'
+      responses:
+        '204':
+          description: Liste supprimée
+        '404':
+          description: Liste non trouvée
+
+  /api/liste:
+    post:
+      tags: [Liste]
+      summary: Créer une liste
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListeDto'
+      responses:
+        '201':
+          description: Liste créée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListeDto'
+        '400':
+          description: Données invalides
+
+  /api/liste/tableau/{tabId}:
+    get:
+      tags: [Liste]
+      summary: Récupère les listes d'un tableau
+      parameters:
+        - $ref: '#/components/parameters/tabId'
+      responses:
+        '200':
+          description: Listes du tableau avec leurs cartes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ListeDto'
+
+  /api/liste/tableau/{tabId}/archivees:
+    get:
+      tags: [Liste]
+      summary: Récupère les listes archivées d'un tableau
+      parameters:
+        - $ref: '#/components/parameters/tabId'
+      responses:
+        '200':
+          description: Listes archivées
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ListeDto'
+
+  /api/liste/{id}/archiver:
+    patch:
+      tags: [Liste]
+      summary: Archiver une liste et ses cartes
+      parameters:
+        - $ref: '#/components/parameters/lisId'
+      responses:
+        '200':
+          description: Liste archivée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListeDto'
+        '404':
+          description: Liste non trouvée
+
+  /api/liste/{id}/desarchiver:
+    patch:
+      tags: [Liste]
+      summary: Désarchiver une liste et ses cartes
+      parameters:
+        - $ref: '#/components/parameters/lisId'
+      responses:
+        '200':
+          description: Liste désarchivée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListeDto'
+        '404':
+          description: Liste non trouvée
+
+  /api/liste/tableau/{tabId}/ordre:
+    put:
+      tags: [Liste]
+      summary: Réorganiser l'ordre des listes d'un tableau
+      parameters:
+        - $ref: '#/components/parameters/tabId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/OrdreListeDto'
+      responses:
+        '204':
+          description: Ordre mis à jour
+        '404':
+          description: Tableau non trouvé
+
+  /api/liste/{lisId}/ordre-cartes:
+    put:
+      tags: [Liste]
+      summary: Réorganiser l'ordre des cartes dans une liste
+      parameters:
+        - $ref: '#/components/parameters/lisId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/OrdreCarteDto'
+      responses:
+        '204':
+          description: Ordre des cartes mis à jour
+        '404':
+          description: Liste non trouvée
+
+  # ===========================================================================
+  # MEMBRE
+  # ===========================================================================
+  /api/membre:
+    get:
+      tags: [Membre]
+      summary: Récupère tous les membres
+      responses:
+        '200':
+          description: Liste des membres
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MembreDto'
+    post:
+      tags: [Membre]
+      summary: Associer un membre à une carte
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MembreDto'
+      responses:
+        '201':
+          description: Membre associé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MembreDto'
+        '400':
+          description: Données invalides
+
+  /api/membre/carte/{carId}:
+    get:
+      tags: [Membre]
+      summary: Récupère les membres d'une carte
+      parameters:
+        - $ref: '#/components/parameters/carId'
+      responses:
+        '200':
+          description: Liste des membres de la carte
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MembreDto'
+
+  /api/membre/carte/{carId}/compte/{cptId}:
+    delete:
+      tags: [Membre]
+      summary: Retirer un membre d'une carte
+      parameters:
+        - $ref: '#/components/parameters/carId'
+        - $ref: '#/components/parameters/cptId'
+      responses:
+        '204':
+          description: Membre retiré
+        '404':
+          description: Association non trouvée
+
+  # ===========================================================================
+  # NOTIFICATION
+  # ===========================================================================
+  /api/notification:
+    get:
+      tags: [Notification]
+      summary: Récupère les notifications (filtrables par cptId et état)
+      parameters:
+        - name: cptId
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: etat
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Liste des notifications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotificationDto'
+    post:
+      tags: [Notification]
+      summary: Créer une notification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationDto'
+      responses:
+        '201':
+          description: Notification créée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationDto'
+
+  /api/notification/{notId}:
+    get:
+      tags: [Notification]
+      summary: Récupère une notification par son id
+      parameters:
+        - $ref: '#/components/parameters/notId'
+      responses:
+        '200':
+          description: Notification trouvée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationDto'
+        '404':
+          description: Notification non trouvée
+    put:
+      tags: [Notification]
+      summary: Modifier une notification
+      parameters:
+        - $ref: '#/components/parameters/notId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationDto'
+      responses:
+        '200':
+          description: Notification modifiée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationDto'
+        '404':
+          description: Notification non trouvée
+    delete:
+      tags: [Notification]
+      summary: Supprimer une notification
+      parameters:
+        - $ref: '#/components/parameters/notId'
+      responses:
+        '200':
+          description: Notification supprimée
+        '404':
+          description: Notification non trouvée
+
+  /api/notification/{notId}/read:
+    patch:
+      tags: [Notification]
+      summary: Marquer une notification comme lue
+      parameters:
+        - $ref: '#/components/parameters/notId'
+      responses:
+        '200':
+          description: Notification marquée comme lue
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationDto'
+        '404':
+          description: Notification non trouvée
+
+  # ===========================================================================
+  # PROFIL
+  # ===========================================================================
+  /api/profil/{id}:
+    get:
+      tags: [Profil]
+      summary: Récupère un profil par l'id du compte
+      parameters:
+        - $ref: '#/components/parameters/cptId'
+      responses:
+        '200':
+          description: Profil trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfilDto'
+        '404':
+          description: Profil non trouvé
+    put:
+      tags: [Profil]
+      summary: Modifier un profil
+      parameters:
+        - $ref: '#/components/parameters/cptId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfilDto'
+      responses:
+        '200':
+          description: Profil modifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfilDto'
+        '404':
+          description: Profil non trouvé
+    delete:
+      tags: [Profil]
+      summary: Supprimer un profil
+      parameters:
+        - $ref: '#/components/parameters/cptId'
+      responses:
+        '200':
+          description: Profil supprimé
+        '404':
+          description: Profil non trouvé
+
+  /api/profil:
+    post:
+      tags: [Profil]
+      summary: Créer un profil
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfilDto'
+      responses:
+        '201':
+          description: Profil créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfilDto'
+        '400':
+          description: Données invalides
+
+  # ===========================================================================
+  # ROLE
+  # ===========================================================================
+  /api/role:
+    get:
+      tags: [Role]
+      summary: Récupère tous les rôles
+      responses:
+        '200':
+          description: Liste des rôles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RoleDto'
+    post:
+      tags: [Role]
+      summary: Associer un compte à un tableau avec un rôle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleDto'
+      responses:
+        '201':
+          description: Rôle créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleDto'
+        '400':
+          description: Données invalides
+        '409':
+          description: Association déjà existante
+
+  /api/role/compte/{cptId}:
+    get:
+      tags: [Role]
+      summary: Récupère les rôles d'un compte
+      parameters:
+        - $ref: '#/components/parameters/cptId'
+      responses:
+        '200':
+          description: Liste des rôles du compte
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RoleDto'
+        '404':
+          description: Aucun rôle trouvé
+
+  /api/role/tableau/{tabId}:
+    get:
+      tags: [Role]
+      summary: Récupère les membres d'un tableau avec leur rôle
+      parameters:
+        - $ref: '#/components/parameters/tabId'
+      responses:
+        '200':
+          description: Liste des rôles du tableau
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RoleDto'
+        '404':
+          description: Aucun membre trouvé
+
+  /api/role/tableau/{tabId}/compte/{cptId}:
+    patch:
+      tags: [Role]
+      summary: Modifier le rôle d'un membre dans un tableau
+      parameters:
+        - $ref: '#/components/parameters/tabId'
+        - $ref: '#/components/parameters/cptId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+                  enum: [A, U, C, P]
+      responses:
+        '200':
+          description: Rôle mis à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleDto'
+        '400':
+          description: Rôle invalide
+        '404':
+          description: Association non trouvée
+    delete:
+      tags: [Role]
+      summary: Retirer un membre d'un tableau
+      parameters:
+        - $ref: '#/components/parameters/tabId'
+        - $ref: '#/components/parameters/cptId'
+      responses:
+        '204':
+          description: Membre retiré
+        '404':
+          description: Association non trouvée
+
+  # ===========================================================================
+  # TABLEAU
+  # ===========================================================================
+  /api/tableau:
+    get:
+      tags: [Tableau]
+      summary: Récupère tous les tableaux
+      responses:
+        '200':
+          description: Liste des tableaux
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TableauDto'
+    post:
+      tags: [Tableau]
+      summary: Créer un tableau
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TableauDto'
+      responses:
+        '201':
+          description: Tableau créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableauDto'
+        '400':
+          description: Données invalides
+
+  /api/tableau/nombre:
+    get:
+      tags: [Tableau]
+      summary: Retourne le nombre de tableaux
+      responses:
+        '200':
+          description: Nombre de tableaux
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
+
+  /api/tableau/tri:
+    get:
+      tags: [Tableau]
+      summary: Récupère les tableaux triés
+      parameters:
+        - name: tri
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [rec, alp]
+      responses:
+        '200':
+          description: Tableaux triés
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TableauDto'
+
+  /api/tableau/recherche:
+    get:
+      tags: [Tableau]
+      summary: Recherche des tableaux par nom
+      parameters:
+        - name: search
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Tableaux correspondants
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TableauDto'
+
+  /api/tableau/{id}:
+    get:
+      tags: [Tableau]
+      summary: Récupère un tableau par son id
+      parameters:
+        - $ref: '#/components/parameters/tabId'
+      responses:
+        '200':
+          description: Tableau trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableauDto'
+        '404':
+          description: Tableau non trouvé
+    put:
+      tags: [Tableau]
+      summary: Modifier un tableau
+      parameters:
+        - $ref: '#/components/parameters/tabId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TableauDto'
+      responses:
+        '200':
+          description: Tableau modifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableauDto'
+        '404':
+          description: Tableau non trouvé
+    delete:
+      tags: [Tableau]
+      summary: Supprimer un tableau et tout son contenu
+      parameters:
+        - $ref: '#/components/parameters/tabId'
+      responses:
+        '204':
+          description: Tableau supprimé
+        '404':
+          description: Tableau non trouvé
+
+  /api/tableau/compte/{cptId}:
+    get:
+      tags: [Tableau]
+      summary: Récupère les tableaux d'un utilisateur
+      parameters:
+        - $ref: '#/components/parameters/cptId'
+      responses:
+        '200':
+          description: Tableaux de l'utilisateur
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TableauDto'
+
+  /api/tableau/{id}/fermer:
+    patch:
+      tags: [Tableau]
+      summary: Fermer un tableau et archiver son contenu
+      parameters:
+        - $ref: '#/components/parameters/tabId'
+      responses:
+        '200':
+          description: Tableau fermé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableauDto'
+        '404':
+          description: Tableau non trouvé
+
+  /api/tableau/{id}/ouvrir:
+    patch:
+      tags: [Tableau]
+      summary: Ouvrir un tableau et restaurer son contenu
+      parameters:
+        - $ref: '#/components/parameters/tabId'
+      responses:
+        '200':
+          description: Tableau ouvert
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableauDto'
+        '404':
+          description: Tableau non trouvé
+
+# ===========================================================================
+# COMPONENTS
+# ===========================================================================
+components:
+  parameters:
+    carId:
+      name: carId
+      in: path
+      required: true
+      schema:
+        type: string
+    lisId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    tabId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    cptId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    etiId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    comId:
+      name: comId
+      in: path
+      required: true
+      schema:
+        type: string
+    docId:
+      name: docId
+      in: path
+      required: true
+      schema:
+        type: string
+    notId:
+      name: notId
+      in: path
+      required: true
+      schema:
+        type: string
+
+  schemas:
+    AssocierDto:
+      type: object
+      properties:
+        car_id:
+          type: string
+        eti_id:
+          type: string
+
+    CarteDto:
+      type: object
+      properties:
+        car_id:
+          type: string
+        car_nom:
+          type: string
+        car_des:
+          type: string
+        car_archiver:
+          type: string
+        car_terminer:
+          type: string
+        car_ordre:
+          type: string
+        car_priorite:
+          type: integer
+        car_dateCreation:
+          type: string
+        car_dateDebut:
+          type: string
+        car_dateFin:
+          type: string
+        car_couverture:
+          type: string
+        lis_id:
+          type: string
+
+    MoveCarteDto:
+      type: object
+      properties:
+        newLisId:
+          type: string
+        newOrdre:
+          type: integer
+
+    DragDropDto:
+      type: object
+      properties:
+        sourceLisId:
+          type: string
+        targetLisId:
+          type: string
+        newOrdre:
+          type: integer
+
+    CommentaireDto:
+      type: object
+      properties:
+        com_id:
+          type: string
+        com_contenu:
+          type: string
+        com_date:
+          type: string
+        car_id:
+          type: string
+        cpt_id:
+          type: string
+
+    CompteDto:
+      type: object
+      properties:
+        cpt_id:
+          type: string
+        cpt_pseudo:
+          type: string
+        cpt_role:
+          type: string
+
+    CompteCreateDto:
+      type: object
+      required: [pseudo, mdp]
+      properties:
+        pseudo:
+          type: string
+        mdp:
+          type: string
+        role:
+          type: string
+
+    CompteUpdateMdpDto:
+      type: object
+      required: [mdp]
+      properties:
+        mdp:
+          type: string
+
+    DocumentDto:
+      type: object
+      properties:
+        doc_id:
+          type: string
+        doc_nom:
+          type: string
+        doc_url:
+          type: string
+        doc_date:
+          type: string
+        car_id:
+          type: string
+
+    EtiquetteDto:
+      type: object
+      properties:
+        eti_id:
+          type: string
+        eti_nom:
+          type: string
+        eti_couleur:
+          type: string
+
+    JournalDto:
+      type: object
+      properties:
+        jou_id:
+          type: string
+        jou_titre:
+          type: string
+        jou_description:
+          type: string
+        jou_auteur:
+          type: string
+        jou_action:
+          type: string
+        jou_date:
+          type: string
+        jou_etat:
+          type: string
+        tab_id:
+          type: string
+        car_id:
+          type: string
+
+    ListeDto:
+      type: object
+      properties:
+        lis_id:
+          type: string
+        lis_titre:
+          type: string
+        lis_ordre:
+          type: integer
+        lis_etat:
+          type: string
+        tab_id:
+          type: string
+        cartes:
+          type: array
+          items:
+            $ref: '#/components/schemas/CarteDto'
+
+    OrdreListeDto:
+      type: object
+      properties:
+        lisId:
+          type: string
+        ordre:
+          type: integer
+
+    OrdreCarteDto:
+      type: object
+      properties:
+        carId:
+          type: string
+        ordre:
+          type: integer
+
+    MembreDto:
+      type: object
+      properties:
+        car_id:
+          type: string
+        cpt_id:
+          type: string
+
+    NotificationDto:
+      type: object
+      properties:
+        not_id:
+          type: string
+        not_message:
+          type: string
+        not_etat:
+          type: string
+        not_date:
+          type: string
+        cpt_id:
+          type: string
+
+    ProfilDto:
+      type: object
+      properties:
+        pfl_nom:
+          type: string
+        pfl_prenom:
+          type: string
+        pfl_mail:
+          type: string
+        pfl_etat:
+          type: string
+        pfl_date:
+          type: string
+        cpt_id:
+          type: string
+
+    RoleDto:
+      type: object
+      properties:
+        cpt_id:
+          type: string
+        tab_id:
+          type: string
+        rol_role:
+          type: string
+          enum: [A, U, C, P]
+          description: "A=Admin, U=Utilisateur, C=Créateur, P=En attente"
+
+    TableauDto:
+      type: object
+      properties:
+        tab_id:
+          type: string
+        tab_nom:
+          type: string
+        tab_description:
+          type: string
+        tab_date:
+          type: string
+        tab_etat:
+          type: string
+        tab_image:
+          type: string
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - BearerAuth: []
