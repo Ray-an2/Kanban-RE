@@ -4,6 +4,8 @@ import com.kanban.membre.dtos.MembreDto;
 import com.kanban.membre.entity.Membre;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+
 @Component
 public class MembreMapper {
 
@@ -21,6 +23,11 @@ public class MembreMapper {
         Membre membre = new Membre();
         membre.setCptId(dto.getCptId());
         membre.setCarId(dto.getCarId());
+        membre.setDateCreation(
+                dto.getDateCreation() != null && !dto.getDateCreation().isBlank()
+                        ? dto.getDateCreation()
+                        : Instant.now().toString()
+        );
         return membre;
     }
 }
