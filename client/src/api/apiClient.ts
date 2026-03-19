@@ -80,7 +80,6 @@ export const authApi = {
 };
 
 // ---- Tableau -------------------------------------------------
-// tab_etat : 'O' = Ouvert, 'F' = Fermé
 
 export const tableauApi = {
     getAll:          ()                         => get('/tableau'),
