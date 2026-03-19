@@ -3,7 +3,7 @@ package com.kanban.liste.dtos;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kanban.carte.dtos.CarteDto;
 import lombok.Getter;
-<parameter name="file_text">import lombok.Setter;
+import lombok.Setter;
 
 import java.util.List;
 
