@@ -3,64 +3,126 @@ import { db } from "../main.ts";
 
 import { isCompteRow, compteRowToApi } from "../model/db.ts";
 import { APIErreurCode, APIException, APIResponse } from "../model/reponse.ts";
-import { type AuthResponse, type LoginRequest, type RegisterRequest, type AuthContext } from "../model/auth.ts";
+import {
+    type AuthResponse,
+    type LoginRequest,
+    type RegisterRequest,
+    type AuthContext,
+} from "../model/auth.ts";
 import { type User } from "../model/user.ts";
 import { authMiddleware } from "../middleware/auth.ts";
 import { createJWT, hashPassword, verifyPassword } from "../middleware/jwt.ts";
 
 const router = new Router({ prefix: "/auth" });
 
+// URL du serveur Tomcat — utilisée pour déléguer la création du compte
+const TOMCAT_BASE_URL = Deno.env.get("TOMCAT_BASE_URL");
+
+// ============================================================
+// POST /auth/inscription
+// ============================================================
 /**
- * POST /auth/inscription
+ * Flux corrigé :
+ *  1. Deno valide les champs requis.
+ *  2. Deno hache le mot de passe (scrypt — seul Deno connaît le pepper).
+ *  3. Deno appelle Tomcat POST /api/compte avec le hash et les infos profil.
+ *     → Tomcat crée le compte ET le profil dans SQLite en une transaction.
+ *  4. Deno retourne { success, data: user } au client.
+ *
+ * Pourquoi Deno hache et ne laisse pas Tomcat le faire ?
+ *   Le PASSWORD_PEPPER est une variable d'env du serveur Deno uniquement.
+ *   Tomcat ne le connaît pas et ne doit pas le connaître — il reçoit
+ *   le hash final et le stocke tel quel.
  */
 router.post("/inscription", async (ctx) => {
     const body = (await ctx.request.body.json()) as RegisterRequest;
 
+    // --- Validation des champs ---
     if (!body?.pseudo || !body?.motDePasse || !body?.email || !body?.nom || !body?.prenom) {
         throw new APIException(
             APIErreurCode.BAD_REQUEST,
             400,
-            "Champs manquants",
+            "Champs manquants : pseudo, motDePasse, email, nom et prenom sont obligatoires.",
         );
     }
 
-    const existing = db.prepare(`
-    SELECT cpt_id, cpt_pseudo, cpt_mdp, cpt_role
-    FROM t_compte_cpt WHERE cpt_pseudo = ?;`).get(body.pseudo);
+    if (body.pseudo.trim().length < 3) {
+        throw new APIException(
+            APIErreurCode.BAD_REQUEST,
+            400,
+            "Le pseudo doit contenir au moins 3 caractères.",
+        );
+    }
 
-    if (existing && isCompteRow(existing)) {
+    if (body.motDePasse.length < 6) {
+        throw new APIException(
+            APIErreurCode.BAD_REQUEST,
+            400,
+            "Le mot de passe doit contenir au moins 6 caractères.",
+        );
+    }
+
+    // --- Vérification pseudo disponible (lecture SQLite locale) ---
+    const existing = db.prepare(`
+        SELECT cpt_id FROM t_compte_cpt WHERE cpt_pseudo = ?;
+    `).get(body.pseudo);
+
+    if (existing) {
         throw new APIException(
             APIErreurCode.VALIDATION_ERROR,
             409,
-            "Pseudo deja utilise",
+            "Ce pseudo est déjà utilisé.",
         );
     }
 
-    const cptId = crypto.randomUUID();
-    const createdAt = new Date().toISOString();
+    // --- Hachage du mot de passe (scrypt + pepper, côté Deno uniquement) ---
     const passwordHash = await hashPassword(body.motDePasse);
 
-    db.prepare(`
-    INSERT INTO t_compte_cpt (cpt_id, cpt_pseudo, cpt_mdp, cpt_role)
-    VALUES (?, ?, ?, ?);
-    `).run(cptId, body.pseudo, passwordHash, "U");
+    // --- Délégation à Tomcat pour créer compte + profil ---
+    if (!TOMCAT_BASE_URL) {
+        throw new APIException(
+            APIErreurCode.SERVER_ERROR,
+            500,
+            "Configuration serveur manquante (TOMCAT_BASE_URL).",
+        );
+    }
 
-    db.prepare(`
-    INSERT INTO t_profil_pfl (pfl_nom, pfl_prenom, pfl_dateCreation, pfl_mail, pfl_etat, cpt_id)
-    VALUES (?, ?, ?, ?, ?, ?);
-    `).run(
-        body.nom,
-        body.prenom,
-        createdAt,
-        body.email,
-        "D",
-        cptId,
-    );
+    const tomcatResponse = await fetch(`${TOMCAT_BASE_URL}/api/compte`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            pseudo: body.pseudo,
+            mdp: passwordHash,   // hash scrypt déjà calculé
+            role: "U",           // rôle utilisateur par défaut
+            nom: body.nom,
+            prenom: body.prenom,
+            mail: body.email,
+        }),
+    });
+
+    if (!tomcatResponse.ok) {
+        // Extraire le message d'erreur Tomcat si disponible
+        let message = "Erreur lors de la création du compte.";
+        try {
+            const json = await tomcatResponse.json();
+            message = json.message ?? message;
+        } catch { /* ignorer */ }
+
+        throw new APIException(
+            tomcatResponse.status === 409
+                ? APIErreurCode.VALIDATION_ERROR
+                : APIErreurCode.TOMCAT_ERROR,
+            tomcatResponse.status,
+            message,
+        );
+    }
+
+    const created = await tomcatResponse.json();
 
     const user: User = {
-        cpt_id: cptId,
-        cpt_pseudo: body.pseudo,
-        cpt_role: "U",
+        cpt_id: created.id,
+        cpt_pseudo: created.pseudo,
+        cpt_role: created.role ?? "U",
     };
 
     const response: APIResponse<User> = {
@@ -72,8 +134,19 @@ router.post("/inscription", async (ctx) => {
     ctx.response.body = response;
 });
 
+// ============================================================
+// POST /auth/login
+// ============================================================
 /**
- * POST /auth/login
+ * Flux :
+ *  1. Deno lit le compte dans SQLite (hash + rôle).
+ *  2. Deno vérifie le mot de passe (scrypt + pepper).
+ *  3. Deno génère et retourne un JWT signé.
+ *
+ * Le login reste entièrement côté Deno car :
+ *   - La vérification scrypt nécessite le PASSWORD_PEPPER (secret Deno).
+ *   - Le JWT_SECRET est aussi un secret Deno.
+ *   - Pas besoin de roundtrip Tomcat pour une simple lecture + vérification.
  */
 router.post("/login", async (ctx) => {
     const body = (await ctx.request.body.json()) as LoginRequest;
@@ -82,32 +155,38 @@ router.post("/login", async (ctx) => {
         throw new APIException(
             APIErreurCode.BAD_REQUEST,
             400,
-            "Champs manquants",
+            "Champs manquants : pseudo et motDePasse sont obligatoires.",
         );
     }
 
+    // Lecture du compte dans SQLite local
     const row = db.prepare(`
-    SELECT cpt_id, cpt_pseudo, cpt_mdp, cpt_role
-    FROM t_compte_cpt WHERE cpt_pseudo = ?;
+        SELECT cpt_id, cpt_pseudo, cpt_mdp, cpt_role
+        FROM t_compte_cpt
+        WHERE cpt_pseudo = ?;
     `).get(body.pseudo);
 
     if (!row || !isCompteRow(row)) {
         throw new APIException(
             APIErreurCode.UNAUTHORIZED,
             401,
-            "Identifiants invalides",
+            "Identifiants invalides.",
         );
     }
 
+    // Vérification du mot de passe (scrypt + pepper)
     const ok = await verifyPassword(body.motDePasse, row.cpt_mdp);
     if (!ok) {
         throw new APIException(
             APIErreurCode.UNAUTHORIZED,
             401,
-            "Mot de passe invalides",
+            "Identifiants invalides.",
+            // Note : message volontairement identique pour ne pas
+            // indiquer si c'est le pseudo ou le mot de passe qui est faux.
         );
     }
 
+    // Génération du JWT
     const token = await createJWT({
         cpt_id: row.cpt_id,
         cpt_pseudo: row.cpt_pseudo,
@@ -125,20 +204,27 @@ router.post("/login", async (ctx) => {
     ctx.response.body = response;
 });
 
+// ============================================================
+// GET /auth/validate
+// ============================================================
 /**
- * GET /auth/validate
+ * Valide le token JWT et retourne les infos de l'utilisateur connecté.
+ * Utilisé par le frontend pour vérifier la session au démarrage.
  */
 router.get("/validate", authMiddleware, (ctx: AuthContext) => {
     const cptId = ctx.state.user!.cpt_id;
+
     const row = db.prepare(`
-    SELECT cpt_id, cpt_pseudo, cpt_mdp, cpt_role
-    FROM t_compte_cpt WHERE cpt_id = ?;`).get(cptId);
+        SELECT cpt_id, cpt_pseudo, cpt_mdp, cpt_role
+        FROM t_compte_cpt
+        WHERE cpt_id = ?;
+    `).get(cptId);
 
     if (!row || !isCompteRow(row)) {
         throw new APIException(
             APIErreurCode.NOT_FOUND,
             404,
-            "Utilisateur introuvable",
+            "Utilisateur introuvable.",
         );
     }
 
@@ -149,6 +235,7 @@ router.get("/validate", authMiddleware, (ctx: AuthContext) => {
             user: compteRowToApi(row),
         },
     };
+
     ctx.response.body = response;
 });
 

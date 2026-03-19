@@ -1,6 +1,23 @@
 import { Router } from "@oak/oak";
-import { db } from "../main.ts";
+import { authMiddleware } from "../middleware/auth.ts";
+import { proxyToTomcat } from "../middleware/proxy.ts";
 
-import { APIErreurCode, APIException, APIResponse } from "../model/reponse.ts";
+/**
+ * Routes Commentaire — vérification JWT puis proxy vers /api/commentaire.
+ * Les commentaires sont stockés dans MongoDB côté Tomcat.
+ *
+ * GET    /commentaire                  → tous les commentaires
+ * GET    /commentaire/:comId           → un commentaire
+ * GET    /commentaire?carteId=...      → commentaires d'une carte (query param)
+ * POST   /commentaire                  → créer un commentaire
+ * DELETE /commentaire/:comId           → supprimer un commentaire
+ */
+const routeCommentaire = new Router({ prefix: "/commentaire" });
 
-const router = new Router({ prefix: "/commentaire" });
+routeCommentaire
+    .get("/",               authMiddleware, proxyToTomcat)
+    .get("/:comId",         authMiddleware, proxyToTomcat)
+    .post("/",              authMiddleware, proxyToTomcat)
+    .delete("/:comId",      authMiddleware, proxyToTomcat);
+
+export default routeCommentaire;
