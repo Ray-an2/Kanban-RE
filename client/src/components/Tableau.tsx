@@ -117,7 +117,7 @@ const Tableau: React.FC = () => {
     setAddLoading(true);
     setMembresError(null);
     try {
-      await roleApi.associer({ cpt_id: selectedCptId, tab_id: id, rol_role: selectedRole });
+      await roleApi.associer({ cptId: selectedCptId, tabId: id, rolRole: selectedRole });
       setShowAddMembre(false);
       await loadMembres();
     } catch (err) {

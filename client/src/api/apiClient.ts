@@ -176,8 +176,8 @@ export const roleApi = {
     getByCompte:  (cptId: string)                          => get(`/api/role/compte/${cptId}`),
     getByTableau: (tabId: string)                          => get(`/api/role/tableau/${tabId}`),
     associer:     (data: unknown)                          => post('/api/role', data),
-    update:       (tabId: string, cptId: string, rolRole: string) =>
-        patch(`/api/role/tableau/${tabId}/compte/${cptId}`, { rolRole }),
+    update:       (tabId: string, cptId: string, role: string) =>
+        patch(`/api/role/tableau/${tabId}/compte/${cptId}`, { role }),
     delete:             (tabId: string, cptId: string)           => del(`/api/role/tableau/${tabId}/compte/${cptId}`),
     inviter:            (data: { tabId: string; cptId: string; roleCible: string }) =>
         post('/api/role', { cptId: data.cptId, tabId: data.tabId, rolRole: 'E', roleCible: data.roleCible }),
