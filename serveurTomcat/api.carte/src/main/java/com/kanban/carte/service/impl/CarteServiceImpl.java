@@ -26,37 +26,42 @@ public class CarteServiceImpl implements CarteService {
   private final ListeRepository listeRepository;
   private final JournalHelper journalHelper;
 
-  public CarteServiceImpl(CarteRepository carteRepository,
-                          CarteMapper carteMapper,
-                          ListeRepository listeRepository,
-                          JournalHelper journalHelper) {
+  public CarteServiceImpl(CarteRepository carteRepository, CarteMapper carteMapper,
+                          ListeRepository listeRepository, JournalHelper journalHelper) {
     this.carteRepository = carteRepository;
     this.carteMapper = carteMapper;
     this.listeRepository = listeRepository;
     this.journalHelper = journalHelper;
   }
 
-  // -------------------------------------------------------------------------
-  // Helpers privés
-  // -------------------------------------------------------------------------
 
   /** Retrouve le tabId d'une carte via sa liste */
+  /**
+   * Retourne l'identifiant du tableau d'une liste.
+   * @param lisId : identifiant de la liste.
+   * @return identifiant du tableau.
+   */
   private String getTabId(String lisId) {
     return listeRepository.findById(lisId)
             .map(Liste::getTabId)
             .orElse(null);
   }
 
-  // -------------------------------------------------------------------------
-  // CRUD
-  // -------------------------------------------------------------------------
-
+  /**
+   * Retourne toutes les cartes.
+   * @return List<CarteDto> : Liste de toutes les cartes.
+   */
   @Override
   @Transactional(readOnly = true)
   public List<CarteDto> getAllCartes() {
     return carteRepository.findAll().stream().map(carteMapper::toDto).toList();
   }
 
+  /**
+   * Retourne une carte par son id.
+   * @param id : identifiant de la carte.
+   * @return
+   */
   @Override
   @Transactional(readOnly = true)
   public CarteDto getCarteById(String id) {
@@ -65,6 +70,11 @@ public class CarteServiceImpl implements CarteService {
             .orElseThrow(() -> new EntityNotFoundException("La carte avec l'id " + id + " n'existe pas"));
   }
 
+  /**
+   * Créer une carte.
+   * @param carteDto
+   * @return
+   */
   @Override
   public CarteDto createCarte(CarteDto carteDto) {
     Carte carte = carteMapper.toEntity(carteDto);
