@@ -4,6 +4,9 @@ import com.kanban.carte.entity.Carte;
 import com.kanban.carte.repository.CarteRepository;
 import com.kanban.journal.helper.JournalAction;
 import com.kanban.journal.helper.JournalHelper;
+import com.kanban.role.entity.Role;
+import com.kanban.role.entity.RoleId;
+import com.kanban.role.repository.RoleRepository;
 import com.kanban.liste.entity.Liste;
 import com.kanban.liste.repository.ListeRepository;
 import com.kanban.tableau.dtos.TableauDto;
@@ -27,17 +30,20 @@ public class TableauServiceImpl implements TableauService {
   private final ListeRepository listeRepository;
   private final CarteRepository carteRepository;
   private final JournalHelper journalHelper;
+  private final RoleRepository roleRepository;
 
   public TableauServiceImpl(TableauRepository tableauRepository,
                             TableauMapper tableauMapper,
                             ListeRepository listeRepository,
                             CarteRepository carteRepository,
-                            JournalHelper journalHelper) {
+                            JournalHelper journalHelper,
+                            RoleRepository roleRepository) {
     this.tableauRepository = tableauRepository;
     this.tableauMapper = tableauMapper;
     this.listeRepository = listeRepository;
     this.carteRepository = carteRepository;
     this.journalHelper = journalHelper;
+    this.roleRepository = roleRepository;
   }
 
   // -------------------------------------------------------------------------
@@ -51,6 +57,12 @@ public class TableauServiceImpl implements TableauService {
     tableau.setDate(Instant.now().toString());
     if (tableau.getEtat() == null) tableau.setEtat("O");
     var saved = tableauRepository.save(tableau);
+    if (tableauDto.getCptId() != null && !tableauDto.getCptId().isBlank()) {
+      Role role = new Role();
+      role.setId(new RoleId(tableauDto.getCptId(), saved.getId()));
+      role.setRolRole("C");
+      roleRepository.save(role);
+    }
 
     journalHelper.logTableau(
             "Création tableau",

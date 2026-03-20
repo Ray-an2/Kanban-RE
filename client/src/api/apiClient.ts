@@ -1,9 +1,12 @@
+/**
+ * Client API centralisé — toutes les requêtes passent par le serveur Deno (VITE_API_URL).
+ * Le token JWT est injecté automatiquement depuis localStorage.
+ */
+
 import type { APIResponse } from '../model/api.ts';
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';
 const TOKEN_KEY = 'auth_token';
-
-// ---- Helpers internes ----------------------------------------
 
 function getToken(): string | null {
     return localStorage.getItem(TOKEN_KEY);
@@ -18,53 +21,95 @@ function authHeaders(extra?: HeadersInit): HeadersInit {
     };
 }
 
+/**
+ * Fonction fetch centrale.
+ *
+ * Gère deux formats de réponse :
+ *  - Format Deno (auth) : { success: true, data: T } ou { success: false, error: { message } }
+ *  - Format Tomcat direct : T (tableau, liste, carte...) retourné sans wrapper
+ *
+ * Gère aussi les réponses 204 No Content et les body vides.
+ */
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     const response = await fetch(`${API_URL}${path}`, {
         ...options,
         headers: authHeaders(options.headers as HeadersInit),
     });
 
-    const json = (await response.json()) as APIResponse<T>;
+    // 204 No Content ou body vide explicite : retourner null
+    const contentLength = response.headers.get('content-length');
+    if (response.status === 204 || contentLength === '0') {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return null as unknown as T;
+    }
 
-    if (!response.ok || !json.success) {
-        const message = json.success ? `HTTP ${response.status}` : json.error.message;
+    // Lire le body une seule fois
+    const text = await response.text();
+
+    if (!text || text.trim() === '') {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return null as unknown as T;
+    }
+
+    let parsed: unknown;
+    try {
+        parsed = JSON.parse(text);
+    } catch {
+        throw new Error(`Réponse non-JSON du serveur (${response.status}): ${text.slice(0, 100)}`);
+    }
+
+    // --- Réponse en erreur ---
+    if (!response.ok) {
+        const raw = parsed as Record<string, unknown>;
+        const errorObj = raw?.error as Record<string, unknown> | undefined;
+        const message =
+            (errorObj?.message as string) ||
+            (raw?.message as string) ||
+            `Erreur HTTP ${response.status}`;
         throw new Error(message);
     }
 
-    return json.data;
+    // --- Format Deno : { success: true/false, data?, error? } ---
+    // On détecte ce format par la présence de la propriété "success"
+    if (parsed !== null && typeof parsed === 'object' && 'success' in (parsed as object)) {
+        const wrapped = parsed as APIResponse<T>;
+        if (!wrapped.success) {
+            const message = wrapped.error?.message ?? `Erreur HTTP ${response.status}`;
+            throw new Error(message);
+        }
+        return wrapped.data;
+    }
+
+    // --- Format Tomcat direct : la donnée est retournée telle quelle ---
+    return parsed as T;
 }
 
 function get<T = unknown>(path: string): Promise<T> {
     return request<T>(path, { method: 'GET' });
 }
-
 function post<T = unknown>(path: string, body?: unknown): Promise<T> {
     return request<T>(path, {
         method: 'POST',
         body: body !== undefined ? JSON.stringify(body) : undefined,
     });
 }
-
 function put<T = unknown>(path: string, body?: unknown): Promise<T> {
     return request<T>(path, {
         method: 'PUT',
         body: body !== undefined ? JSON.stringify(body) : undefined,
     });
 }
-
 function patch<T = unknown>(path: string, body?: unknown): Promise<T> {
     return request<T>(path, {
         method: 'PATCH',
         body: body !== undefined ? JSON.stringify(body) : undefined,
     });
 }
-
 function del<T = unknown>(path: string): Promise<T> {
     return request<T>(path, { method: 'DELETE' });
 }
 
-// ---- Auth ----------------------------------------------------
-
+// ---- Auth (préfixe /auth — géré directement par Deno, sans /api) ----
 export const authApi = {
     login: (pseudo: string, motDePasse: string) =>
         post<{ token: string; user: { cpt_id: string; cpt_pseudo: string; cpt_role: string } }>(
@@ -79,165 +124,136 @@ export const authApi = {
         ),
 };
 
-// ---- Tableau -------------------------------------------------
-
+// ---- Tableau ----
 export const tableauApi = {
-    getAll:          ()                         => get('/tableau'),
-    getById:         (id: string)               => get(`/tableau/${id}`),
-    getByCompte:     (cptId: string)            => get(`/tableau/compte/${cptId}`),
-    getNombre:       ()                         => get('/tableau/nombre'),
-    getTries:        (tri: 'rec' | 'alp')       => get(`/tableau/tri?tri=${tri}`),
-    rechercher:      (search: string)           => get(`/tableau/recherche?search=${encodeURIComponent(search)}`),
-    create:          (data: unknown)            => post('/tableau', data),
-    update:          (id: string, data: unknown)=> put(`/tableau/${id}`, data),
-    delete:          (id: string)               => del(`/tableau/${id}`),
-    /** Ferme le tableau : tab_etat → 'F' */
-    fermer:          (id: string)               => patch(`/tableau/${id}/fermer`),
-    /** Ouvre le tableau : tab_etat → 'O' */
-    ouvrir:          (id: string)               => patch(`/tableau/${id}/ouvrir`),
+    getAll:      ()                           => get('/api/tableau'),
+    getById:     (id: string)                => get(`/api/tableau/${id}`),
+    getByCompte: (cptId: string)             => get(`/api/tableau/compte/${cptId}`),
+    getNombre:   ()                           => get('/api/tableau/nombre'),
+    getTries:    (tri: 'rec' | 'alp')        => get(`/api/tableau/tri?tri=${tri}`),
+    rechercher:  (search: string)             => get(`/api/tableau/recherche?search=${encodeURIComponent(search)}`),
+    create:      (data: unknown)              => post('/api/tableau', data),
+    update:      (id: string, data: unknown) => put(`/api/tableau/${id}`, data),
+    delete:      (id: string)                => del(`/api/tableau/${id}`),
+    fermer:      (id: string)                => patch(`/api/tableau/${id}/fermer`),
+    ouvrir:      (id: string)                => patch(`/api/tableau/${id}/ouvrir`),
 };
 
-// ---- Liste ---------------------------------------------------
-
+// ---- Liste ----
 export const listeApi = {
-    getByTableau:    (tabId: string)              => get(`/liste/tableau/${tabId}`),
-    getArchivees:    (tabId: string)              => get(`/liste/tableau/${tabId}/archivees`),
-    getById:         (id: string)                 => get(`/liste/${id}`),
-    create:          (data: unknown)              => post('/liste', data),
-    update:          (id: string, data: unknown)  => put(`/liste/${id}`, data),
-    delete:          (id: string)                 => del(`/liste/${id}`),
-    archiver:        (id: string)                 => patch(`/liste/${id}/archiver`),
-    desarchiver:     (id: string)                 => patch(`/liste/${id}/desarchiver`),
-    updateOrdre:     (tabId: string, body: unknown) => put(`/liste/tableau/${tabId}/ordre`, body),
-    updateOrdreCartes: (lisId: string, body: unknown) => put(`/liste/${lisId}/ordre-cartes`, body),
+    getByTableau:      (tabId: string)                 => get(`/api/liste/tableau/${tabId}`),
+    getArchivees:      (tabId: string)                 => get(`/api/liste/tableau/${tabId}/archivees`),
+    getById:           (id: string)                    => get(`/api/liste/${id}`),
+    create:            (data: unknown)                 => post('/api/liste', data),
+    update:            (id: string, data: unknown)     => put(`/api/liste/${id}`, data),
+    delete:            (id: string)                    => del(`/api/liste/${id}`),
+    archiver:          (id: string)                    => patch(`/api/liste/${id}/archiver`),
+    desarchiver:       (id: string)                    => patch(`/api/liste/${id}/desarchiver`),
+    updateOrdre:       (tabId: string, body: unknown)  => put(`/api/liste/tableau/${tabId}/ordre`, body),
+    updateOrdreCartes: (lisId: string, body: unknown)  => put(`/api/liste/${lisId}/ordre-cartes`, body),
 };
 
-// ---- Carte ---------------------------------------------------
-// Champs JSON : car_id, car_nom, car_des, car_archiver, car_terminer,
-//               car_ordre, car_priorite, car_dateCreation, car_dateDebut,
-//               car_dateFin, car_couverture, lis_id
-
+// ---- Carte ----
 export const carteApi = {
-    getById:         (carId: string)              => get(`/carte/${carId}`),
-    getArchivees:    (tabId: string)              => get(`/carte/tableau/${tabId}/archivees`),
-    count:           (lisId: string)              => get(`/carte/liste/${lisId}/count`),
-    isEnRetard:      (carId: string)              => get(`/carte/${carId}/retard`),
-    create:          (data: unknown)              => post('/carte', data),
-    update:          (carId: string, data: unknown) => put(`/carte/${carId}`, data),
-    delete:          (carId: string)              => del(`/carte/${carId}`),
-    archiver:        (carId: string)              => patch(`/carte/${carId}/archiver`),
-    terminer:        (carId: string)              => patch(`/carte/${carId}/terminer`),
-    moveListe:       (carId: string, newLisId: string) =>
-        patch(`/carte/${carId}/move-liste?newLisId=${newLisId}`),
-    dragDrop:        (carId: string, body: { sourceLisId: string; targetLisId: string; newOrdre: number }) =>
-        patch(`/carte/${carId}/drag-drop`, body),
+    getById:     (carId: string)                => get(`/api/carte/${carId}`),
+    getArchivees:(tabId: string)                => get(`/api/carte/tableau/${tabId}/archivees`),
+    count:       (lisId: string)                => get(`/api/carte/liste/${lisId}/count`),
+    isEnRetard:  (carId: string)                => get(`/api/carte/${carId}/retard`),
+    create:      (data: unknown)                => post('/api/carte', data),
+    update:      (carId: string, data: unknown) => put(`/api/carte/${carId}`, data),
+    delete:      (carId: string)                => del(`/api/carte/${carId}`),
+    archiver:    (carId: string)                => patch(`/api/carte/${carId}/archiver`),
+    terminer:    (carId: string)                => patch(`/api/carte/${carId}/terminer`),
+    moveListe:   (carId: string, newLisId: string) =>
+        patch(`/api/carte/${carId}/move-liste?newLisId=${newLisId}`),
+    dragDrop:    (carId: string, body: { sourceLisId: string; targetLisId: string; newOrdre: number }) =>
+        patch(`/api/carte/${carId}/drag-drop`, body),
 };
 
-// ---- Rôle ----------------------------------------------------
-// Champs JSON (RoleDto) : cptId, tabId, rolRole, cptPseudo, tabNom
-
+// ---- Rôle ----
 export const roleApi = {
-    getAll:          ()                               => get('/role'),
-    getByCompte:     (cptId: string)                  => get(`/role/compte/${cptId}`),
-    getByTableau:    (tabId: string)                  => get(`/role/tableau/${tabId}`),
-    associer:        (data: unknown)                  => post('/role', data),
-    update:          (tabId: string, cptId: string, rolRole: string) =>
-        patch(`/role/tableau/${tabId}/compte/${cptId}`, { rolRole }),
-    delete:          (tabId: string, cptId: string)   => del(`/role/tableau/${tabId}/compte/${cptId}`),
+    getAll:       ()                                        => get('/api/role'),
+    getByCompte:  (cptId: string)                          => get(`/api/role/compte/${cptId}`),
+    getByTableau: (tabId: string)                          => get(`/api/role/tableau/${tabId}`),
+    associer:     (data: unknown)                          => post('/api/role', data),
+    update:       (tabId: string, cptId: string, rolRole: string) =>
+        patch(`/api/role/tableau/${tabId}/compte/${cptId}`, { rolRole }),
+    delete:       (tabId: string, cptId: string)           => del(`/api/role/tableau/${tabId}/compte/${cptId}`),
 };
 
-// ---- Membre --------------------------------------------------
-// Champs JSON (MembreDto) : cptId, carId, dateCreation
-
+// ---- Membre ----
 export const membreApi = {
-    getByCarte:      (carId: string)                  => get(`/membre/carte/${carId}`),
-    associer:        (data: unknown)                  => post('/membre', data),
-    delete:          (carId: string, cptId: string)   => del(`/membre/carte/${carId}/compte/${cptId}`),
+    getByCarte: (carId: string)                  => get(`/api/membre/carte/${carId}`),
+    associer:   (data: unknown)                  => post('/api/membre', data),
+    delete:     (carId: string, cptId: string)   => del(`/api/membre/carte/${carId}/compte/${cptId}`),
 };
 
-// ---- Étiquette -----------------------------------------------
-// Champs JSON (EtiquetteDto) : id, nom, couleur
-
+// ---- Étiquette ----
 export const etiquetteApi = {
-    getAll:          ()                               => get('/etiquette'),
-    getById:         (id: string)                     => get(`/etiquette/${id}`),
-    getByNom:        (nom: string)                    => get(`/etiquette/nom/${encodeURIComponent(nom)}`),
-    create:          (data: unknown)                  => post('/etiquette', data),
-    update:          (id: string, data: unknown)      => put(`/etiquette/${id}`, data),
-    delete:          (id: string)                     => del(`/etiquette/${id}`),
+    getAll:   ()                                => get('/api/etiquette'),
+    getById:  (id: string)                      => get(`/api/etiquette/${id}`),
+    getByNom: (nom: string)                     => get(`/api/etiquette/nom/${encodeURIComponent(nom)}`),
+    create:   (data: unknown)                   => post('/api/etiquette', data),
+    update:   (id: string, data: unknown)       => put(`/api/etiquette/${id}`, data),
+    delete:   (id: string)                      => del(`/api/etiquette/${id}`),
 };
 
-// ---- Associer (carte ↔ étiquette) ----------------------------
-// Champs JSON (AssocierDto) : carId, etiId, carNom, etiNom
-
+// ---- Associer (carte <-> étiquette) ----
 export const associerApi = {
-    getByCarte:      (carId: string)                  => get(`/associer/carte/${carId}`),
-    getByEtiquette:  (etiId: string)                  => get(`/associer/etiquette/${etiId}`),
-    create:          (data: unknown)                  => post('/associer', data),
-    delete:          (carId: string, etiId: string)   => del(`/associer/carte/${carId}/etiquette/${etiId}`),
+    getByCarte:     (carId: string)                => get(`/api/associer/carte/${carId}`),
+    getByEtiquette: (etiId: string)                => get(`/api/associer/etiquette/${etiId}`),
+    create:         (data: unknown)                => post('/api/associer', data),
+    delete:         (carId: string, etiId: string) => del(`/api/associer/carte/${carId}/etiquette/${etiId}`),
 };
 
-// ---- Journal -------------------------------------------------
-// Champs JSON (JournalDto) : jou_id, jou_titre, jou_description,
-//                            jou_auteur, jou_action, jou_date, jou_etat, tab_id, car_id
-
+// ---- Journal ----
 export const journalApi = {
-    getByTableau:    (tabId: string)                  => get(`/journal/tableau/${tabId}`),
-    countByTableau:  (tabId: string)                  => get(`/journal/tableau/${tabId}/count`),
-    lastByTableau:   (tabId: string)                  => get(`/journal/tableau/${tabId}/last`),
-    getByCarte:      (carId: string)                  => get(`/journal/carte/${carId}`),
+    getByTableau:   (tabId: string) => get(`/api/journal/tableau/${tabId}`),
+    countByTableau: (tabId: string) => get(`/api/journal/tableau/${tabId}/count`),
+    lastByTableau:  (tabId: string) => get(`/api/journal/tableau/${tabId}/last`),
+    getByCarte:     (carId: string) => get(`/api/journal/carte/${carId}`),
 };
 
-// ---- Notification --------------------------------------------
-// Champs JSON (NotificationDto, pas de @JsonProperty) : id, titre, dateCreation, lien, etat, cptId
-
+// ---- Notification ----
 export const notificationApi = {
-    getAll:          ()                               => get('/notification'),
-    getById:         (id: string)                     => get(`/notification/${id}`),
-    create:          (data: unknown)                  => post('/notification', data),
-    markAsRead:      (id: string)                     => patch(`/notification/${id}/read`),
-    delete:          (id: string)                     => del(`/notification/${id}`),
+    getAll:     ()               => get('/api/notification'),
+    getById:    (id: string)     => get(`/api/notification/${id}`),
+    create:     (data: unknown)  => post('/api/notification', data),
+    markAsRead: (id: string)     => patch(`/api/notification/${id}/read`),
+    delete:     (id: string)     => del(`/api/notification/${id}`),
 };
 
-// ---- Commentaire ---------------------------------------------
-// Champs JSON (CommentaireDto) : id, carteId, auteurId, contenu, dateCreation
-
+// ---- Commentaire ----
 export const commentaireApi = {
-    getByCarte:      (carteId: string)                => get(`/commentaire?carteId=${carteId}`),
-    getById:         (id: string)                     => get(`/commentaire/${id}`),
-    create:          (data: unknown)                  => post('/commentaire', data),
-    delete:          (id: string)                     => del(`/commentaire/${id}`),
+    getByCarte: (carteId: string)            => get(`/api/commentaire?carteId=${carteId}`),
+    getById:    (id: string)                 => get(`/api/commentaire/${id}`),
+    create:     (data: unknown)              => post('/api/commentaire', data),
+    delete:     (id: string)                 => del(`/api/commentaire/${id}`),
 };
 
-// ---- Document ------------------------------------------------
-// Champs JSON (DocumentDto) : id, carteId, nomFichier, url, dateCreation
-
+// ---- Document ----
 export const documentApi = {
-    getByCarte:      (carteId: string)                => get(`/document?carteId=${carteId}`),
-    getById:         (id: string)                     => get(`/document/${id}`),
-    create:          (data: unknown)                  => post('/document', data),
-    update:          (id: string, data: unknown)      => put(`/document/${id}`, data),
-    delete:          (id: string)                     => del(`/document/${id}`),
+    getByCarte: (carteId: string)            => get(`/api/document?carteId=${carteId}`),
+    getById:    (id: string)                 => get(`/api/document/${id}`),
+    create:     (data: unknown)              => post('/api/document', data),
+    update:     (id: string, data: unknown)  => put(`/api/document/${id}`, data),
+    delete:     (id: string)                 => del(`/api/document/${id}`),
 };
 
-// ---- Compte --------------------------------------------------
-// Champs JSON (CompteDto) : id, pseudo, role
-
+// ---- Compte ----
 export const compteApi = {
-    getAll:          ()                               => get('/compte'),
-    getById:         (id: string)                     => get(`/compte/${id}`),
-    isPseudoDisponible: (pseudo: string)              =>
-        get<{ disponible: boolean }>(`/compte/pseudo/${encodeURIComponent(pseudo)}/disponible`),
-    updatePseudo:    (id: string, pseudo: string)     => patch(`/compte/${id}/pseudo`, { pseudo }),
-    updateRole:      (id: string, role: string)       => patch(`/compte/${id}/role`, { role }),
-    updateMdp:       (id: string, mdp: string)        => patch(`/compte/${id}/mdp`, { mdp }),
-    delete:          (id: string)                     => del(`/compte/${id}`),
+    getAll:             ()                => get('/api/compte'),
+    getById:            (id: string)      => get(`/api/compte/${id}`),
+    isPseudoDisponible: (pseudo: string)  =>
+        get<{ disponible: boolean }>(`/api/compte/pseudo/${encodeURIComponent(pseudo)}/disponible`),
+    updatePseudo: (id: string, pseudo: string) => patch(`/api/compte/${id}/pseudo`, { pseudo }),
+    updateRole:   (id: string, role: string)   => patch(`/api/compte/${id}/role`, { role }),
+    updateMdp:    (id: string, mdp: string)    => patch(`/api/compte/${id}/mdp`, { mdp }),
+    delete:       (id: string)                 => del(`/api/compte/${id}`),
 };
 
-// ---- Profil --------------------------------------------------
-// Champs JSON (ProfilDto) : compteId, nom, prenom, mail, etat, dateCreation
-
+// ---- Profil ----
 export const profilApi = {
-    getById:         (id: string)                     => get(`/profil/${id}`),
-    update:          (id: string, data: unknown)      => put(`/profil/${id}`, data),
+    getById: (id: string)                => get(`/api/profil/${id}`),
+    update:  (id: string, data: unknown) => put(`/api/profil/${id}`, data),
 };

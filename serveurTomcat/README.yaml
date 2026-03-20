@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Kanban API - ServeurTomcat
+  title: ServeurTomcat
   description: >
     API REST du serveur Spring Boot pour l'application Kanban.
     Gère les tableaux, listes, cartes, comptes, rôles, étiquettes,
@@ -8,11 +8,9 @@ info:
   version: 0.1.0
   contact:
     name: Équipe Kanban
-
 servers:
   - url: http://localhost:8081
     description: Serveur local de développement
-
 tags:
   - name: Associer
     description: Association entre cartes et étiquettes
@@ -42,10 +40,6 @@ tags:
     description: Gestion des tableaux
 
 paths:
-
-  # ===========================================================================
-  # ASSOCIER
-  # ===========================================================================
   /api/associer:
     get:
       tags: [Associer]
@@ -126,10 +120,6 @@ paths:
           description: Association supprimée
         '404':
           description: Association non trouvée
-
-  # ===========================================================================
-  # CARTE
-  # ===========================================================================
   /api/carte:
     get:
       tags: [Carte]
@@ -351,10 +341,6 @@ paths:
             application/json:
               schema:
                 type: boolean
-
-  # ===========================================================================
-  # COMMENTAIRE
-  # ===========================================================================
   /api/commentaire:
     get:
       tags: [Commentaire]
@@ -418,10 +404,6 @@ paths:
           description: Commentaire supprimé
         '404':
           description: Commentaire non trouvé
-
-  # ===========================================================================
-  # COMPTE
-  # ===========================================================================
   /api/compte:
     get:
       tags: [Compte]
@@ -579,10 +561,6 @@ paths:
           description: Ancien mot de passe incorrect
         '404':
           description: Compte non trouvé
-
-  # ===========================================================================
-  # DOCUMENT
-  # ===========================================================================
   /api/document:
     get:
       tags: [Document]
@@ -666,10 +644,6 @@ paths:
           description: Document supprimé
         '404':
           description: Document non trouvé
-
-  # ===========================================================================
-  # ETIQUETTE
-  # ===========================================================================
   /api/etiquette:
     get:
       tags: [Etiquette]
@@ -787,10 +761,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/EtiquetteDto'
-
-  # ===========================================================================
-  # JOURNAL
-  # ===========================================================================
   /api/journal:
     post:
       tags: [Journal]
@@ -911,10 +881,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/JournalDto'
-
-  # ===========================================================================
-  # LISTE
-  # ===========================================================================
   /api/liste/{id}:
     get:
       tags: [Liste]
@@ -1084,10 +1050,6 @@ paths:
           description: Ordre des cartes mis à jour
         '404':
           description: Liste non trouvée
-
-  # ===========================================================================
-  # MEMBRE
-  # ===========================================================================
   /api/membre:
     get:
       tags: [Membre]
@@ -1148,10 +1110,6 @@ paths:
           description: Membre retiré
         '404':
           description: Association non trouvée
-
-  # ===========================================================================
-  # NOTIFICATION
-  # ===========================================================================
   /api/notification:
     get:
       tags: [Notification]
@@ -1254,10 +1212,6 @@ paths:
                 $ref: '#/components/schemas/NotificationDto'
         '404':
           description: Notification non trouvée
-
-  # ===========================================================================
-  # PROFIL
-  # ===========================================================================
   /api/profil/{id}:
     get:
       tags: [Profil]
@@ -1323,10 +1277,6 @@ paths:
                 $ref: '#/components/schemas/ProfilDto'
         '400':
           description: Données invalides
-
-  # ===========================================================================
-  # ROLE
-  # ===========================================================================
   /api/role:
     get:
       tags: [Role]
@@ -1436,10 +1386,6 @@ paths:
           description: Membre retiré
         '404':
           description: Association non trouvée
-
-  # ===========================================================================
-  # TABLEAU
-  # ===========================================================================
   /api/tableau:
     get:
       tags: [Tableau]
@@ -1619,10 +1565,6 @@ paths:
                 $ref: '#/components/schemas/TableauDto'
         '404':
           description: Tableau non trouvé
-
-# ===========================================================================
-# COMPONENTS
-# ===========================================================================
 components:
   parameters:
     carId:
@@ -1899,7 +1841,7 @@ components:
         rol_role:
           type: string
           enum: [A, U, C, P]
-          description: "A=Admin, U=Utilisateur, C=Créateur, P=En attente"
+          description: "A = Admin, U = Utilisateur, C = Créateur, P= En attente"
 
     TableauDto:
       type: object

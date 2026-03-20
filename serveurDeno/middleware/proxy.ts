@@ -11,8 +11,8 @@ function tomcatStatusToErreurCode(status: number): APIErreurCode {
     case status === 403: return APIErreurCode.ROLE_UNAUTHORIZED;
     case status === 404: return APIErreurCode.NOT_FOUND;
     case status === 409: return APIErreurCode.VALIDATION_ERROR;
-    case status >= 500: return APIErreurCode.TOMCAT_ERROR;
-    default: return APIErreurCode.SERVER_ERROR;
+    case status >= 500:  return APIErreurCode.TOMCAT_ERROR;
+    default:             return APIErreurCode.SERVER_ERROR;
   }
 }
 
@@ -49,18 +49,22 @@ export async function proxyToTomcat(ctx: AuthContext): Promise<void> {
   const hasBody = ctx.request.hasBody && method !== "GET" && method !== "HEAD";
 
   if (hasBody) {
-    const raw = await ctx.request.body({ type: "bytes" }).value;
-    const bytes = raw instanceof Uint8Array ? raw : new Uint8Array(raw);
+    // Oak 17 : ctx.request.body.arrayBuffer() remplace ctx.request.body({ type: "bytes" }).value
+    const rawBuffer = await ctx.request.body.arrayBuffer();
+    const bytes = new Uint8Array(rawBuffer);
 
     // Injecter l'auteur dans le body JSON si l'utilisateur est connecté
     const contentType = ctx.request.headers.get("content-type") ?? "";
     const auteur = ctx.state.user?.cpt_pseudo;
 
+    const cptId = ctx.state.user?.cpt_id;
     if (auteur && contentType.includes("application/json") && bytes.length > 0) {
       try {
         const text = new TextDecoder().decode(bytes);
         const json = JSON.parse(text);
+        // Injecter auteur (pseudo) et cptId pour la création de rôle côté Tomcat
         if (!json.auteur) json.auteur = auteur;
+        if (!json.cptId && cptId) json.cptId = cptId;
         const enriched = new TextEncoder().encode(JSON.stringify(json));
         bodyBytes = enriched;
         headers.set("content-length", enriched.length.toString());

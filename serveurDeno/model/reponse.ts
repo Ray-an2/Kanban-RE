@@ -18,18 +18,17 @@ export interface APIFailure {
 }
 
 export enum APIErreurCode {
-    // Erreurs client
-    NOT_FOUND        = "NOT_FOUND",         // 404 — ressource introuvable
-    BAD_REQUEST      = "BAD_REQUEST",        // 400 — corps / paramètres invalides
-    VALIDATION_ERROR = "VALIDATION_ERROR",   // 409 — conflit (pseudo déjà pris, etc.)
-    UNAUTHORIZED     = "UNAUTHORIZED",       // 401 — token absent ou invalide
-    ROLE_UNAUTHORIZED = "ROLE_UNAUTHORIZED", // 403 — droits insuffisants
+    NOT_FOUND = "NOT_FOUND",
+    BAD_REQUEST = "BAD_REQUEST",  // 400
+    VALIDATION_ERROR = "VALIDATION_ERROR", // 409
+    UNAUTHORIZED = "UNAUTHORIZED", // 401
+    ROLE_UNAUTHORIZED = "ROLE_UNAUTHORIZED", // 403
 
     // Erreurs serveur
-    SERVER_ERROR     = "SERVER_ERROR",       // 500 — erreur interne Deno
-    TOMCAT_ERROR     = "TOMCAT_ERROR",       // 5xx — erreur retournée par Tomcat
-    TOMCAT_UNAVAILABLE = "TOMCAT_UNAVAILABLE", // réseau KO, Tomcat injoignable
-    TIMEOUT          = "TIMEOUT",            // délai dépassé
+    SERVER_ERROR = "SERVER_ERROR", // 500
+    TOMCAT_ERROR = "TOMCAT_ERROR", // 5xx
+    TOMCAT_UNAVAILABLE = "TOMCAT_UNAVAILABLE",
+    TIMEOUT = "TIMEOUT",
 }
 
 /**

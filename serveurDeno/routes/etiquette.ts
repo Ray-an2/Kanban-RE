@@ -13,7 +13,7 @@ import { proxyToTomcat } from "../middleware/proxy.ts";
  * PUT    /etiquette/:id                → modifier une étiquette
  * DELETE /etiquette/:id                → supprimer une étiquette
  */
-const routeEtiquette = new Router({ prefix: "/etiquette" });
+const routeEtiquette = new Router({ prefix: "/api/etiquette" });
 
 routeEtiquette
     .get("/",                       authMiddleware, proxyToTomcat)

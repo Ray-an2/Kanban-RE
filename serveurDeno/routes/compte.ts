@@ -19,13 +19,13 @@ import { proxyToTomcat } from "../middleware/proxy.ts";
  * PATCH  /compte/:id/mdp                       → modifier le mot de passe
  * DELETE /compte/:id                           → supprimer un compte
  */
-const routeCompte = new Router({ prefix: "/compte" });
+const routeCompte = new Router({ prefix: "/api/compte" });
 
 routeCompte
     .get("/",                               authMiddleware, proxyToTomcat)
     .get("/pseudo/:pseudo/disponible",      authMiddleware, proxyToTomcat)
     .get("/:id",                            authMiddleware, proxyToTomcat)
-    .post("/",                              proxyToTomcat) // pas de JWT : appelé par inscription
+    .post("/",                              proxyToTomcat)
     .patch("/:id/pseudo",                   authMiddleware, proxyToTomcat)
     .patch("/:id/role",                     authMiddleware, proxyToTomcat)
     .patch("/:id/mdp",                      authMiddleware, proxyToTomcat)

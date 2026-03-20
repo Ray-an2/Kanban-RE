@@ -28,4 +28,7 @@ public class TableauDto {
 
   @JsonProperty("auteur")
   private String auteur;
+
+  @JsonProperty("cptId")
+  private String cptId;
 }

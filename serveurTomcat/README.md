@@ -13,7 +13,8 @@ Les commentaires et les pièces jointes sont stockés dans MongoDB. Le reste des
 - `api/profil`
 - `api/membre`
 - `api/role`
-- `api/motdepasse`
+- `api/associer`
+- `api/membre`
 - `api/commentaire`
 - `api/document`
 
@@ -26,7 +27,7 @@ Les variables attendues (via `.env` ou variables d'environnement) :
 
 L'application est configurée dans `src/main/resources/application.yml`.
 
-# READEME sur le serveur Tomcat
+# README sur le serveur Tomcat
 Ce projet a pour but de mettre en place un serveur Tomcat pour héberger une application web. Tomcat est un conteneur de servlets open source développé par la fondation Apache.
 ## Installation de Tomcat
 1. Téléchargez la dernière version de Tomcat depuis le site officiel : [https://tomcat.apache.org/download-90.cgi](https://tomcat.apache.org/download-90.cgi).

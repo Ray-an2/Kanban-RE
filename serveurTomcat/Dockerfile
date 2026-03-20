@@ -21,7 +21,7 @@ FROM tomcat:10.1-jre25
 COPY --from=build /app/target/*.war /usr/local/tomcat/webapps/ROOT.war
 
 # Active les logs détaillés
-ENV JAVA_OPTS="-Dlogging.level.root=DEBUG"
+#ENV JAVA_OPTS="-Dlogging.level.root=DEBUG"
 ENV SPRING_DOCKER_COMPOSE_ENABLED=false
 
 EXPOSE 8080

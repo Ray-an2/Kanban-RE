@@ -11,7 +11,7 @@ import { proxyToTomcat } from "../middleware/proxy.ts";
  * POST   /associer                                → créer une association
  * DELETE /associer/carte/:carId/etiquette/:etiId  → supprimer une association
  */
-const routeAssocier = new Router({ prefix: "/associer" });
+const routeAssocier = new Router({ prefix: "/api/associer" });
 
 routeAssocier
     .get("/",                                       authMiddleware, proxyToTomcat)

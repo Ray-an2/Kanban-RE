@@ -19,7 +19,7 @@ import { type AuthContext } from "../model/auth.ts";
  * PATCH  /tableau/:id/fermer             → fermer un tableau
  * PATCH  /tableau/:id/ouvrir             → ouvrir un tableau
  */
-const routeTableau = new Router({ prefix: "/tableau" });
+const routeTableau = new Router({ prefix: "/api/tableau" });
 
 routeTableau
     .get("/",                   authMiddleware, proxyToTomcat)

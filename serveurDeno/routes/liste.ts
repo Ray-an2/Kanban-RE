@@ -16,7 +16,7 @@ import { proxyToTomcat } from "../middleware/proxy.ts";
  * PUT    /liste/tableau/:tabId/ordre          → réorganiser les listes
  * PUT    /liste/:lisId/ordre-cartes           → réorganiser les cartes
  */
-const routeListe = new Router({ prefix: "/liste" });
+const routeListe = new Router({ prefix: "/api/liste" });
 
 routeListe
     .get("/tableau/:tabId",                 authMiddleware, proxyToTomcat)

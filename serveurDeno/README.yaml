@@ -7,7 +7,7 @@ servers:
   - url: 'http://localhost:8000'    # URL provisoire avant le déploiement.
 paths:
 
-  auth/login:
+  /auth/login:
     get:
       summary: Page de connexion
       description: Route publique vers la page de connexion.
@@ -35,7 +35,7 @@ paths:
           description: Authentification réussie et accès au tableau.
         '401':
           description: (UNAUTHORIZED) identifiants invalides.
-  auth/inscription:
+  /auth/inscription:
     description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
     get:
       summary: Page d'inscription
@@ -57,7 +57,7 @@ paths:
           description: Compte créé
         '400':
           description: (VALIDATION_ERROR) données invalides.
-  api/tableau:
+  /api/tableau:
     description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
     get:
       summary: Accueil tableau
@@ -95,7 +95,7 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  api/tableau/logs:
+  /api/tableau/logs:
     description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
     get:
       summary: Logs (admin uniquement)
@@ -113,7 +113,7 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  api/tableau/{tabId}/log:
+  /api/tableau/{tabId}/log:
     description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
     get:
       summary: Logs par tableau
@@ -138,7 +138,7 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  api/tableau/{tabId}:
+  /api/tableau/{tabId}:
     description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
     get:
       summary: Tableau
@@ -217,7 +217,7 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  api/tableau/{tabId}/liste:
+  /api/tableau/{tabId}/liste:
     description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
     get:
       summary: Listes d'un tableau
@@ -273,7 +273,7 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  api/tableau/{tabId}/liste/{lisId}:
+  /api/tableau/{tabId}/liste/{lisId}:
     description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
     get:
       summary: Détails d'une liste
@@ -370,7 +370,7 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  api/tableau/{tabId}/liste/{lisId}/carte:
+  /api/tableau/{tabId}/liste/{lisId}/carte:
     description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
     get:
       summary: Cartes d'une liste
@@ -438,7 +438,7 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  api/tableau/{tabId}/carte/{carId}:
+  /api/tableau/{tabId}/carte/{carId}:
     description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
     get:
       summary: Carte
@@ -535,7 +535,7 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  api/compte/{id}:
+  /api/compte/{id}:
     description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
     get:
       summary: Compte utilisateur
@@ -560,7 +560,7 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  api/admin/comptes:
+  /api/admin/comptes:
     description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
     get:
       summary: Gestion des comptes (admin)
@@ -578,7 +578,7 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  api/users:
+  /api/users:
     description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
     get:
       summary: Liste des comptes (admin)
@@ -618,7 +618,7 @@ paths:
           description: (VALIDATION_ERROR) pseudo déjà utilisé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  api/users/{id}:
+  /api/users/{id}:
     description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
     get:
       summary: Détails d'un compte (admin)
@@ -697,7 +697,7 @@ paths:
           description: (NOT_FOUND) ressource introuvable.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  api/users/{id}/profile:
+  /api/users/{id}/profile:
     description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
     put:
       summary: Modification du profil
@@ -721,7 +721,7 @@ paths:
           description: (NOT_FOUND) ressource introuvable.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  api/users/{id}/password:
+  /api/users/{id}/password:
     description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
     put:
       summary: Modification du mot de passe
@@ -743,7 +743,7 @@ paths:
           description: (UNAUTHORIZED) non autorisé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  api/users/{id}/pseudo:
+  /api/users/{id}/pseudo:
     description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
     put:
       summary: Modification du pseudo
@@ -767,7 +767,7 @@ paths:
           description: (VALIDATION_ERROR) pseudo déjà utilisé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  api/notifications:
+  /api/notifications:
     description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
     get:
       summary: Notifications
@@ -783,7 +783,7 @@ paths:
           description: (TIMEOUT) délai d'attente dépassé.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  api/notifications:
+  /api/notifications:
     description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
     get:
       summary: Liste des notifications
@@ -819,7 +819,7 @@ paths:
           description: (ROLE_UNAUTHORIZED) rôle insuffisant.
         '500':
           description: (SERVER_ERROR) erreur interne du serveur.
-  api/notifications/{id}:
+  /api/notifications/{id}:
     description: Le serveur Deno vérifie d'abord le token, puis redirige la requête HTTP vers Tomcat.
     get:
       summary: Détails d'une notification

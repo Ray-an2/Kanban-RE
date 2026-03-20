@@ -24,6 +24,6 @@ public class Profil {
   @Column(name = "pfl_etat", nullable = false)
   private String etat;
 
-  @Column(name = "pfl_dateCreation")
+  @Column(name = "\"pfl_dateCreation\"")
   private String dateCreation;
 }
