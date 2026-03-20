@@ -118,7 +118,6 @@ const UserManagementPage: React.FC = () => {
     }
 
     try {
-      // 1. Inscription via Deno (crée le compte + profil)
       await authApi.inscription({
         pseudo: createData.pseudo,
         motDePasse: createData.mdp,
@@ -126,13 +125,24 @@ const UserManagementPage: React.FC = () => {
         nom: createData.nom,
         prenom: createData.prenom
       });
+      const comptes = await compteApi.getAll() as Compte[];
+      const newCompte = comptes.find(c => c.pseudo === createData.pseudo);
 
-      // 2. Si rôle admin, on récupère le compte créé et on met à jour son rôle
-      if (createData.role === 'A') {
-        const comptes = await compteApi.getAll() as Compte[];
-        const newCompte = comptes.find(c => c.pseudo === createData.pseudo);
-        if (newCompte) {
-          await compteApi.updateRole(newCompte.id, 'A');
+      if (newCompte) {
+        // 3. Met l'état du profil à Désactivé par défaut
+        await profilApi.update(newCompte.id, {
+          nom: createData.nom,
+          prenom: createData.prenom,
+          mail: createData.mail,
+          etat: 'D'
+        });
+
+        if (createData.role === 'A') {
+          const comptes = await compteApi.getAll() as Compte[];
+          const newCompte = comptes.find(c => c.pseudo === createData.pseudo);
+          if (newCompte) {
+            await compteApi.updateRole(newCompte.id, 'A');
+          }
         }
       }
 
@@ -150,6 +160,25 @@ const UserManagementPage: React.FC = () => {
       setUsers(prev => prev.filter(u => u.compte.id !== id));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur suppression');
+    }
+  };
+
+  const handleToggleEtat = async (u: UserRow) => {
+    const newEtat = u.profil?.etat === 'A' ? 'D' : 'A';
+    try {
+      await profilApi.update(u.compte.id, {
+        nom: u.profil?.nom,
+        prenom: u.profil?.prenom,
+        mail: u.profil?.mail,
+        etat: newEtat
+      });
+      setUsers(prev => prev.map(row =>
+          row.compte.id === u.compte.id
+              ? { ...row, profil: row.profil ? { ...row.profil, etat: newEtat } : row.profil }
+              : row
+      ));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erreur changement statut');
     }
   };
 
@@ -248,6 +277,10 @@ const UserManagementPage: React.FC = () => {
                             <button type="button" onClick={() => openEdit(u)}
                                     style={{ padding: '5px 10px', backgroundColor: '#2196F3', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>
                               Modifier
+                            </button>
+                            <button type="button" onClick={() => handleToggleEtat(u)}
+                                    style={{ padding: '5px 10px', backgroundColor: u.profil?.etat === 'A' ? '#FF9800' : '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>
+                              {u.profil?.etat === 'A' ? 'Désactiver' : 'Activer'}
                             </button>
                             <button type="button" onClick={() => handleDelete(c.id, c.pseudo)}
                                     style={{ padding: '5px 10px', backgroundColor: '#f44336', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>

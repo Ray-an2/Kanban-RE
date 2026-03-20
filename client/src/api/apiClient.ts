@@ -263,4 +263,5 @@ export const compteApi = {
 export const profilApi = {
     getById: (id: string)                => get(`/api/profil/${id}`),
     update:  (id: string, data: unknown) => put(`/api/profil/${id}`, data),
+    updateEtat: (id: string, etat: string) => put(`/api/profil/${id}`, { etat }),
 };
