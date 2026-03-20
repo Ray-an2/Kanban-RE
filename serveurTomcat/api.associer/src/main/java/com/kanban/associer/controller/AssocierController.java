@@ -21,7 +21,7 @@ public class AssocierController {
 
   /**
    * Liste tous les liaisons entre les cartes et les etiquettes dans le systeme.
-   * @return List<AssocierDto
+   * @return List<AssocierDto> : Liste de liaisons entre la carte et les etiquettes.
    */
   @GetMapping
   public List<AssocierDto> getAllAssociers() {
@@ -30,7 +30,7 @@ public class AssocierController {
 
   /**
    * Methode qui récupère les Associers détenu par un utilisateur en particulier.
-   * @return AssocierDto
+   * @return List<AssocierDto> : Liste de liaisons entre la carte et les etiquettes.
    */
   @GetMapping("/carte/{carId}")
   public List<AssocierDto> getAssociersCarte(@PathVariable String carId) {
@@ -38,8 +38,8 @@ public class AssocierController {
   }
 
   /**
-   * Methode qui récupère les etiquettes avec leur roles détenu par un tableau en particulier.
-   * @return RoleDto
+   * Methode qui récupère les liaisions détenu par une étiquette en particulier.
+   * @return List<AssocierDto> : Liste de liaisons entre la carte et les etiquettes.
    */
   @GetMapping("/etiquette/{etiId}")
   public List<AssocierDto> getAssociersEti(@PathVariable String etiId) {
@@ -49,7 +49,7 @@ public class AssocierController {
   /**
    * Associe une carte à une etiquette.
    * @param associerDto :
-   * @return List<AssocierDto>
+   * @return List<AssocierDto> : Liste de liaisons entre la carte et les etiquettes.
    */
   @PostMapping
   public ResponseEntity<AssocierDto> createAssocier(@Valid @RequestBody AssocierDto associerDto) {

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AssocierMapper {
+
   public AssocierDto toDto(Associer associer){
     if(associer==null){
       return null;
