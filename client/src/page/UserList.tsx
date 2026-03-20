@@ -178,7 +178,11 @@ const UserManagementPage: React.FC = () => {
             </button>
             <button type="button" onClick={() => navigate('/api/admin/tableaux')}
                     style={{ padding: '8px 16px', backgroundColor: '#3498db', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-              Retour admin
+              Retour Tableaux
+            </button>
+            <button type="button" onClick={() => navigate('/api/admin/compte')}
+                    style={{ padding: '8px 16px', backgroundColor: '#3498db', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+              Mon compte
             </button>
           </div>
         </div>
