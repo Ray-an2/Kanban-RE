@@ -19,19 +19,31 @@ public class MembreController {
         this.membreService = membreService;
     }
 
-    /** GET /api/membre — tous les membres */
+    /**
+     * Récupère tous les membres d'une carte
+     * @return List<MembreDto> : Liste de tous les membres.
+     */
     @GetMapping
     public List<MembreDto> getAllMembres() {
         return membreService.getAllMembre();
     }
 
-    /** GET /api/membre/carte/:carId — membres d'une carte */
+
+    /**
+     * Récupère les membres d'une carte en particulier
+     * @param carId : identifiant de la carte
+     * @return List<MembreDto> : Liste des membres de la carte.
+     */
     @GetMapping("/carte/{carId}")
     public List<MembreDto> getMembresCarte(@PathVariable String carId) {
         return membreService.getMembreByCarId(carId);
     }
 
-    /** POST /api/membre — associer un membre à une carte */
+    /**
+     * Créer une membre d'une carte
+     * @param membreDto
+     * @return
+     */
     @PostMapping
     public ResponseEntity<MembreDto> associeMembre(@Valid @RequestBody MembreDto membreDto) {
         MembreDto created = membreService.associerMembre(membreDto);
@@ -40,6 +52,12 @@ public class MembreController {
 
     /**
      * DELETE /api/membre/carte/:carId/compte/:cptId
+     */
+    /**
+     * Supprime un membre d'une carte
+     * @param cptId : identifiant du compte
+     * @param carId : identifiant de la carte
+     * @return
      */
     @DeleteMapping("/carte/{carId}/compte/{cptId}")
     public ResponseEntity<Void> deleteMembre(

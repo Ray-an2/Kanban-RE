@@ -30,10 +30,8 @@ public class MembreServiceImpl implements MembreService {
     private final JournalHelper journalHelper;
 
     public MembreServiceImpl(MembreRepository membreRepository,
-                             MembreMapper membreMapper,
-                             CarteRepository carteRepository,
-                             ListeRepository listeRepository,
-                             JournalHelper journalHelper) {
+                             MembreMapper membreMapper, CarteRepository carteRepository,
+                             ListeRepository listeRepository, JournalHelper journalHelper) {
         this.membreRepository = membreRepository;
         this.membreMapper = membreMapper;
         this.carteRepository = carteRepository;
@@ -41,7 +39,11 @@ public class MembreServiceImpl implements MembreService {
         this.journalHelper = journalHelper;
     }
 
-    /** Retrouve le tabId d'une carte via sa liste */
+    /**
+     * Retourne l'identifiant du tableau d'une liste.
+     * @param lisId : identifiant de la liste.
+     * @return identifiant du tableau.
+     */
     private String getTabId(String lisId) {
         return listeRepository.findById(lisId)
                 .map(Liste::getTabId)
@@ -59,7 +61,6 @@ public class MembreServiceImpl implements MembreService {
     @Override
     @Transactional(readOnly = true)
     public List<MembreDto> getMembreByCarId(String carId) {
-        // Retourne liste vide si aucun membre — situation normale
         return membreRepository.findByCarId(carId).stream()
                 .map(membreMapper::toDto)
                 .toList();

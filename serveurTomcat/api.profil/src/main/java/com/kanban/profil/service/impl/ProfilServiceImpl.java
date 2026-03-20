@@ -27,7 +27,6 @@ public class ProfilServiceImpl implements ProfilService {
   public ProfilDto createProfil(ProfilDto profilDto) {
     Profil profil = profilMapper.toEntity(profilDto);
 
-    // Injecter les valeurs par défaut si absentes
     if (profil.getEtat() == null || profil.getEtat().isBlank()) {
       profil.setEtat("A");
     }
