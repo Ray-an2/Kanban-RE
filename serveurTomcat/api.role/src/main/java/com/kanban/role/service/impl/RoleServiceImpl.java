@@ -34,7 +34,6 @@ public class RoleServiceImpl implements RoleService {
     this.compteRepository = compteRepository;
   }
 
-  /** Enrichit un RoleDto avec le pseudo du compte */
   private RoleDto enrichir(Role role) {
     RoleDto dto = roleMapper.toDto(role);
     compteRepository.findById(role.getCptId())
@@ -62,26 +61,21 @@ public class RoleServiceImpl implements RoleService {
 
   @Override
   public RoleDto associerRole(RoleDto roleDto) {
-    // Si un rôle existe déjà pour ce compte sur ce tableau
     if (roleRepository.existsByCptIdAndTabId(roleDto.getCptId(), roleDto.getTabId())) {
       RoleId existId = new RoleId(roleDto.getCptId(), roleDto.getTabId());
       Role existant = roleRepository.findById(existId).orElseThrow();
 
-      // Invitation (rôle 'E') demandée mais un vrai rôle (C/A/M) existe déjà → refus
       if ("E".equals(roleDto.getRolRole()) && !"E".equals(existant.getRolRole())) {
         throw new IllegalStateException(
                 "Le compte " + roleDto.getCptId() + " est déjà membre de ce tableau.");
       }
-      // Sinon (non-invitation et rôle déjà existant) → refus
       if (!"E".equals(roleDto.getRolRole())) {
         throw new IllegalStateException(
                 "Le compte " + roleDto.getCptId() + " a déjà un rôle sur ce tableau.");
       }
-      // Re-invitation (rôle 'E' → 'E') : mise à jour
       existant.setRolRole("E");
       return enrichir(roleRepository.save(existant));
     }
-
     Role role = roleMapper.toEntity(roleDto);
     Role saved = roleRepository.save(role);
 
@@ -98,6 +92,11 @@ public class RoleServiceImpl implements RoleService {
     return enrichir(saved);
   }
 
+  /**
+   * Supprime le membre d'un tableau.
+   * @param cptId : identifiant du compte
+   * @param tabId : identifiant du tableau
+   */
   @Override
   public void deleteRole(String cptId, String tabId) {
     RoleId id = new RoleId(cptId, tabId);
@@ -116,6 +115,13 @@ public class RoleServiceImpl implements RoleService {
     );
   }
 
+  /**
+   * Met à jour le role d'un membre d'un tableau.
+   * @param cptId : identifiant du compte
+   * @param tabId : identifiant du tableau
+   * @param newRole : nouveau role du membre
+   * @return
+   */
   @Override
   public RoleDto updateRole(String cptId, String tabId, String newRole) {
     RoleId id = new RoleId(cptId, tabId);

@@ -17,6 +17,5 @@ public interface RoleService {
 
   RoleDto updateRole(String cptId, String tabId, String newRole);
 
-  // Accès direct à l'entité (pour vérifier le rôle E avant acceptation)
   com.kanban.role.entity.Role getRoleEntity(String cptId, String tabId);
 }
