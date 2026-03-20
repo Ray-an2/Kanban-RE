@@ -65,8 +65,8 @@ const Tableau: React.FC = () => {
       try {
         setLoading(true);
         const [tab, listes] = await Promise.all([
-          tableauApi.getById(id) as Promise<TableauType>,
-          listeApi.getByTableau(id) as Promise<Liste[]>,
+          await tableauApi.getById(id) as Promise<TableauType>,
+          await listeApi.getByTableau(id) as Promise<Liste[]>,
         ]);
         setTableau(tab);
         setLists(listes);
