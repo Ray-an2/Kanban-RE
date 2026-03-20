@@ -88,6 +88,11 @@ public class RoleServiceImpl implements RoleService {
   }
 
   @Override
+  public com.kanban.role.entity.Role getRoleEntity(String cptId, String tabId) {
+    return roleRepository.findById(new RoleId(cptId, tabId)).orElse(null);
+  }
+
+  @Override
   public RoleDto updateRole(String cptId, String tabId, String newRole) {
     RoleId id = new RoleId(cptId, tabId);
     Role role = roleRepository.findById(id)

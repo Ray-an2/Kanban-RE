@@ -2,6 +2,9 @@ import { Context, Next } from "@oak/oak";
 import { APIErreurCode, APIException, APIFailure } from "../model/reponse.ts";
 
 export async function errorMiddleware(ctx: Context, next: Next) {
+    ctx.response.headers.set("Access-Control-Allow-Origin", "*");
+    ctx.response.headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+    ctx.response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
     try {
         await next();
     } catch (err) {

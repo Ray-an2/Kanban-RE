@@ -159,6 +159,15 @@ public class CompteServiceImpl implements CompteService {
    */
   @Override
   @Transactional(readOnly = true)
+  public CompteDto getByPseudo(String pseudo) {
+    return compteRepository.findByPseudo(pseudo)
+            .map(compteMapper::toDto)
+            .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException(
+                    "Aucun compte trouvé avec le pseudo : " + pseudo));
+  }
+
+  @Override
+  @Transactional(readOnly = true)
   public boolean isPseudoDisponible(String pseudo) {
     return !compteRepository.existsByPseudo(pseudo);
   }

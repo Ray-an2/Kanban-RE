@@ -6,41 +6,44 @@ import Inscription from "./Inscription.tsx";
 import Connexion from "./Connexion.tsx";
 import TableauPage from "./Accueil.tsx";
 import CardDetailsPage from "./CarteDetails.tsx";
+// @ts-ignore
 import Compte from "./Compte.tsx";
 import Notification from "./Notification.tsx";
 import AdminLogsPage from "./LogListe.tsx";
 import UserManagementPage from "./UserList.tsx"
 import AdminTableaux from "./TableauAdmin.tsx";
 import CompteAdmin from "./CompteAdmin.tsx";
+import Invitation from "./Invitation.tsx";
 
 import "../css/App.css";
 
 function App() {
   return (
-    <BrowserRouter>
-  <Routes>
-    <Route path="/" element={<Navigate to="/auth/login" replace />} />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Navigate to="/auth/login" replace />} />
 
-    <Route path="/auth/login" element={<Connexion />} />
-    <Route path="/auth/inscription" element={<Inscription />} />
+          <Route path="/auth/login" element={<Connexion />} />
+          <Route path="/auth/inscription" element={<Inscription />} />
 
-    {/* Routes privées (utilisateur connecté) */}
-    <Route element={<PrivateRoute />}>
-      <Route path="/api/tableau" element={<TableauPage />} />
-        <Route path="/api/tableau/:id" element={<KanbanBoard />} />
-        <Route path="/api/tableau/:id/log" element={<Log />} />
-        <Route path="/api/tableau/:boardId/carte/:cardId" element={<CardDetailsPage />} />
-      <Route path="/api/compte" element={<Compte />} />
-      <Route path="/api/notifications" element={<Notification />} />
-      <Route path="/api/tableau/logs" element={<AdminLogsPage />} />
-      <Route path="/api/admin/tableaux" element={<AdminTableaux />} />
-      <Route path="/api/admin/compte" element={<CompteAdmin />} />
-      <Route path="/api/admin/comptes" element={<UserManagementPage />} />
-    </Route>
+          {/* Routes privées (utilisateur connecté) */}
+          <Route element={<PrivateRoute />}>
+            <Route path="/api/tableau" element={<TableauPage />} />
+            <Route path="/api/tableau/:id" element={<KanbanBoard />} />
+            <Route path="/api/tableau/:id/log" element={<Log />} />
+            <Route path="/api/tableau/:boardId/carte/:cardId" element={<CardDetailsPage />} />
+            <Route path="/api/compte" element={<Compte />} />
+            <Route path="/api/notifications" element={<Notification />} />
+            <Route path="/api/tableau/logs" element={<AdminLogsPage />} />
+            <Route path="/api/admin/tableaux" element={<AdminTableaux />} />
+            <Route path="/api/admin/compte" element={<CompteAdmin />} />
+            <Route path="/api/admin/comptes" element={<UserManagementPage />} />
+          </Route>
 
-    <Route path="*" element={<h1>Page non trouvée</h1>} />
-  </Routes>
-</BrowserRouter>
+          <Route path="/invitation/:hash" element={<Invitation />} />
+          <Route path="*" element={<h1>Page non trouvée</h1>} />
+        </Routes>
+      </BrowserRouter>
   );
 }
 

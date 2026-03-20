@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.ts';
 import type { Tableau } from '../model/types.ts';
 import { tableauApi } from '../api/apiClient.ts';
+import InvitationModal from '../components/InvitationModal.tsx';
 
 const AdminTableaux: React.FC = () => {
     const navigate = useNavigate();
@@ -15,6 +16,7 @@ const AdminTableaux: React.FC = () => {
     const [current, setCurrent] = useState<Tableau | null>(null);
     const [formData, setFormData] = useState({ tab_nom: '', tab_description: '' });
     const [error, setError] = useState<string | null>(null);
+    const [invitationTableau, setInvitationTableau] = useState<{ id: string; nom: string } | null>(null);
 
     const load = async () => {
         try {
@@ -172,6 +174,10 @@ const AdminTableaux: React.FC = () => {
                                                     style={{ padding: '5px 10px', backgroundColor: t.tab_etat === 'O' ? '#f44336' : '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>
                                                 {t.tab_etat === 'O' ? 'Fermer' : 'Ouvrir'}
                                             </button>
+                                            <button type="button" onClick={() => setInvitationTableau({ id: t.tab_id, nom: t.tab_nom })}
+                                                    style={{ padding: '5px 10px', backgroundColor: '#9b59b6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>
+                                                👥 Inviter
+                                            </button>
                                             <button type="button" onClick={() => handleDelete(t.tab_id)}
                                                     style={{ padding: '5px 10px', backgroundColor: '#9E9E9E', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>
                                                 Supprimer
@@ -221,6 +227,15 @@ const AdminTableaux: React.FC = () => {
                             </div>
                         </form>
                     </div>
+                </div>
+            )}
+            {invitationTableau && (
+                <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
+                    <InvitationModal
+                        tableauId={invitationTableau.id}
+                        tableauNom={invitationTableau.nom}
+                        onClose={() => setInvitationTableau(null)}
+                    />
                 </div>
             )}
             <style>{`@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}`}</style>

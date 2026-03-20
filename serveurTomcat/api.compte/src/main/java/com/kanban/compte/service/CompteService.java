@@ -26,6 +26,9 @@ public interface CompteService {
   // Suppression
   boolean delete(String compteId);
 
+  // Récupérer un compte par pseudo (pour les invitations)
+  CompteDto getByPseudo(String pseudo);
+
   // Vérification disponibilité pseudo
   boolean isPseudoDisponible(String pseudo);
 }

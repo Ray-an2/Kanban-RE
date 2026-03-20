@@ -215,4 +215,17 @@ router.get("/validate", authMiddleware, (ctx: AuthContext) => {
     ctx.response.body = response;
 });
 
+router.post("/hash", async (ctx) => {
+    const body = await ctx.request.body.json();
+    if (!body?.motDePasse) {
+        throw new APIException(APIErreurCode.BAD_REQUEST, 400, "motDePasse requis");
+    }
+    const hash = await hashPassword(body.motDePasse);
+    const response: APIResponse<{ hash: string }> = {
+        success: true,
+        data: { hash },
+    };
+    ctx.response.body = response;
+});
+
 export default router;

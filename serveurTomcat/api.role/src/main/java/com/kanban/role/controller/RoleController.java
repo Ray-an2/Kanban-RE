@@ -64,6 +64,49 @@ public class RoleController {
     return ResponseEntity.ok(updated);
   }
 
+  /**
+   * PATCH /api/role/tableau/:tabId/invitation/accepter
+   * L'utilisateur connecté accepte l'invitation (rôle 'E' → rôle réel stocké).
+   * Le cptId est lu depuis le header X-Cpt-Id injecté par le proxy Deno.
+   * Body : { "cptId": "..." }
+   */
+  @PatchMapping("/tableau/{tabId}/invitation/accepter")
+  public ResponseEntity<RoleDto> accepterInvitation(
+          @PathVariable String tabId,
+          @RequestBody java.util.Map<String, String> body) {
+    String cptId = body.get("cptId");
+    if (cptId == null || cptId.isBlank()) return ResponseEntity.badRequest().build();
+
+    // Récupérer le rôle 'E' pour connaître le rôle cible stocké dans le lien
+    com.kanban.role.entity.RoleId id = new com.kanban.role.entity.RoleId(cptId, tabId);
+    com.kanban.role.entity.Role role = roleService.getRoleEntity(cptId, tabId);
+    if (role == null || !"E".equals(role.getRolRole()))
+      return ResponseEntity.badRequest().build();
+
+    // Le vrai rôle cible est stocké dans not_lien de la notification : M ou A
+    // Il est passé dans le body
+    String roleCible = body.get("roleCible");
+    if (roleCible == null || roleCible.isBlank()) roleCible = "M";
+
+    RoleDto updated = roleService.updateRole(cptId, tabId, roleCible);
+    return ResponseEntity.ok(updated);
+  }
+
+  /**
+   * DELETE /api/role/tableau/:tabId/invitation/refuser
+   * L'utilisateur refuse l'invitation → supprime le rôle 'E'.
+   * Body : { "cptId": "..." }
+   */
+  @DeleteMapping("/tableau/{tabId}/invitation/refuser")
+  public ResponseEntity<Void> refuserInvitation(
+          @PathVariable String tabId,
+          @RequestBody java.util.Map<String, String> body) {
+    String cptId = body.get("cptId");
+    if (cptId == null || cptId.isBlank()) return ResponseEntity.badRequest().build();
+    roleService.deleteRole(cptId, tabId);
+    return ResponseEntity.noContent().build();
+  }
+
   /** DELETE /api/role/tableau/:tabId/compte/:cptId — retirer un membre */
   @DeleteMapping("/tableau/{tabId}/compte/{cptId}")
   public ResponseEntity<Void> deleteRole(

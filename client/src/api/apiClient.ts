@@ -178,7 +178,13 @@ export const roleApi = {
     associer:     (data: unknown)                          => post('/api/role', data),
     update:       (tabId: string, cptId: string, rolRole: string) =>
         patch(`/api/role/tableau/${tabId}/compte/${cptId}`, { rolRole }),
-    delete:       (tabId: string, cptId: string)           => del(`/api/role/tableau/${tabId}/compte/${cptId}`),
+    delete:             (tabId: string, cptId: string)           => del(`/api/role/tableau/${tabId}/compte/${cptId}`),
+    inviter:            (data: { tabId: string; cptId: string; roleCible: string }) =>
+        post('/api/role', { cptId: data.cptId, tabId: data.tabId, rolRole: 'E', roleCible: data.roleCible }),
+    accepterInvitation: (tabId: string, cptId: string, roleCible: string) =>
+        patch(`/api/role/tableau/${tabId}/invitation/accepter`, { cptId, roleCible }),
+    refuserInvitation:  (tabId: string, cptId: string) =>
+        request<void>(`/api/role/tableau/${tabId}/invitation/refuser`, { method: 'DELETE', body: JSON.stringify({ cptId }) }),
 };
 
 // ---- Membre ----
@@ -244,18 +250,17 @@ export const documentApi = {
 export const compteApi = {
     getAll:             ()                => get('/api/compte'),
     getById:            (id: string)      => get(`/api/compte/${id}`),
+    getByPseudo:        (pseudo: string)  => get(`/api/compte/pseudo/${encodeURIComponent(pseudo)}`),
     isPseudoDisponible: (pseudo: string)  =>
         get<{ disponible: boolean }>(`/api/compte/pseudo/${encodeURIComponent(pseudo)}/disponible`),
-    create:       (data: unknown)                  => post('/api/compte', data),  // ← ajouter
-    updatePseudo: (id: string, pseudo: string)     => patch(`/api/compte/${id}/pseudo`, { pseudo }),
-    updateRole:   (id: string, role: string)       => patch(`/api/compte/${id}/role`, { role }),
-    updateMdp:    (id: string, mdp: string)        => patch(`/api/compte/${id}/mdp`, { mdp }),
-    delete:       (id: string)                     => del(`/api/compte/${id}`),
+    updatePseudo: (id: string, pseudo: string) => patch(`/api/compte/${id}/pseudo`, { pseudo }),
+    updateRole:   (id: string, role: string)   => patch(`/api/compte/${id}/role`, { role }),
+    updateMdp:    (id: string, mdp: string)    => patch(`/api/compte/${id}/mdp`, { mdp }),
+    delete:       (id: string)                 => del(`/api/compte/${id}`),
 };
 
 // ---- Profil ----
 export const profilApi = {
     getById: (id: string)                => get(`/api/profil/${id}`),
-    create:  (data: unknown)             => post('/api/profil', data),  // ← ajouter
     update:  (id: string, data: unknown) => put(`/api/profil/${id}`, data),
 };
