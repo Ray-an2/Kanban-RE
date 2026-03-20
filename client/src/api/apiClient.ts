@@ -9,8 +9,7 @@ function getToken(): string | null {
 
 function authHeaders(extra?: HeadersInit): HeadersInit {
     const token = getToken();
-    return {
-        'Content-Type': 'application/json',
+    return {'Content-Type': 'application/json',
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...(extra ?? {}),
     };
@@ -214,7 +213,6 @@ export const documentApi = {
     delete:     (id: string)                 => del(`/api/document/${id}`),
 };
 
-// ---- Compte ----
 export const compteApi = {
     getAll:             ()                => get('/api/compte'),
     getById:            (id: string)      => get(`/api/compte/${id}`),
@@ -227,7 +225,6 @@ export const compteApi = {
     delete:       (id: string)                 => del(`/api/compte/${id}`),
 };
 
-// ---- Profil ----
 export const profilApi = {
     getById: (id: string)                => get(`/api/profil/${id}`),
     update:  (id: string, data: unknown) => put(`/api/profil/${id}`, data),
