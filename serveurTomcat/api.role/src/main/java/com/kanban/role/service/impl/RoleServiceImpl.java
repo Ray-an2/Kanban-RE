@@ -51,19 +51,19 @@ public class RoleServiceImpl implements RoleService {
   @Override
   @Transactional(readOnly = true)
   public List<RoleDto> getRoleByCptId(String cptId) {
-    return roleRepository.findByCptId(cptId).stream().map(this::enrichir).toList();
+    return roleRepository.findByIdCptId(cptId).stream().map(this::enrichir).toList();
   }
 
   @Override
   @Transactional(readOnly = true)
   public List<RoleDto> getRoleByTabId(String tabId) {
-    return roleRepository.findByTabId(tabId).stream().map(this::enrichir).toList();
+    return roleRepository.findByIdTabId(tabId).stream().map(this::enrichir).toList();
   }
 
   @Override
   public RoleDto associerRole(RoleDto roleDto) {
     // Si un rôle existe déjà pour ce compte sur ce tableau
-    if (roleRepository.existsByCptIdAndTabId(roleDto.getCptId(), roleDto.getTabId())) {
+    if (roleRepository.existsByIdCptIdAndIdTabId(roleDto.getCptId(), roleDto.getTabId())) {
       RoleId existId = new RoleId(roleDto.getCptId(), roleDto.getTabId());
       Role existant = roleRepository.findById(existId).orElseThrow();
 
