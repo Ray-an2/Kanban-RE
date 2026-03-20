@@ -5,7 +5,7 @@
     <id>UMLClass</id>
     <coordinates>
       <x>763</x>
-      <y>259</y>
+      <y>252</y>
       <w>301</w>
       <h>231</h>
     </coordinates>
@@ -38,7 +38,7 @@ _+ idCarte : string_
     <id>UMLClass</id>
     <coordinates>
       <x>420</x>
-      <y>77</y>
+      <y>70</y>
       <w>336</w>
       <h>119</h>
     </coordinates>
@@ -59,7 +59,7 @@ _+ idCompte : string_
     <id>UMLClass</id>
     <coordinates>
       <x>63</x>
-      <y>259</y>
+      <y>252</y>
       <w>245</w>
       <h>175</h>
     </coordinates>
@@ -86,7 +86,7 @@ description : string, image : string) : void
     <id>UMLClass</id>
     <coordinates>
       <x>385</x>
-      <y>462</y>
+      <y>455</y>
       <w>294</w>
       <h>105</h>
     </coordinates>
@@ -105,7 +105,7 @@ _+ idDocument : string_
     <id>UMLClass</id>
     <coordinates>
       <x>889</x>
-      <y>581</y>
+      <y>574</y>
       <w>301</w>
       <h>105</h>
     </coordinates>
@@ -125,7 +125,7 @@ _+ idEtiquette : string_
     <id>UMLClass</id>
     <coordinates>
       <x>322</x>
-      <y>595</y>
+      <y>588</y>
       <w>448</w>
       <h>140</h>
     </coordinates>
@@ -149,7 +149,7 @@ _+ idJournal : string_
     <id>UMLClass</id>
     <coordinates>
       <x>392</x>
-      <y>259</y>
+      <y>252</y>
       <w>280</w>
       <h>168</h>
     </coordinates>
@@ -174,8 +174,8 @@ _+ idListe : string_
     <id>Relation</id>
     <coordinates>
       <x>182</x>
-      <y>189</y>
-      <w>336</w>
+      <y>182</y>
+      <w>329</w>
       <h>84</h>
     </coordinates>
     <panel_attributes>lt=-
@@ -188,8 +188,8 @@ créer</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>693</x>
-      <y>189</y>
-      <w>238</w>
+      <y>182</y>
+      <w>231</w>
       <h>84</h>
     </coordinates>
     <panel_attributes>lt=-
@@ -202,7 +202,7 @@ membre de</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>301</x>
-      <y>294</y>
+      <y>287</y>
       <w>105</w>
       <h>35</h>
     </coordinates>
@@ -216,7 +216,7 @@ contient</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>665</x>
-      <y>294</y>
+      <y>287</y>
       <w>112</w>
       <h>35</h>
     </coordinates>
@@ -230,7 +230,7 @@ contient</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>672</x>
-      <y>399</y>
+      <y>392</y>
       <w>105</w>
       <h>126</h>
     </coordinates>
@@ -244,8 +244,8 @@ associé à</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>980</x>
-      <y>483</y>
-      <w>77</w>
+      <y>476</y>
+      <w>70</w>
       <h>112</h>
     </coordinates>
     <panel_attributes>lt=-
@@ -255,32 +255,10 @@ appartient à</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;140.0</additional_attributes>
   </element>
   <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>168</x>
-      <y>427</y>
-      <w>168</w>
-      <h>245</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;10.0;330.0;220.0;330.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>763</x>
-      <y>483</y>
-      <w>98</w>
-      <h>189</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
-    <additional_attributes>120.0;10.0;120.0;250.0;10.0;250.0</additional_attributes>
-  </element>
-  <element>
     <id>UMLClass</id>
     <coordinates>
       <x>0</x>
-      <y>56</y>
+      <y>49</y>
       <w>308</w>
       <h>154</h>
     </coordinates>
@@ -305,7 +283,7 @@ mail : string) : string
     <id>Relation</id>
     <coordinates>
       <x>301</x>
-      <y>126</y>
+      <y>119</y>
       <w>133</w>
       <h>35</h>
     </coordinates>
@@ -319,7 +297,7 @@ possède</panel_attributes>
     <id>UMLClass</id>
     <coordinates>
       <x>1127</x>
-      <y>385</y>
+      <y>378</y>
       <w>301</w>
       <h>112</h>
     </coordinates>
@@ -339,8 +317,8 @@ _+ idCommentaire : string_
     <id>Relation</id>
     <coordinates>
       <x>1057</x>
-      <y>329</y>
-      <w>252</w>
+      <y>322</y>
+      <w>245</w>
       <h>70</h>
     </coordinates>
     <panel_attributes>lt=-
@@ -353,7 +331,7 @@ contient</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>749</x>
-      <y>105</y>
+      <y>98</y>
       <w>168</w>
       <h>35</h>
     </coordinates>
@@ -367,7 +345,7 @@ contient</panel_attributes>
     <id>UMLClass</id>
     <coordinates>
       <x>903</x>
-      <y>70</y>
+      <y>63</y>
       <w>301</w>
       <h>119</h>
     </coordinates>
@@ -382,6 +360,18 @@ _+ idNotification : string_
 + ajouterNotification(auteur : string) : Notification
 + supprimerNotification(idNotification : string) : void
 + modifierNotification(titre : string, lien : string) : string</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>245</x>
+      <y>609</y>
+      <w>70</w>
+      <h>49</h>
+    </coordinates>
+    <panel_attributes>Journal observe les autres classes
+style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>
 </diagram>
