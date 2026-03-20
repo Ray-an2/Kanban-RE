@@ -186,10 +186,14 @@ const AdminTableaux: React.FC = () => {
                                     </td>
                                 </tr>
                             ))}
+                            <tr>
+                                <td>
                             <button type="button" onClick={openCreate}
                                     style={{ padding: '8px 16px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
                                 + Nouveau
                             </button>
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
                     )}
