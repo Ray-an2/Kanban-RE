@@ -209,10 +209,6 @@ const UserManagementPage: React.FC = () => {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
           <h1 style={{ margin: 0, color: '#2c3e50' }}>Gestion des utilisateurs</h1>
           <div style={{ display: 'flex', gap: '10px' }}>
-            <button type="button" onClick={openCreate}
-                    style={{ padding: '8px 16px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-              + Nouveau compte
-            </button>
             <button type="button" onClick={() => navigate('/api/admin/tableaux')}
                     style={{ padding: '8px 16px', backgroundColor: '#3498db', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
               Retour Tableaux
@@ -291,6 +287,14 @@ const UserManagementPage: React.FC = () => {
                       </tr>
                   );
                 })}
+                <tr>
+                  <td>
+                    <button type="button" onClick={openCreate}
+                            style={{ padding: '8px 16px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                      + Nouveau compte
+                    </button>
+                  </td>
+                </tr>
                 </tbody>
               </table>
               <div style={{ padding: '12px 15px', color: '#666', fontSize: '13px', textAlign: 'right' }}>
