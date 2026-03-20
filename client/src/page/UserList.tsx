@@ -108,6 +108,14 @@ const UserManagementPage: React.FC = () => {
       setCreateError('L\'email est obligatoire');
       return;
     }
+    if (!createData.nom.trim()) {
+      setCreateError('Le nom est obligatoire');
+      return;
+    }
+    if (!createData.prenom.trim()) {
+      setCreateError('Le prénom est obligatoire');
+      return;
+    }
 
     try {
       // 1. Inscription via Deno (crée le compte + profil)
