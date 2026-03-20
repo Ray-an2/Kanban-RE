@@ -361,14 +361,14 @@ const UserManagementPage: React.FC = () => {
 
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '15px' }}>
                           <div>
-                            <label style={labelStyle}>Nom</label>
+                            <label style={labelStyle}>Nom *</label>
                             <input type="text" value={createData.nom}
                                    onChange={e => setCreateData(p => ({ ...p, nom: e.target.value }))}
                                    placeholder="Ex: Dupont"
                                    style={inputStyle} />
                           </div>
                           <div>
-                            <label style={labelStyle}>Prénom</label>
+                            <label style={labelStyle}>Prénom *</label>
                             <input type="text" value={createData.prenom}
                                    onChange={e => setCreateData(p => ({ ...p, prenom: e.target.value }))}
                                    placeholder="Ex: Jean"
