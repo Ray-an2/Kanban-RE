@@ -5,7 +5,7 @@ import { carteApi, associerApi, etiquetteApi, commentaireApi } from '../api/apiC
 import { useAuth } from '../hooks/useAuth.ts';
 
 const CarteDetail: React.FC = () => {
-  const { id: boardId, cardId } = useParams<{ id: string; cardId: string }>();
+  const { boardId, cardId } = useParams<{ boardId: string; cardId: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -125,7 +125,7 @@ const CarteDetail: React.FC = () => {
               )}
             </div>
           </div>
-          <button type="button" onClick={() => navigate(`/api/tableau/${boardId}`)}
+          <button type="button" onClick={() => boardId ? navigate(`/api/tableau/${boardId}`) : navigate('/api/tableau')}
                   style={{ padding: '8px 16px', backgroundColor: '#95a5a6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
             Retour
           </button>
