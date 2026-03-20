@@ -32,12 +32,9 @@ public class TableauServiceImpl implements TableauService {
   private final JournalHelper journalHelper;
   private final RoleRepository roleRepository;
 
-  public TableauServiceImpl(TableauRepository tableauRepository,
-                            TableauMapper tableauMapper,
-                            ListeRepository listeRepository,
-                            CarteRepository carteRepository,
-                            JournalHelper journalHelper,
-                            RoleRepository roleRepository) {
+  public TableauServiceImpl(TableauRepository tableauRepository, TableauMapper tableauMapper,
+                            ListeRepository listeRepository, CarteRepository carteRepository,
+                            JournalHelper journalHelper, RoleRepository roleRepository) {
     this.tableauRepository = tableauRepository;
     this.tableauMapper = tableauMapper;
     this.listeRepository = listeRepository;
@@ -46,10 +43,11 @@ public class TableauServiceImpl implements TableauService {
     this.roleRepository = roleRepository;
   }
 
-  // -------------------------------------------------------------------------
-  // CRUD de base
-  // -------------------------------------------------------------------------
-
+  /**
+   * Création d'un tableau
+   * @param tableauDto
+   * @return
+   */
   @Override
   public TableauDto createTab(TableauDto tableauDto) {
     var tableau = tableauMapper.toEntity(tableauDto);
@@ -63,17 +61,18 @@ public class TableauServiceImpl implements TableauService {
       role.setRolRole("C");
       roleRepository.save(role);
     }
-
-    journalHelper.logTableau(
-            "Création tableau",
-            String.format("Création du tableau « %s »", saved.getNom()),
-            tableauDto.getAuteur(),
-            JournalAction.CREATE_BOARD,
-            saved.getId()
+    // Journalisation
+    journalHelper.logTableau("Création tableau", String.format("Création du tableau « %s »", saved.getNom()),
+            tableauDto.getAuteur(), JournalAction.CREATE_BOARD, saved.getId()
     );
     return tableauMapper.toDto(saved);
   }
 
+  /**
+   * Récupération d'un tableau par son id
+   * @param id : identifiant du tableau
+   * @return
+   */
   @Override
   @Transactional(readOnly = true)
   public TableauDto getTabById(String id) {
@@ -82,6 +81,11 @@ public class TableauServiceImpl implements TableauService {
             .orElseThrow(() -> new EntityNotFoundException("Tableau non trouvé avec l'id: " + id));
   }
 
+  /**
+   * Suppression d'un tableau
+   * @param id : identifiant du tableau
+   * @return true si le tableau est supprimé, false sinon
+   */
   @Override
   public boolean deleteTab(String id) {
     var tableau = tableauRepository.findById(id)
@@ -99,22 +103,35 @@ public class TableauServiceImpl implements TableauService {
     return true;
   }
 
+  /**
+   * Récupère tous les tableaux
+   * @return Liste<TableauDto> : Liste de tous les tableaux.
+   */
   @Override
   @Transactional(readOnly = true)
   public List<TableauDto> getAllTab() {
     return tableauRepository.findAll().stream().map(tableauMapper::toDto).toList();
   }
 
+  /**
+   * Retourne le nombre de tableau.
+   * @return le nombre de tableau.
+   */
   @Override
   @Transactional(readOnly = true)
   public Long getNombreTab() {
     return tableauRepository.count();
   }
 
+  /**
+   * Met à jour un tableau
+   * @param id : identifiant du tableau
+   * @param tableauDto : nouvelle information du tableau
+   * @return
+   */
   @Override
   public TableauDto updateTab(String id, TableauDto tableauDto) {
-    var tableau = tableauRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Tableau non trouvé avec l'id: " + id));
+    var tableau = tableauRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Tableau non trouvé avec l'id: " + id));
     if (tableauDto.getNom() != null && !tableauDto.getNom().isBlank())
       tableau.setNom(tableauDto.getNom());
     if (tableauDto.getDescription() != null)
@@ -122,27 +139,29 @@ public class TableauServiceImpl implements TableauService {
     if (tableauDto.getImage() != null)
       tableau.setImage(tableauDto.getImage());
     var saved = tableauRepository.save(tableau);
-
-    journalHelper.logTableau(
-            "Modification tableau",
-            String.format("Modification du tableau « %s »", saved.getNom()),
-            tableauDto.getAuteur(),
-            JournalAction.UPDATE_BOARD,
-            id
+    // Journalisation
+    journalHelper.logTableau("Modification tableau", String.format("Modification du tableau « %s »", saved.getNom()),
+            tableauDto.getAuteur(), JournalAction.UPDATE_BOARD, id
     );
     return tableauMapper.toDto(saved);
   }
 
-  // -------------------------------------------------------------------------
-  // Filtres
-  // -------------------------------------------------------------------------
-
+  /**
+   * Liste les tableaux d'un compte
+   * @param cptId : identifiant du compte
+   * @return La liste des tableaux du compte
+   */
   @Override
   @Transactional(readOnly = true)
   public List<TableauDto> getTabByCompteId(String cptId) {
     return tableauRepository.findByCompteId(cptId).stream().map(tableauMapper::toDto).toList();
   }
 
+  /**
+   * Recherche un tableau par son nom
+   * @param search : nom du tableau
+   * @return La liste des tableaux qui correspond à la recherche.
+   */
   @Override
   @Transactional(readOnly = true)
   public List<TableauDto> searchByNom(String search) {
@@ -150,6 +169,11 @@ public class TableauServiceImpl implements TableauService {
     return tableauRepository.findByNomContaining(search).stream().map(tableauMapper::toDto).toList();
   }
 
+  /**
+   * Trie les tableau selon une méthode de tri (pas implémenter)
+   * @param tri : mode de trie (alphabetique | date)
+   * @return Liste<TableauDto> : Liste de tableau selon le tri
+   */
   @Override
   @Transactional(readOnly = true)
   public List<TableauDto> getAllTabTries(String tri) {
@@ -160,10 +184,11 @@ public class TableauServiceImpl implements TableauService {
     };
   }
 
-  // -------------------------------------------------------------------------
-  // État ouvert / fermé
-  // -------------------------------------------------------------------------
-
+  /**
+   * Ferme un tableau
+   * @param id : identifiant du tableau
+   * @return
+   */
   @Override
   public TableauDto fermerTableau(String id) {
     var tableau = tableauRepository.findById(id)
@@ -179,7 +204,7 @@ public class TableauServiceImpl implements TableauService {
         carteRepository.save(carte);
       }
     }
-
+    // Journalisation
     journalHelper.logTableau(
             "Fermeture tableau",
             String.format("Fermeture du tableau « %s »", tableau.getNom()),
@@ -190,6 +215,11 @@ public class TableauServiceImpl implements TableauService {
     return tableauMapper.toDto(tableau);
   }
 
+  /**
+   * Ouvre un tableau.
+   * @param id : identifiant du tableau
+   * @return
+   */
   @Override
   public TableauDto ouvrirTableau(String id) {
     var tableau = tableauRepository.findById(id)
@@ -205,7 +235,7 @@ public class TableauServiceImpl implements TableauService {
         carteRepository.save(carte);
       }
     }
-
+    // Journalisation
     journalHelper.logTableau(
             "Ouverture tableau",
             String.format("Ouverture du tableau « %s »", tableau.getNom()),
