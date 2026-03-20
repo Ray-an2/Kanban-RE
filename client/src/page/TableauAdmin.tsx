@@ -89,6 +89,10 @@ const AdminTableaux: React.FC = () => {
                             style={{ padding: '8px 16px', backgroundColor: '#3498db', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
                         Logs
                     </button>
+                    <button type="button" onClick={() => navigate('/api/admin/compte')}
+                            style={{ padding: '8px 16px', backgroundColor: '#3498db', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                        Mon compte
+                    </button>
                     <button type="button" onClick={openCreate}
                             style={{ padding: '8px 16px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
                         + Nouveau
