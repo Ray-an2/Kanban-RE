@@ -41,10 +41,7 @@ public class CompteController {
    * Vérifie si un pseudo est disponible avant inscription.
    * Retourne { "disponible": true/false }
    */
-  /**
-   * GET /api/compte/pseudo/:pseudo
-   * Retourne le compte correspondant au pseudo (utilisé pour les invitations).
-   */
+  /** GET /api/compte/pseudo/:pseudo — trouver un compte par pseudo (pour invitations) */
   @GetMapping("/pseudo/{pseudo}")
   public CompteDto getByPseudo(@PathVariable String pseudo) {
     return compteService.getByPseudo(pseudo);

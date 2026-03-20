@@ -1,3 +1,8 @@
+// ============================================================
+// Types du frontend — noms JSON alignés sur les DTOs Tomcat
+// Règle : si le DTO a @JsonProperty → nom snake_case défini
+//         sinon → Jackson sérialise en camelCase (nom du champ Java)
+// ============================================================
 
 // --- Compte (CompteDto — pas de @JsonProperty) ---
 export interface Compte {
@@ -42,20 +47,19 @@ export interface Liste {
   cartes: Carte[];
 }
 
-// --- Carte (CarteDto — @JsonProperty snake_case) ---
+// --- Carte (CarteDto — @JsonProperty snake_case depuis CarteDto.java) ---
 export interface Carte {
   car_id: string;
   car_nom: string;
-  /** @JsonProperty("car_des") dans CarteDto.java */
-  car_des?: string;
+  car_description?: string;    // @JsonProperty("car_description")
   car_archiver: 'O' | 'N';
   /** 'T' = Terminé, 'N' = Non terminé */
   car_terminer: 'T' | 'N';
   car_ordre: string;
   car_priorite: number;
-  car_date_creation: string;
-  car_date_debut?: string;
-  car_date_fin?: string;
+  car_date_creation: string;   // @JsonProperty("car_date_creation")
+  car_date_debut?: string;     // @JsonProperty("car_date_debut")
+  car_date_fin?: string;       // @JsonProperty("car_date_fin")
   car_couverture?: string;
   lis_id: string;
 }
