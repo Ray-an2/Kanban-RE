@@ -20,7 +20,6 @@ const CompteAdmin: React.FC = () => {
     if (!user) return;
     profilApi.getById(user.cpt_id)
         .then(data => {
-          // ProfilDto champs : compteId, nom, prenom, mail, etat, dateCreation
           const p = data as Profil;
           setProfil(p);
           setFormData({ nom: p.nom ?? '', prenom: p.prenom ?? '', mail: p.mail ?? '', pseudo: user.cpt_pseudo });

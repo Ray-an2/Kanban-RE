@@ -27,19 +27,14 @@ public class ListeServiceImpl implements ListeService {
     private final CarteRepository carteRepository;
     private final JournalHelper journalHelper;
 
-    public ListeServiceImpl(ListeRepository listeRepository,
-                            ListeMapper listeMapper,
-                            CarteRepository carteRepository,
-                            JournalHelper journalHelper) {
+    public ListeServiceImpl(ListeRepository listeRepository, ListeMapper listeMapper,
+                            CarteRepository carteRepository, JournalHelper journalHelper) {
         this.listeRepository = listeRepository;
         this.listeMapper = listeMapper;
         this.carteRepository = carteRepository;
         this.journalHelper = journalHelper;
     }
 
-    // -------------------------------------------------------------------------
-    // CRUD
-    // -------------------------------------------------------------------------
 
     @Override
     public ListeDto createListe(ListeDto listeDto) {
@@ -47,13 +42,9 @@ public class ListeServiceImpl implements ListeService {
         liste.setId(UUID.randomUUID().toString());
         if (liste.getEtat() == null) liste.setEtat("P");
         var saved = listeRepository.save(liste);
-
-        journalHelper.logTableau(
-                "Création liste",
-                String.format("Création de la liste « %s »", saved.getTitre()),
-                listeDto.getAuteur(),
-                JournalAction.CREATE_LIST,
-                saved.getTabId()
+        // journalisation
+        journalHelper.logTableau("Création liste", String.format("Création de la liste « %s »", saved.getTitre()),
+                listeDto.getAuteur(), JournalAction.CREATE_LIST, saved.getTabId()
         );
         return listeMapper.toDto(saved);
     }
@@ -82,12 +73,8 @@ public class ListeServiceImpl implements ListeService {
             liste.setTitre(listeDto.getTitre());
         var saved = listeRepository.save(liste);
 
-        journalHelper.logTableau(
-                "Modification liste",
-                String.format("Modification de la liste « %s »", saved.getTitre()),
-                listeDto.getAuteur(),
-                JournalAction.UPDATE_LIST,
-                saved.getTabId()
+        journalHelper.logTableau("Modification liste", String.format("Modification de la liste « %s »", saved.getTitre()), listeDto.getAuteur(),
+                JournalAction.UPDATE_LIST, saved.getTabId()
         );
         return listeMapper.toDto(saved);
     }
@@ -100,19 +87,11 @@ public class ListeServiceImpl implements ListeService {
         String tabId = liste.getTabId();
         listeRepository.deleteById(id);
 
-        journalHelper.logTableau(
-                "Suppression liste",
-                String.format("Suppression de la liste « %s »", titre),
-                null,
-                JournalAction.DELETE_LIST,
-                tabId
+        journalHelper.logTableau("Suppression liste", String.format("Suppression de la liste « %s »", titre), null,
+                JournalAction.DELETE_LIST, tabId
         );
         return true;
     }
-
-    // -------------------------------------------------------------------------
-    // Archivage
-    // -------------------------------------------------------------------------
 
     @Override
     public ListeDto archiverListe(String id) {
@@ -129,11 +108,8 @@ public class ListeServiceImpl implements ListeService {
         }
 
         journalHelper.logTableau(
-                "Archivage liste",
-                String.format("Archivage de la liste « %s »", liste.getTitre()),
-                null,
-                JournalAction.ARCHIVE_LIST,
-                liste.getTabId()
+                "Archivage liste", String.format("Archivage de la liste « %s »", liste.getTitre()),
+                null, JournalAction.ARCHIVE_LIST, liste.getTabId()
         );
         return listeMapper.toDto(liste);
     }
@@ -152,12 +128,8 @@ public class ListeServiceImpl implements ListeService {
             }
         }
 
-        journalHelper.logTableau(
-                "Désarchivage liste",
-                String.format("Désarchivage de la liste « %s »", liste.getTitre()),
-                null,
-                JournalAction.UNARCHIVE_LIST,
-                liste.getTabId()
+        journalHelper.logTableau("Désarchivage liste", String.format("Désarchivage de la liste « %s »", liste.getTitre()),
+                null, JournalAction.UNARCHIVE_LIST, liste.getTabId()
         );
         return listeMapper.toDto(liste);
     }
@@ -169,9 +141,6 @@ public class ListeServiceImpl implements ListeService {
                 .map(listeMapper::toDto).toList();
     }
 
-    // -------------------------------------------------------------------------
-    // Réorganisation
-    // -------------------------------------------------------------------------
 
     @Override
     public void updateOrdreListes(String tabId, List<OrdreListeDto> ordres) {

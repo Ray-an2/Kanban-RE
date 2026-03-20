@@ -18,7 +18,7 @@ const Accueil: React.FC<UserBoardsProps> = ({ tableaux, isAdmin = false }) => {
   const userTableaux = isAdmin
     ? tableaux
     : tableaux.filter(_tableau => {
-        return true; // À remplacer par votre logique réelle
+        return true;
       });
 
   return (

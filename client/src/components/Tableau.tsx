@@ -25,36 +25,32 @@ const Tableau: React.FC = () => {
   const [loading, setLoading]   = useState(true);
   const [error, setError]       = useState<string | null>(null);
 
-  // drag cartes
   const draggedCard       = useRef<Carte | null>(null);
   const dragSourceListId  = useRef<string | null>(null);
   const dragOverCardIdx   = useRef<number>(-1);
-  // drag listes
   const draggedListId     = useRef<string | null>(null);
   const dragOverListIdx   = useRef<number>(-1);
 
-  // nouvelle liste
+
   const [showNewListe, setShowNewListe] = useState(false);
   const [titreListe, setTitreListe]     = useState('');
 
-  // membres tableau
+
   const [showMembres, setShowMembres]       = useState(false);
   const [membresTab, setMembresTab]         = useState<MembreTableau[]>([]);
   const [loadingMembres, setLoadingMembres] = useState(false);
   const [membresError, setMembresError]     = useState<string | null>(null);
 
-  // ajout membre
   const [showAddMembre, setShowAddMembre]   = useState(false);
   const [allComptes, setAllComptes]         = useState<CompteSimple[]>([]);
   const [selectedCptId, setSelectedCptId]   = useState('');
   const [selectedRole, setSelectedRole]     = useState('M');
   const [addLoading, setAddLoading]         = useState(false);
 
-  // modification rôle
   const [editingMembre, setEditingMembre]   = useState<string | null>(null);
   const [editRole, setEditRole]             = useState('');
 
-  // membres carte
+
   const [showMembresCarte, setShowMembresCarte] = useState<string | null>(null);
   const [membresCarte, setMembresCarte]         = useState<MembreCarte[]>([]);
 
@@ -76,7 +72,6 @@ const Tableau: React.FC = () => {
     })();
   }, [id]);
 
-  // ---------- membres tableau ----------
   const loadMembres = async () => {
     setLoadingMembres(true);
     setMembresError(null);
@@ -96,14 +91,12 @@ const Tableau: React.FC = () => {
     await loadMembres();
   };
 
-  // ---------- ouvrir ajout membre ----------
   const openAddMembre = async () => {
     setShowAddMembre(true);
     setSelectedCptId('');
     setSelectedRole('M');
     try {
       const comptes = await compteApi.getAll() as CompteSimple[];
-      // Filtrer les comptes déjà membres
       const dejaMembres = new Set(membresTab.map(m => m.cptId));
       setAllComptes(comptes.filter(c => !dejaMembres.has(c.id)));
     } catch {
@@ -111,7 +104,6 @@ const Tableau: React.FC = () => {
     }
   };
 
-  // ---------- ajouter membre ----------
   const handleAddMembre = async () => {
     if (!selectedCptId || !id) return;
     setAddLoading(true);
@@ -125,7 +117,7 @@ const Tableau: React.FC = () => {
     } finally { setAddLoading(false); }
   };
 
-  // ---------- supprimer membre ----------
+
   const handleDeleteMembre = async (cptId: string) => {
     if (!id) return;
     if (!globalThis.confirm('Retirer ce membre du tableau ?')) return;
@@ -138,7 +130,6 @@ const Tableau: React.FC = () => {
     }
   };
 
-  // ---------- modifier rôle ----------
   const openEditRole = (m: MembreTableau) => {
     setEditingMembre(m.cptId);
     setEditRole(m.rolRole);
@@ -156,7 +147,6 @@ const Tableau: React.FC = () => {
     }
   };
 
-  // ---------- membres carte ----------
   const openMembresCarte = async (carId: string) => {
     setShowMembresCarte(carId);
     try {
@@ -165,7 +155,6 @@ const Tableau: React.FC = () => {
     } catch { setMembresCarte([]); }
   };
 
-  // ---------- ajouter liste ----------
   const ajouterListe = async () => {
     if (!titreListe.trim() || !id) return;
     try {
@@ -175,7 +164,6 @@ const Tableau: React.FC = () => {
     } catch (err) { console.error(err); }
   };
 
-  // ---------- drag CARTES ----------
   const onCardDragStart = (e: React.DragEvent, card: Carte, listId: string) => {
     draggedCard.current = card; dragSourceListId.current = listId; draggedListId.current = null;
     e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('dtype', 'card');
@@ -199,7 +187,6 @@ const Tableau: React.FC = () => {
     finally { draggedCard.current = null; dragSourceListId.current = null; dragOverCardIdx.current = -1; }
   };
 
-  // ---------- drag LISTES ----------
   const onListDragStart = (e: React.DragEvent, lisId: string) => {
     draggedListId.current = lisId; draggedCard.current = null;
     e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('dtype', 'list');
@@ -234,7 +221,6 @@ const Tableau: React.FC = () => {
     return { label, color };
   };
 
-  // Vérifie si l'utilisateur connecté est admin ou créateur du tableau
   const isAdminOrCreateur = () => {
     const membre = membresTab.find(m => m.cptId === user?.cpt_id);
     return user?.cpt_role === 'A' || membre?.rolRole === 'C' || membre?.rolRole === 'A';
@@ -247,7 +233,6 @@ const Tableau: React.FC = () => {
   return (
       <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', minHeight: '100vh' }}>
 
-        {/* EN-TÊTE */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
           <div>
             <h1 style={{ margin: 0, color: '#2c3e50' }}>{tableau.tab_nom}</h1>
@@ -269,7 +254,6 @@ const Tableau: React.FC = () => {
           </div>
         </div>
 
-        {/* COLONNES */}
         <div style={{ display: 'flex', gap: '14px', overflowX: 'auto', paddingBottom: '20px', alignItems: 'flex-start' }}>
           {lists.map((list, listIdx) => (
               <div key={list.lis_id}
@@ -308,7 +292,6 @@ const Tableau: React.FC = () => {
               </div>
           ))}
 
-          {/* AJOUTER LISTE */}
           <div style={{ minWidth: '272px', flexShrink: 0 }}>
             {showNewListe ? (
                 <div style={{ backgroundColor: '#f0f2f5', borderRadius: '8px', padding: '12px' }}>
@@ -332,7 +315,6 @@ const Tableau: React.FC = () => {
           </div>
         </div>
 
-        {/* POPUP MEMBRES TABLEAU */}
         {showMembres && (
             <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
               <div style={{ backgroundColor: 'white', borderRadius: '8px', padding: '24px', width: '480px', maxWidth: '90%', maxHeight: '85vh', overflowY: 'auto', boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }}>
@@ -344,7 +326,6 @@ const Tableau: React.FC = () => {
                           style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#666' }}>✕</button>
                 </div>
 
-                {/* Message d'erreur */}
                 {membresError && (
                     <div style={{ padding: '8px 12px', backgroundColor: '#fdecea', color: '#e74c3c', borderRadius: '4px', marginBottom: '12px', fontSize: '13px' }}>
                       {membresError}
@@ -439,7 +420,6 @@ const Tableau: React.FC = () => {
                                 </div>
                               </div>
 
-                              {/* Formulaire modification rôle inline */}
                               {isEditing && (
                                   <div style={{ marginTop: '10px', display: 'flex', gap: '8px', alignItems: 'center' }}>
                                     <select value={editRole} onChange={e => setEditRole(e.target.value)}

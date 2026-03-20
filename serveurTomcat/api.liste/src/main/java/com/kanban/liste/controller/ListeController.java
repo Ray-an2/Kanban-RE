@@ -19,72 +19,93 @@ public class ListeController {
         this.listeService = listeService;
     }
 
-    // -------------------------------------------------------------------------
-    // CRUD de base
-    // -------------------------------------------------------------------------
-
-    /** GET /api/liste/:id — récupérer une liste par son id */
+    /**
+     * Récupère une liste par son id
+     * @param id : identifiant de la liste
+     * @return Une liste
+     */
     @GetMapping("/{id}")
     public ListeDto getListeById(@PathVariable String id) {
         return listeService.getListeById(id);
     }
 
-    /** GET /api/liste/tableau/:tabId — listes publiées d'un tableau */
+    /**
+     * Récupère toutes les listes d'un tableau
+     * @param tabId : identifiant du tableau
+     * @return Liste de toutes les listes d'un tableau
+     */
     @GetMapping("/tableau/{tabId}")
     public List<ListeDto> getListesByTableau(@PathVariable String tabId) {
         return listeService.getListesByTabId(tabId);
     }
 
-    /** POST /api/liste — créer une liste */
+    /**
+     * Crée une liste
+     * @param listeDto : au minimum le nom de la liste
+     * @return
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ListeDto createListe(@RequestBody ListeDto listeDto) {
         return listeService.createListe(listeDto);
     }
 
-    /** PUT /api/liste/:id — modifier le titre d'une liste */
+    /**
+     * Modifie le titre d'une liste
+     * @param id : identifiant de la liste
+     * @param listeDto : nouveau titre de la liste
+     * @return
+     */
     @PutMapping("/{id}")
     public ListeDto updateListe(@PathVariable String id, @RequestBody ListeDto listeDto) {
         return listeService.updateListe(id, listeDto);
     }
 
-    /** DELETE /api/liste/:id — supprimer une liste */
+    /**
+     * Supprime une liste
+     * @param id : identifiant de la liste
+     * @return
+     */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public boolean deleteListe(@PathVariable String id) {
         return listeService.deleteListe(id);
     }
 
-    // -------------------------------------------------------------------------
-    // Archivage
-    // -------------------------------------------------------------------------
-
-    /** GET /api/liste/tableau/:tabId/archivees — listes archivées d'un tableau */
+    /**
+     * Liste tous les listes archivées d'un tableau
+     * @param tabId : identifiant du tableau
+     * @return List<ListeDto> liste archivée d'un tableau
+     */
     @GetMapping("/tableau/{tabId}/archivees")
     public List<ListeDto> getListesArchivees(@PathVariable String tabId) {
         return listeService.getListesArchivees(tabId);
     }
 
-    /** PATCH /api/liste/:id/archiver — archiver une liste et ses cartes */
+    /**
+     * Archiver une liste et ses cartes
+     * @param id : identifiant de la liste
+     * @return
+     */
     @PatchMapping("/{id}/archiver")
     public ListeDto archiverListe(@PathVariable String id) {
         return listeService.archiverListe(id);
     }
 
-    /** PATCH /api/liste/:id/desarchiver — désarchiver une liste et ses cartes */
+    /**
+     * Désarchiver une liste et ses cartes.
+     * @param id : identifiant de la liste
+     * @return
+     */
     @PatchMapping("/{id}/desarchiver")
     public ListeDto desarchiverListe(@PathVariable String id) {
         return listeService.desarchiverListe(id);
     }
 
-    // -------------------------------------------------------------------------
-    // Réorganisation
-    // -------------------------------------------------------------------------
-
     /**
-     * PUT /api/liste/tableau/:tabId/ordre
-     * Réorganise l'ordre des listes d'un tableau.
-     * Body : [{ "lisId": "...", "ordre": 1 }, ...]
+     * Met à jour l'ordre des listes d'un tableau.
+     * @param tabId : identifiant du tableau
+     * @param ordres : nouvelle ordre des listes
      */
     @PutMapping("/tableau/{tabId}/ordre")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -94,9 +115,9 @@ public class ListeController {
     }
 
     /**
-     * PUT /api/liste/:lisId/ordre-cartes
-     * Réorganise l'ordre des cartes dans une liste.
-     * Body : [{ "carId": "...", "ordre": 0 }, ...]
+     * Met à jour l'ordre des cartes d'une liste.
+     * @param lisId : identifiant de la liste
+     * @param ordres : nouvel ordre des cartes
      */
     @PutMapping("/{lisId}/ordre-cartes")
     @ResponseStatus(HttpStatus.NO_CONTENT)

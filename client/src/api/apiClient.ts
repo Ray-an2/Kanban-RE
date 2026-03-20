@@ -1,8 +1,3 @@
-/**
- * Client API centralisé — toutes les requêtes passent par le serveur Deno (VITE_API_URL).
- * Le token JWT est injecté automatiquement depuis localStorage.
- */
-
 import type { APIResponse } from '../model/api.ts';
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';
@@ -21,29 +16,18 @@ function authHeaders(extra?: HeadersInit): HeadersInit {
     };
 }
 
-/**
- * Fonction fetch centrale.
- *
- * Gère deux formats de réponse :
- *  - Format Deno (auth) : { success: true, data: T } ou { success: false, error: { message } }
- *  - Format Tomcat direct : T (tableau, liste, carte...) retourné sans wrapper
- *
- * Gère aussi les réponses 204 No Content et les body vides.
- */
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     const response = await fetch(`${API_URL}${path}`, {
         ...options,
         headers: authHeaders(options.headers as HeadersInit),
     });
 
-    // 204 No Content ou body vide explicite : retourner null
     const contentLength = response.headers.get('content-length');
     if (response.status === 204 || contentLength === '0') {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         return null as unknown as T;
     }
 
-    // Lire le body une seule fois
     const text = await response.text();
 
     if (!text || text.trim() === '') {
@@ -58,7 +42,6 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
         throw new Error(`Réponse non-JSON du serveur (${response.status}): ${text.slice(0, 100)}`);
     }
 
-    // --- Réponse en erreur ---
     if (!response.ok) {
         const raw = parsed as Record<string, unknown>;
         const errorObj = raw?.error as Record<string, unknown> | undefined;
@@ -69,8 +52,6 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
         throw new Error(message);
     }
 
-    // --- Format Deno : { success: true/false, data?, error? } ---
-    // On détecte ce format par la présence de la propriété "success"
     if (parsed !== null && typeof parsed === 'object' && 'success' in (parsed as object)) {
         const wrapped = parsed as APIResponse<T>;
         if (!wrapped.success) {
@@ -80,7 +61,6 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
         return wrapped.data;
     }
 
-    // --- Format Tomcat direct : la donnée est retournée telle quelle ---
     return parsed as T;
 }
 
@@ -109,7 +89,6 @@ function del<T = unknown>(path: string): Promise<T> {
     return request<T>(path, { method: 'DELETE' });
 }
 
-// ---- Auth (préfixe /auth — géré directement par Deno, sans /api) ----
 export const authApi = {
     login: (pseudo: string, motDePasse: string) =>
         post<{ token: string; user: { cpt_id: string; cpt_pseudo: string; cpt_role: string } }>(
@@ -124,7 +103,6 @@ export const authApi = {
         ),
 };
 
-// ---- Tableau ----
 export const tableauApi = {
     getAll:      ()                           => get('/api/tableau'),
     getById:     (id: string)                => get(`/api/tableau/${id}`),
@@ -139,7 +117,6 @@ export const tableauApi = {
     ouvrir:      (id: string)                => patch(`/api/tableau/${id}/ouvrir`),
 };
 
-// ---- Liste ----
 export const listeApi = {
     getByTableau:      (tabId: string)                 => get(`/api/liste/tableau/${tabId}`),
     getArchivees:      (tabId: string)                 => get(`/api/liste/tableau/${tabId}/archivees`),
@@ -153,7 +130,6 @@ export const listeApi = {
     updateOrdreCartes: (lisId: string, body: unknown)  => put(`/api/liste/${lisId}/ordre-cartes`, body),
 };
 
-// ---- Carte ----
 export const carteApi = {
     getById:     (carId: string)                => get(`/api/carte/${carId}`),
     getArchivees:(tabId: string)                => get(`/api/carte/tableau/${tabId}/archivees`),
@@ -164,13 +140,11 @@ export const carteApi = {
     delete:      (carId: string)                => del(`/api/carte/${carId}`),
     archiver:    (carId: string)                => patch(`/api/carte/${carId}/archiver`),
     terminer:    (carId: string)                => patch(`/api/carte/${carId}/terminer`),
-    moveListe:   (carId: string, newLisId: string) =>
-        patch(`/api/carte/${carId}/move-liste?newLisId=${newLisId}`),
+    moveListe:   (carId: string, newLisId: string) => patch(`/api/carte/${carId}/move-liste?newLisId=${newLisId}`),
     dragDrop:    (carId: string, body: { sourceLisId: string; targetLisId: string; newOrdre: number }) =>
         patch(`/api/carte/${carId}/drag-drop`, body),
 };
 
-// ---- Rôle ----
 export const roleApi = {
     getAll:       ()                                        => get('/api/role'),
     getByCompte:  (cptId: string)                          => get(`/api/role/compte/${cptId}`),
@@ -187,14 +161,12 @@ export const roleApi = {
         request<void>(`/api/role/tableau/${tabId}/invitation/refuser`, { method: 'DELETE', body: JSON.stringify({ cptId }) }),
 };
 
-// ---- Membre ----
 export const membreApi = {
     getByCarte: (carId: string)                  => get(`/api/membre/carte/${carId}`),
     associer:   (data: unknown)                  => post('/api/membre', data),
     delete:     (carId: string, cptId: string)   => del(`/api/membre/carte/${carId}/compte/${cptId}`),
 };
 
-// ---- Étiquette ----
 export const etiquetteApi = {
     getAll:   ()                                => get('/api/etiquette'),
     getById:  (id: string)                      => get(`/api/etiquette/${id}`),
@@ -204,7 +176,6 @@ export const etiquetteApi = {
     delete:   (id: string)                      => del(`/api/etiquette/${id}`),
 };
 
-// ---- Associer (carte <-> étiquette) ----
 export const associerApi = {
     getByCarte:     (carId: string)                => get(`/api/associer/carte/${carId}`),
     getByEtiquette: (etiId: string)                => get(`/api/associer/etiquette/${etiId}`),
@@ -212,7 +183,6 @@ export const associerApi = {
     delete:         (carId: string, etiId: string) => del(`/api/associer/carte/${carId}/etiquette/${etiId}`),
 };
 
-// ---- Journal ----
 export const journalApi = {
     getByTableau:   (tabId: string) => get(`/api/journal/tableau/${tabId}`),
     countByTableau: (tabId: string) => get(`/api/journal/tableau/${tabId}/count`),
@@ -220,7 +190,7 @@ export const journalApi = {
     getByCarte:     (carId: string) => get(`/api/journal/carte/${carId}`),
 };
 
-// ---- Notification ----
+
 export const notificationApi = {
     getAll:     ()               => get('/api/notification'),
     getById:    (id: string)     => get(`/api/notification/${id}`),
@@ -229,7 +199,6 @@ export const notificationApi = {
     delete:     (id: string)     => del(`/api/notification/${id}`),
 };
 
-// ---- Commentaire ----
 export const commentaireApi = {
     getByCarte: (carteId: string)            => get(`/api/commentaire?carteId=${carteId}`),
     getById:    (id: string)                 => get(`/api/commentaire/${id}`),
@@ -237,7 +206,6 @@ export const commentaireApi = {
     delete:     (id: string)                 => del(`/api/commentaire/${id}`),
 };
 
-// ---- Document ----
 export const documentApi = {
     getByCarte: (carteId: string)            => get(`/api/document?carteId=${carteId}`),
     getById:    (id: string)                 => get(`/api/document/${id}`),

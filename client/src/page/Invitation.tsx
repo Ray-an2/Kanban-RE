@@ -3,13 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.ts';
 import { roleApi } from '../api/apiClient.ts';
 
-/**
- * Page d'invitation : /invitation/:hash
- *
- * Le hash est base64(tabId:roleCible).
- * L'utilisateur connecté peut accepter (rôle E → rôle réel) ou refuser (suppression du rôle E).
- * Après action, la notification correspondante est marquée comme lue.
- */
 const Invitation: React.FC = () => {
     const { hash } = useParams<{ hash: string }>();
     const navigate = useNavigate();

@@ -8,7 +8,6 @@ interface CarteProps {
     onDragEnd?: () => void;
     onClick: (e: React.MouseEvent, carte: CarteType) => void;
     isDragging?: boolean;
-    /** Ouvre le popup membres de la carte */
     onClickMembres?: () => void;
 }
 
@@ -45,7 +44,6 @@ const Carte: React.FC<CarteProps> = ({
                 userSelect: 'none',
             }}
         >
-            {/* Bouton membres */}
             {onClickMembres && (
                 <button
                     type="button"
@@ -70,8 +68,6 @@ const Carte: React.FC<CarteProps> = ({
             }}>
                 {carte.car_nom}
             </h3>
-
-            {/* Description */}
             {carte.car_description && (
                 <p style={{
                     color: '#666', fontSize: '12px', margin: '0 0 8px 0',
@@ -82,7 +78,6 @@ const Carte: React.FC<CarteProps> = ({
                 </p>
             )}
 
-            {/* Badges et date */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '4px' }}>
                 <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
                     {carte.car_terminer === 'T' && (

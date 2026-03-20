@@ -13,10 +13,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * BUG CORRIGÉ : le fichier JournalServiceImpl.java était vide (0 octets)
- * en production, rendant le service journal complètement non fonctionnel.
- */
 @Service
 @Transactional
 public class JournalServiceImpl implements JournalService {
@@ -34,11 +30,10 @@ public class JournalServiceImpl implements JournalService {
         Journal journal = journalMapper.toEntity(journalDto);
         journal.setId(UUID.randomUUID().toString());
 
-        // Injecter la date courante si absente
         if (journal.getDate() == null || journal.getDate().isBlank()) {
             journal.setDate(Instant.now().toString());
         }
-        // État actif par défaut
+
         if (journal.getEtat() == null || journal.getEtat().isBlank()) {
             journal.setEtat("A");
         }

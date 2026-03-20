@@ -1,4 +1,3 @@
-/* Styles de base pour le Kanban */
 .app {
   font-family: Arial, sans-serif;
   padding: 20px;
@@ -50,7 +49,6 @@
   background: transparent;
 }
 
-/* Styles pour la modale (centrée et en petite fenêtre) */
 .modal-overlay {
   position: fixed;
   top: 0;

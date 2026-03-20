@@ -3,17 +3,11 @@ import { tableauApi } from '../api/apiClient.ts';
 import type { Tableau } from '../model/types.ts';
 
 interface Props {
-    /** null = mode création, Tableau = mode édition */
     tableau?: Tableau | null;
     onClose: () => void;
-    /** Appelé après création ou modification avec le tableau résultant */
     onSuccess: (tableau: Tableau) => void;
 }
 
-/**
- * Modal réutilisable pour créer ou modifier un tableau.
- * Utilisé dans TableauAdmin.tsx (admin) et Accueil.tsx (utilisateur).
- */
 const TableauFormModal: React.FC<Props> = ({ tableau, onClose, onSuccess }) => {
     const isEdit = tableau != null;
 
@@ -24,7 +18,6 @@ const TableauFormModal: React.FC<Props> = ({ tableau, onClose, onSuccess }) => {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // Préremplir si édition
     useEffect(() => {
         if (tableau) {
             setFormData({
