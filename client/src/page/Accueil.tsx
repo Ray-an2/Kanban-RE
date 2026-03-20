@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.ts';
 import type { Tableau } from '../model/types.ts';
 import { tableauApi } from '../api/apiClient.ts';
+import TableauFormModal from '../components/TableauFormModal.tsx';
 
 const Accueil: React.FC = () => {
     const navigate = useNavigate();
@@ -22,6 +23,7 @@ const UserTableaux: React.FC = () => {
     const [boards, setBoards] = useState<Tableau[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [showCreate, setShowCreate] = useState(false);
 
     useEffect(() => {
         if (!user) return;
@@ -43,6 +45,10 @@ const UserTableaux: React.FC = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
                 <h1 style={{ margin: 0, color: '#2c3e50' }}>Bonjour, {user?.cpt_pseudo} 👋</h1>
                 <div style={{ display: 'flex', gap: '10px' }}>
+                    <button type="button" onClick={() => setShowCreate(true)}
+                            style={{ padding: '8px 16px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                        + Nouveau tableau
+                    </button>
                     <button type="button" onClick={() => navigate('/api/notifications')}
                             style={{ padding: '8px 16px', backgroundColor: '#3498db', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
                         Notifications
@@ -96,6 +102,15 @@ const UserTableaux: React.FC = () => {
                     </div>
                 )}
             </div>
+            {showCreate && (
+                <TableauFormModal
+                    onClose={() => setShowCreate(false)}
+                    onSuccess={(newTab) => {
+                        setBoards(prev => [newTab, ...prev]);
+                        setShowCreate(false);
+                    }}
+                />
+            )}
             <style>{`@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}`}</style>
         </div>
     );

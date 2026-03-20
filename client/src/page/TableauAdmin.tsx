@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.ts';
 import type { Tableau } from '../model/types.ts';
 import { tableauApi } from '../api/apiClient.ts';
+import TableauFormModal from '../components/TableauFormModal.tsx';
 import InvitationModal from '../components/InvitationModal.tsx';
 
 const AdminTableaux: React.FC = () => {
@@ -12,9 +13,7 @@ const AdminTableaux: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [showModal, setShowModal] = useState(false);
-    const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
     const [current, setCurrent] = useState<Tableau | null>(null);
-    const [formData, setFormData] = useState({ tab_nom: '', tab_description: '' });
     const [error, setError] = useState<string | null>(null);
     const [invitationTableau, setInvitationTableau] = useState<{ id: string; nom: string } | null>(null);
 
@@ -41,30 +40,11 @@ const AdminTableaux: React.FC = () => {
         [tableaux, searchTerm]
     );
 
-    const openCreate = () => {
-        setFormData({ tab_nom: '', tab_description: '' });
-        setModalMode('create');
-        setShowModal(true);
-    };
+    const openCreate = () => { setCurrent(null); setShowModal(true); };
 
-    const openEdit = (t: Tableau) => {
-        setFormData({ tab_nom: t.tab_nom, tab_description: t.tab_description ?? '' });
-        setCurrent(t);
-        setModalMode('edit');
-        setShowModal(true);
-    };
+    const openEdit = (t: Tableau) => { setCurrent(t); setShowModal(true); };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            if (modalMode === 'create') await tableauApi.create(formData);
-            else if (current) await tableauApi.update(current.tab_id, formData);
-            await load();
-            setShowModal(false);
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'Erreur');
-        }
-    };
+
 
     const handleDelete = async (id: string) => {
         if (!globalThis.confirm('Supprimer ce tableau ?')) return;
@@ -109,9 +89,9 @@ const AdminTableaux: React.FC = () => {
                             style={{ padding: '8px 16px', backgroundColor: '#3498db', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
                         Logs
                     </button>
-                    <button type="button" onClick={() => navigate('/api/admin/compte')}
-                            style={{ padding: '8px 16px', backgroundColor: '#3498db', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-                        Mon compte
+                    <button type="button" onClick={openCreate}
+                            style={{ padding: '8px 16px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                        + Nouveau
                     </button>
                     <button type="button" onClick={() => { logout(); navigate('/auth/login'); }}
                             style={{ padding: '8px 16px', backgroundColor: '#f44336', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
@@ -176,7 +156,7 @@ const AdminTableaux: React.FC = () => {
                                             </button>
                                             <button type="button" onClick={() => setInvitationTableau({ id: t.tab_id, nom: t.tab_nom })}
                                                     style={{ padding: '5px 10px', backgroundColor: '#9b59b6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>
-                                                Inviter
+                                                👥 Inviter
                                             </button>
                                             <button type="button" onClick={() => handleDelete(t.tab_id)}
                                                     style={{ padding: '5px 10px', backgroundColor: '#9E9E9E', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>
@@ -186,14 +166,6 @@ const AdminTableaux: React.FC = () => {
                                     </td>
                                 </tr>
                             ))}
-                            <tr>
-                                <td>
-                            <button type="button" onClick={openCreate}
-                                    style={{ padding: '8px 16px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-                                + Nouveau
-                            </button>
-                                </td>
-                            </tr>
                             </tbody>
                         </table>
                     )}
@@ -205,37 +177,11 @@ const AdminTableaux: React.FC = () => {
 
             {/* Modal création / édition */}
             {showModal && (
-                <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
-                    <div style={{ backgroundColor: 'white', padding: '30px', borderRadius: '8px', width: '480px', maxWidth: '90%', boxShadow: '0 4px 20px rgba(0,0,0,0.2)' }}>
-                        <h2 style={{ marginTop: 0, color: '#2c3e50' }}>
-                            {modalMode === 'create' ? 'Nouveau tableau' : 'Modifier le tableau'}
-                        </h2>
-                        <form onSubmit={handleSubmit}>
-                            <div style={{ marginBottom: '15px' }}>
-                                <label style={{ display: 'block', marginBottom: '5px', color: '#555', fontWeight: '500' }}>Nom *</label>
-                                <input type="text" value={formData.tab_nom}
-                                       onChange={e => setFormData(p => ({ ...p, tab_nom: e.target.value }))}
-                                       required style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '4px', boxSizing: 'border-box' as const }} />
-                            </div>
-                            <div style={{ marginBottom: '20px' }}>
-                                <label style={{ display: 'block', marginBottom: '5px', color: '#555', fontWeight: '500' }}>Description</label>
-                                <textarea value={formData.tab_description}
-                                          onChange={e => setFormData(p => ({ ...p, tab_description: e.target.value }))}
-                                          style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '4px', minHeight: '80px', resize: 'vertical', boxSizing: 'border-box' as const }} />
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-                                <button type="button" onClick={() => setShowModal(false)}
-                                        style={{ padding: '8px 16px', backgroundColor: '#95a5a6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-                                    Annuler
-                                </button>
-                                <button type="submit"
-                                        style={{ padding: '8px 16px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-                                    {modalMode === 'create' ? 'Créer' : 'Enregistrer'}
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+                <TableauFormModal
+                    tableau={current}
+                    onClose={() => { setShowModal(false); setCurrent(null); }}
+                    onSuccess={async () => { await load(); }}
+                />
             )}
             {invitationTableau && (
                 <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
