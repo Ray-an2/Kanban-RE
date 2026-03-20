@@ -19,9 +19,9 @@ const Carte: React.FC<CarteProps> = ({
         ? '#f44336' : carte.car_priorite === 2
             ? '#ff9800' : '#4caf50';
 
-    // car_dateFin : champ JSON réel depuis CarteDto (@JsonProperty("car_dateFin"))
-    const isLate = carte.car_dateFin
-        ? new Date(carte.car_dateFin) < new Date()
+    // car_date_fin : champ JSON réel depuis CarteDto (@JsonProperty("car_date_fin"))
+    const isLate = carte.car_date_fin
+        ? new Date(carte.car_date_fin) < new Date()
         : false;
 
     return (
@@ -52,14 +52,14 @@ const Carte: React.FC<CarteProps> = ({
                 {carte.car_nom}
             </h3>
 
-            {/* Description — champ JSON "car_des" */}
-            {carte.car_des && (
+            {/* Description — champ JSON "car_description" */}
+            {carte.car_descriptioncription && (
                 <p style={{
                     color: '#666', fontSize: '12px', margin: '0 0 8px 0',
                     display: '-webkit-box', WebkitLineClamp: 2,
                     WebkitBoxOrient: 'vertical', overflow: 'hidden',
                 }}>
-                    {carte.car_des}
+                    {carte.car_descriptioncription}
                 </p>
             )}
 
@@ -77,10 +77,10 @@ const Carte: React.FC<CarteProps> = ({
             </span>
                     )}
                 </div>
-                {/* car_dateFin : champ JSON réel */}
-                {carte.car_dateFin && (
+                {/* car_date_fin : champ JSON réel */}
+                {carte.car_date_fin && (
                     <span style={{ fontSize: '11px', color: isLate ? '#f44336' : '#9e9e9e', fontWeight: isLate ? '600' : 'normal' }}>
-            {isLate ? '⚠ ' : ''}{new Date(carte.car_dateFin).toLocaleDateString('fr-FR')}
+            {isLate ? '⚠ ' : ''}{new Date(carte.car_date_fin).toLocaleDateString('fr-FR')}
           </span>
                 )}
             </div>

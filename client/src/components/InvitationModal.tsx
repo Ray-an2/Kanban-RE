@@ -127,7 +127,7 @@ const InvitationModal: React.FC<Props> = ({ tableauId, tableauNom, onClose }) =>
                                 <input type="radio" name="role" value={r} checked={roleCible === r}
                                        onChange={() => setRoleCible(r)} style={{ margin: 0 }} />
                                 <span style={{ fontWeight: roleCible === r ? '600' : 'normal', color: '#2c3e50' }}>
-                  {r === 'M' ? '👤 Membre' : '🔑 Admin'}
+                  {r === 'M' ? 'Membre' : 'Admin'}
                 </span>
                             </label>
                         ))}

@@ -1,27 +1,46 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import type { Tableau as TableauType, Liste, Carte } from '../model/types.ts';
-// CORRECTION : Carte.tsx est dans le même dossier (components/) → './Carte.tsx'
 import CarteComponent from './Carte.tsx';
-import { tableauApi, listeApi, carteApi } from '../api/apiClient.ts';
+import { tableauApi, listeApi, carteApi, roleApi, membreApi } from '../api/apiClient.ts';
+
+interface MembreTableau { cptId: string; tabId: string; rolRole: string; cptPseudo?: string; }
+interface MembreCarte  { cptId: string; carId: string; dateCreation: string; }
 
 const Tableau: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const [tableau, setTableau] = useState<TableauType | null>(null);
-  const [lists, setLists] = useState<Liste[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [tableau, setTableau]   = useState<TableauType | null>(null);
+  const [lists, setLists]       = useState<Liste[]>([]);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState<string | null>(null);
 
-  const draggedCard = useRef<Carte | null>(null);
-  const dragSourceListId = useRef<string | null>(null);
-  const dragOverIndex = useRef<number>(-1);
+  // drag cartes
+  const draggedCard       = useRef<Carte | null>(null);
+  const dragSourceListId  = useRef<string | null>(null);
+  const dragOverCardIdx   = useRef<number>(-1);
+  // drag listes
+  const draggedListId     = useRef<string | null>(null);
+  const dragOverListIdx   = useRef<number>(-1);
 
-  // ---- Chargement ----
+  // nouvelle liste
+  const [showNewListe, setShowNewListe] = useState(false);
+  const [titreListe, setTitreListe]     = useState('');
+
+  // membres tableau
+  const [showMembres, setShowMembres]       = useState(false);
+  const [membresTab, setMembresTab]         = useState<MembreTableau[]>([]);
+  const [loadingMembres, setLoadingMembres] = useState(false);
+
+  // membres carte
+  const [showMembresCarte, setShowMembresCarte] = useState<string | null>(null);
+  const [membresCarte, setMembresCarte]         = useState<MembreCarte[]>([]);
+
+  // chargement
   useEffect(() => {
     if (!id) return;
-    const load = async () => {
+    (async () => {
       try {
         setLoading(true);
         const [tab, listes] = await Promise.all([
@@ -31,164 +50,279 @@ const Tableau: React.FC = () => {
         setTableau(tab);
         setLists(listes);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Erreur de chargement');
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
+        setError(err instanceof Error ? err.message : 'Erreur');
+      } finally { setLoading(false); }
+    })();
   }, [id]);
 
-  // ---- Drag & drop ----
-  const handleDragStart = (e: React.DragEvent, card: Carte, listId: string) => {
-    draggedCard.current = card;
-    dragSourceListId.current = listId;
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', card.car_id);
-  };
-
-  const handleDragOver = (e: React.DragEvent, cardIndex: number) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    dragOverIndex.current = cardIndex;
-  };
-
-  const handleDrop = async (e: React.DragEvent, targetListId: string) => {
-    e.preventDefault();
-    const card = draggedCard.current;
-    const sourceListId = dragSourceListId.current;
-    if (!card || !sourceListId) return;
-
-    const targetList = lists.find(l => l.lis_id === targetListId);
-    let newOrdre = targetList?.cartes.length ?? 0;
-    if (dragOverIndex.current >= 0) newOrdre = dragOverIndex.current;
-
-    // Optimistic update
-    const prevLists = lists;
-    setLists(applyDragLocally(lists, card, sourceListId, targetListId, newOrdre));
-
+  // ---------- membres tableau ----------
+  const openMembres = async () => {
+    setShowMembres(true);
+    setLoadingMembres(true);
     try {
-      await carteApi.dragDrop(card.car_id, {
-        sourceLisId: sourceListId,
-        targetLisId: targetListId,
-        newOrdre,
-      });
-      // Recharger les listes pour avoir l'ordre serveur
-      const refreshed = await listeApi.getByTableau(id!) as Liste[];
-      setLists(refreshed);
-    } catch (err) {
-      console.error('Drag-drop échoué:', err);
-      setLists(prevLists);
-    } finally {
-      draggedCard.current = null;
-      dragSourceListId.current = null;
-      dragOverIndex.current = -1;
-    }
+      const roles = await roleApi.getByTableau(id!) as MembreTableau[];
+      setMembresTab(roles.filter(r => r.rolRole !== 'E'));
+    } catch { setMembresTab([]); }
+    finally { setLoadingMembres(false); }
   };
 
-  const handleDragEnd = () => {
-    draggedCard.current = null;
-    dragSourceListId.current = null;
-    dragOverIndex.current = -1;
+  // ---------- membres carte ----------
+  const openMembresCarte = async (carId: string) => {
+    setShowMembresCarte(carId);
+    try {
+      const m = await membreApi.getByCarte(carId) as MembreCarte[];
+      setMembresCarte(m);
+    } catch { setMembresCarte([]); }
   };
 
-  const handleCardClick = (e: React.MouseEvent, card: Carte) => {
-    e.stopPropagation();
-    navigate(`/api/tableau/${id}/carte/${card.car_id}`);
+  // ---------- ajouter liste ----------
+  const ajouterListe = async () => {
+    if (!titreListe.trim() || !id) return;
+    try {
+      const nl = await listeApi.create({ lis_titre: titreListe.trim(), lis_ordre: lists.length + 1, tab_id: id }) as Liste;
+      setLists(prev => [...prev, { ...nl, cartes: [] }]);
+      setTitreListe(''); setShowNewListe(false);
+    } catch (err) { console.error(err); }
   };
 
-  // ---- Rendu ----
-  if (loading) return (
-      <div style={{ textAlign: 'center', padding: '50px' }}>
-        <div style={{ border: '4px solid rgba(0,0,0,0.1)', borderRadius: '50%', borderTop: '4px solid #3498db', width: '40px', height: '40px', animation: 'spin 1s linear infinite', margin: '0 auto 20px' }}></div>
-        <p>Chargement du tableau...</p>
-        <style>{`@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}`}</style>
-      </div>
-  );
+  // ---------- drag CARTES ----------
+  const onCardDragStart = (e: React.DragEvent, card: Carte, listId: string) => {
+    draggedCard.current = card; dragSourceListId.current = listId; draggedListId.current = null;
+    e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('dtype', 'card');
+  };
+  const onCardDragOver = (e: React.DragEvent, idx: number) => {
+    e.preventDefault(); e.dataTransfer.dropEffect = 'move'; dragOverCardIdx.current = idx;
+  };
+  const onCardDrop = async (e: React.DragEvent, targetLisId: string) => {
+    e.preventDefault();
+    if (e.dataTransfer.getData('dtype') !== 'card') return;
+    const card = draggedCard.current; const srcId = dragSourceListId.current;
+    if (!card || !srcId) return;
+    const newOrdre = dragOverCardIdx.current >= 0 ? dragOverCardIdx.current
+        : (lists.find(l => l.lis_id === targetLisId)?.cartes?.length ?? 0);
+    const prev = lists;
+    setLists(applyCardDrag(lists, card, srcId, targetLisId, newOrdre));
+    try {
+      await carteApi.dragDrop(card.car_id, { sourceLisId: srcId, targetLisId, newOrdre });
+      const r = await listeApi.getByTableau(id!) as Liste[]; setLists(r);
+    } catch { setLists(prev); }
+    finally { draggedCard.current = null; dragSourceListId.current = null; dragOverCardIdx.current = -1; }
+  };
 
-  if (error) return <div style={{ textAlign: 'center', padding: '50px', color: '#e74c3c' }}>{error}</div>;
-  if (!tableau) return <div style={{ textAlign: 'center', padding: '50px' }}>Tableau non trouvé</div>;
+  // ---------- drag LISTES ----------
+  const onListDragStart = (e: React.DragEvent, lisId: string) => {
+    draggedListId.current = lisId; draggedCard.current = null;
+    e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('dtype', 'list');
+  };
+  const onListDragOver = (e: React.DragEvent, idx: number) => {
+    e.preventDefault();
+    if (draggedCard.current) return;
+    e.dataTransfer.dropEffect = 'move'; dragOverListIdx.current = idx;
+  };
+  const onListDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    if (e.dataTransfer.getData('dtype') !== 'list') return;
+    const srcId = draggedListId.current;
+    if (!srcId || dragOverListIdx.current < 0) return;
+    const srcIdx = lists.findIndex(l => l.lis_id === srcId);
+    if (srcIdx === dragOverListIdx.current) return;
+    const nl = [...lists];
+    const [moved] = nl.splice(srcIdx, 1);
+    nl.splice(dragOverListIdx.current, 0, moved);
+    setLists(nl);
+    try {
+      await listeApi.updateOrdre(id!, nl.map((l, i) => ({ lisId: l.lis_id, ordre: i + 1 })));
+    } catch (err) { console.error(err); }
+    finally { draggedListId.current = null; dragOverListIdx.current = -1; }
+  };
+
+  const rolBadge = (rol: string) => {
+    const map: Record<string, [string, string]> = {
+      C: ['Créateur', '#9b59b6'], A: ['Admin', '#e74c3c'], M: ['Membre', '#3498db'],
+    };
+    const [label, color] = map[rol] ?? [rol, '#95a5a6'];
+    return { label, color };
+  };
+
+  if (loading) return <div style={{ textAlign: 'center', padding: '60px' }}><p>Chargement...</p></div>;
+  if (error)   return <div style={{ textAlign: 'center', padding: '60px', color: '#e74c3c' }}>{error}</div>;
+  if (!tableau) return <div style={{ textAlign: 'center', padding: '60px' }}>Tableau introuvable</div>;
 
   return (
-      <div style={{ padding: '30px', fontFamily: 'Arial, sans-serif', minHeight: '100vh' }}>
-        {/* En-tête */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+      <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', minHeight: '100vh' }}>
+
+        {/* EN-TÊTE */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
           <div>
             <h1 style={{ margin: 0, color: '#2c3e50' }}>{tableau.tab_nom}</h1>
-            {tableau.tab_description && (
-                <p style={{ color: '#666', margin: '5px 0 0 0', fontSize: '14px' }}>{tableau.tab_description}</p>
-            )}
+            {tableau.tab_description && <p style={{ color: '#666', margin: '4px 0 0', fontSize: '14px' }}>{tableau.tab_description}</p>}
           </div>
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+            <button type="button" onClick={openMembres}
+                    style={{ padding: '7px 14px', backgroundColor: '#9b59b6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '13px' }}>
+              👥 Membres
+            </button>
             <button type="button" onClick={() => navigate(`/api/tableau/${id}/log`)}
-                    style={{ padding: '8px 16px', backgroundColor: '#3498db', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                    style={{ padding: '7px 14px', backgroundColor: '#3498db', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '13px' }}>
               Logs
             </button>
             <button type="button" onClick={() => navigate('/api/tableau')}
-                    style={{ padding: '8px 16px', backgroundColor: '#95a5a6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-              Retour
+                    style={{ padding: '7px 14px', backgroundColor: '#95a5a6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '13px' }}>
+              ← Retour
             </button>
           </div>
         </div>
 
-        {/* Colonnes Kanban */}
-        <div style={{ display: 'flex', gap: '20px', overflowX: 'auto', paddingBottom: '20px', alignItems: 'flex-start' }}>
-          {lists.map((list) => (
+        {/* COLONNES */}
+        <div style={{ display: 'flex', gap: '14px', overflowX: 'auto', paddingBottom: '20px', alignItems: 'flex-start' }}>
+
+          {lists.map((list, listIdx) => (
               <div key={list.lis_id}
-                   style={{ backgroundColor: '#f0f2f5', borderRadius: '8px', padding: '15px', minWidth: '280px', maxWidth: '280px', flexShrink: 0 }}
-                   onDragOver={(e) => handleDragOver(e, list.cartes.length)}
-                   onDrop={(e) => handleDrop(e, list.lis_id)}>
+                   draggable
+                   onDragStart={(e) => onListDragStart(e, list.lis_id)}
+                   onDragOver={(e) => onListDragOver(e, listIdx)}
+                   onDrop={onListDrop}
+                   style={{ backgroundColor: '#f0f2f5', borderRadius: '8px', padding: '12px', minWidth: '272px', maxWidth: '272px', flexShrink: 0 }}>
 
-                {/* Titre liste */}
-                <h2 style={{ margin: '0 0 15px 0', color: '#333', fontSize: '15px', fontWeight: '600', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  {list.lis_titre}
-                  <span style={{ backgroundColor: '#dee2e6', color: '#6c757d', padding: '2px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: 'normal' }}>
-                {list.cartes.length}
+                {/* TITRE LISTE */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', cursor: 'grab', userSelect: 'none' }}>
+                  <span style={{ fontWeight: '600', fontSize: '14px', color: '#333' }}>⠿ {list.lis_titre}</span>
+                  <span style={{ backgroundColor: '#dee2e6', color: '#6c757d', padding: '1px 7px', borderRadius: '10px', fontSize: '11px' }}>
+                {list.cartes?.length ?? 0}
               </span>
-                </h2>
+                </div>
 
-                {/* Cartes */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', minHeight: '60px' }}>
-                  {list.cartes.map((card, index) => (
-                      <div key={card.car_id} onDragOver={(e) => handleDragOver(e, index)}>
+                {/* CARTES */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', minHeight: '40px' }}
+                     onDragOver={(e) => onCardDragOver(e, list.cartes?.length ?? 0)}
+                     onDrop={(e) => onCardDrop(e, list.lis_id)}>
+                  {(list.cartes ?? []).map((card, cardIdx) => (
+                      <div key={card.car_id} onDragOver={(e) => onCardDragOver(e, cardIdx)}>
                         <CarteComponent
                             carte={card}
                             listId={list.lis_id}
-                            onDragStart={handleDragStart}
-                            onDragEnd={handleDragEnd}
-                            onClick={handleCardClick}
+                            onDragStart={onCardDragStart}
+                            onDragEnd={() => { draggedCard.current = null; dragSourceListId.current = null; }}
+                            onClick={(e, c) => { e.stopPropagation(); navigate(`/api/tableau/${id}/carte/${c.car_id}`); }}
                             isDragging={draggedCard.current?.car_id === card.car_id}
+                            onClickMembres={() => openMembresCarte(card.car_id)}
                         />
                       </div>
                   ))}
                 </div>
+
+                {/* AJOUTER CARTE */}
+                <button type="button"
+                        style={{ marginTop: '8px', width: '100%', padding: '6px', background: 'transparent', border: '1px dashed #ccc', borderRadius: '4px', color: '#777', cursor: 'pointer', fontSize: '12px' }}>
+                  + Ajouter une carte
+                </button>
               </div>
           ))}
+
+          {/* AJOUTER LISTE */}
+          <div style={{ minWidth: '272px', flexShrink: 0 }}>
+            {showNewListe ? (
+                <div style={{ backgroundColor: '#f0f2f5', borderRadius: '8px', padding: '12px' }}>
+                  <input type="text" value={titreListe} onChange={e => setTitreListe(e.target.value)}
+                         placeholder="Titre de la liste" autoFocus
+                         onKeyDown={e => { if (e.key === 'Enter') ajouterListe(); if (e.key === 'Escape') { setShowNewListe(false); setTitreListe(''); } }}
+                         style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px', boxSizing: 'border-box', marginBottom: '8px' }} />
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button type="button" onClick={ajouterListe}
+                            style={{ padding: '6px 14px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Ajouter</button>
+                    <button type="button" onClick={() => { setShowNewListe(false); setTitreListe(''); }}
+                            style={{ padding: '6px 14px', backgroundColor: '#95a5a6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Annuler</button>
+                  </div>
+                </div>
+            ) : (
+                <button type="button" onClick={() => setShowNewListe(true)}
+                        style={{ width: '100%', padding: '10px', backgroundColor: 'rgba(0,0,0,0.08)', border: 'none', borderRadius: '8px', color: '#555', cursor: 'pointer', fontSize: '14px', textAlign: 'left' }}>
+                  + Ajouter une liste
+                </button>
+            )}
+          </div>
         </div>
+
+        {/* POPUP MEMBRES TABLEAU */}
+        {showMembres && (
+            <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
+              <div style={{ backgroundColor: 'white', borderRadius: '8px', padding: '24px', width: '420px', maxWidth: '90%', maxHeight: '80vh', overflowY: 'auto', boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <h2 style={{ margin: 0, color: '#2c3e50' }}>👥 Membres du tableau</h2>
+                  <button type="button" onClick={() => setShowMembres(false)}
+                          style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#666' }}>✕</button>
+                </div>
+                {loadingMembres ? (
+                    <p style={{ color: '#666', textAlign: 'center' }}>Chargement...</p>
+                ) : membresTab.length === 0 ? (
+                    <p style={{ color: '#999', textAlign: 'center' }}>Aucun membre.</p>
+                ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      {membresTab.map(m => {
+                        const { label, color } = rolBadge(m.rolRole);
+                        return (
+                            <div key={m.cptId} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', backgroundColor: '#f8f9fa', borderRadius: '6px' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <div style={{ width: '34px', height: '34px', borderRadius: '50%', backgroundColor: '#e3f2fd', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: '#1976d2', fontSize: '14px' }}>
+                                  {(m.cptPseudo ?? m.cptId).charAt(0).toUpperCase()}
+                                </div>
+                                <span style={{ fontWeight: '500', color: '#2c3e50' }}>{m.cptPseudo ?? m.cptId}</span>
+                              </div>
+                              <span style={{ padding: '3px 10px', backgroundColor: color + '22', color, borderRadius: '10px', fontSize: '12px', fontWeight: '600' }}>{label}</span>
+                            </div>
+                        );
+                      })}
+                    </div>
+                )}
+              </div>
+            </div>
+        )}
+
+        {/* POPUP MEMBRES CARTE */}
+        {showMembresCarte && (
+            <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
+              <div style={{ backgroundColor: 'white', borderRadius: '8px', padding: '24px', width: '360px', maxWidth: '90%', boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <h2 style={{ margin: 0, color: '#2c3e50', fontSize: '16px' }}>Membres de la carte</h2>
+                  <button type="button" onClick={() => setShowMembresCarte(null)}
+                          style={{ background: 'none', border: 'none', fontSize: '18px', cursor: 'pointer', color: '#666' }}>✕</button>
+                </div>
+                {membresCarte.length === 0 ? (
+                    <p style={{ color: '#999', textAlign: 'center' }}>Aucun membre assigné à cette carte.</p>
+                ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {membresCarte.map(m => (
+                          <div key={m.cptId} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px', backgroundColor: '#f8f9fa', borderRadius: '6px' }}>
+                            <div style={{ width: '30px', height: '30px', borderRadius: '50%', backgroundColor: '#e3f2fd', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: '#1976d2', fontSize: '12px' }}>
+                              {m.cptId.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                              <div style={{ color: '#2c3e50', fontSize: '14px', fontWeight: '500' }}>{m.cptId}</div>
+                              <div style={{ color: '#999', fontSize: '11px' }}>Depuis {new Date(m.dateCreation).toLocaleDateString('fr-FR')}</div>
+                            </div>
+                          </div>
+                      ))}
+                    </div>
+                )}
+              </div>
+            </div>
+        )}
       </div>
   );
 };
 
-/** Applique le déplacement localement pour l'optimistic update */
-function applyDragLocally(
-    lists: Liste[], card: Carte,
-    sourceListId: string, targetListId: string, newOrdre: number
-): Liste[] {
-  return lists.map(list => {
-    if (list.lis_id === sourceListId && list.lis_id === targetListId) {
-      const cartes = list.cartes.filter(c => c.car_id !== card.car_id);
-      cartes.splice(Math.min(newOrdre, cartes.length), 0, card);
-      return { ...list, cartes };
+function applyCardDrag(lists: Liste[], card: Carte, srcId: string, tgtId: string, ordre: number): Liste[] {
+  return lists.map(l => {
+    if (l.lis_id === srcId && l.lis_id === tgtId) {
+      const c = l.cartes.filter(x => x.car_id !== card.car_id);
+      c.splice(Math.min(ordre, c.length), 0, card);
+      return { ...l, cartes: c };
     }
-    if (list.lis_id === sourceListId) {
-      return { ...list, cartes: list.cartes.filter(c => c.car_id !== card.car_id) };
+    if (l.lis_id === srcId) return { ...l, cartes: l.cartes.filter(x => x.car_id !== card.car_id) };
+    if (l.lis_id === tgtId) {
+      const c = [...l.cartes]; c.splice(Math.min(ordre, c.length), 0, { ...card, lis_id: tgtId }); return { ...l, cartes: c };
     }
-    if (list.lis_id === targetListId) {
-      const cartes = [...list.cartes];
-      cartes.splice(Math.min(newOrdre, cartes.length), 0, { ...card, lis_id: targetListId });
-      return { ...list, cartes };
-    }
-    return list;
+    return l;
   });
 }
 

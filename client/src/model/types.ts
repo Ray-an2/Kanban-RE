@@ -53,9 +53,9 @@ export interface Carte {
   car_terminer: 'T' | 'N';
   car_ordre: string;
   car_priorite: number;
-  car_dateCreation: string;
-  car_dateDebut?: string;
-  car_dateFin?: string;
+  car_date_creation: string;
+  car_date_debut?: string;
+  car_date_fin?: string;
   car_couverture?: string;
   lis_id: string;
 }

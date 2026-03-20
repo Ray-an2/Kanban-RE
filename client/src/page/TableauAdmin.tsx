@@ -176,7 +176,7 @@ const AdminTableaux: React.FC = () => {
                                             </button>
                                             <button type="button" onClick={() => setInvitationTableau({ id: t.tab_id, nom: t.tab_nom })}
                                                     style={{ padding: '5px 10px', backgroundColor: '#9b59b6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>
-                                                👥 Inviter
+                                                Inviter
                                             </button>
                                             <button type="button" onClick={() => handleDelete(t.tab_id)}
                                                     style={{ padding: '5px 10px', backgroundColor: '#9E9E9E', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>
