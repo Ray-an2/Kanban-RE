@@ -17,10 +17,6 @@ public class TableauController {
     this.tableauService = tableauService;
   }
 
-  // -------------------------------------------------------------------------
-  // CRUD de base
-  // -------------------------------------------------------------------------
-
   /** GET /api/tableau — tous les tableaux */
   @GetMapping
   public List<TableauDto> getTableaux() {
@@ -65,10 +61,6 @@ public class TableauController {
     return tableauService.deleteTab(id);
   }
 
-  // -------------------------------------------------------------------------
-  // Filtres et recherche
-  // -------------------------------------------------------------------------
-
   /**
    * GET /api/tableau/tri?tri=rec|alp
    * Retourne tous les tableaux triés par date (rec) ou alphabétiquement (alp).
@@ -86,10 +78,6 @@ public class TableauController {
   public List<TableauDto> searchTableaux(@RequestParam String search) {
     return tableauService.searchByNom(search);
   }
-
-  // -------------------------------------------------------------------------
-  // État ouvert / fermé
-  // -------------------------------------------------------------------------
 
   /**
    * PATCH /api/tableau/:id/fermer
